@@ -409,7 +409,7 @@ services:
 
   # dbt service - for running dbt commands against Trino
   dbt_trino_service:
-    image: ghcr.io/dbt-labs/dbt-trino:1.6.latest # Check for latest dbt-trino version
+    image: ghcr.io/dbt-labs/dbt-trino:1.6.0 # Changed from 1.6.latest to specific version
     container_name: dbt_trino_service
     networks:
       - agri_platform_net
