@@ -1,0 +1,103 @@
+# Basic dbt project configuration
+
+name: 'agribusiness_credit_analysis'
+version: '1.0.0'
+config-version: 2
+
+# This profile will connect to ClickHouse
+profile: 'agribusiness_clickhouse'
+
+# Model paths
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"  # directory for compiled artifacts
+clean-targets:         # directories removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+# Configure models for the project
+models:
+  agribusiness_credit_analysis:
+    # Config indicated by + and applies to all files under models/marts/
+    marts:
+      +materialized: table # Default materialization for models in 'marts'
+      # Example: setting schema for models in 'marts'
+      # +schema: analytics
+      fct_risk_analysis:
+        +schema: analytics # Specific schema for this model
+        # You can add tags, specific materializations, etc.
+        # +materialized: incremental
+        # +unique_key: 'proponent_id' # if incremental
+
+# Seeds configuration (if you use CSV seeds)
+# seeds:
+#   agribusiness_credit_analysis:
+#     +schema: raw_data # Example schema for seeds
+#     +quote_columns: false
+#     +enabled: true
+#     your_seed_file:
+#       +column_types:
+#         id: integer
+#         created_at: timestamp
+#         amount: decimal(18,2)
+#
+# Note: For dbt-clickhouse, you might need to specify specific configurations
+# related to ClickHouse engine types (e.g., MergeTree) or other settings.
+# This can often be done within the model SQL file using config blocks,
+# or sometimes in dbt_project.yml if the adapter supports it globally.
+#
+# Example for ClickHouse specific settings in a model's config block:
+# {{
+#   config(
+#     materialized='table',
+#     engine='MergeTree()',
+#     order_by='(event_date, proponent_id)',
+#     partition_by='toYYYYMM(event_date)'
+#   )
+# }}
+#
+# Check the dbt-clickhouse adapter documentation for specific features.
+# https://github.com/ClickHouse/dbt-clickhouse
+# or https://github.com/dbt-clickhouse/dbt-clickhouse (depending on which fork is current)
+
+# Ensure you have dbt-clickhouse specified in your project's requirements.txt
+# if you are using a virtual environment outside of the dbt docker image.
+# The dbt_service in docker-compose.yml uses an image with dbt-clickhouse pre-installed.
+#
+# To use this project, you'll also need a profiles.yml file.
+# This file is typically located in ~/.dbt/ or specified by the DBT_PROFILES_DIR env var.
+# In our docker-compose setup, we will mount a profiles.yml into the dbt_service container.
+#
+# Example profiles.yml content for ClickHouse:
+#
+# agribusiness_clickhouse: # This is the profile name referenced above
+#   target: dev
+#   outputs:
+#     dev:
+#       type: clickhouse
+#       host: clickhouse # Service name from docker-compose
+#       port: 8123 # HTTP port for ClickHouse
+#       user: user # Or your ClickHouse user
+#       password: password # Or your ClickHouse password
+#       schema: agri_db # Default schema to write to, can be overridden by model configs
+#       # secure: false # set to true if using https
+#       # verify: false # set to true if you want to verify server certificate
+#       # connect_timeout: 10
+#       # send_receive_timeout: 300
+#       # sync_request_timeout: 10
+#       # compress_block_size: 1048576
+#       # compression: false # set to true to enable compression
+#       # custom_settings:
+#       #   # Example: 'extremes': True
+#       #   # 'enable_http_compression': True
+#       #   # 'use_numpy': True # if using dbt-clickhouse with numpy support
+#
+# Remember to create this profiles.yml file and mount it correctly
+# in the docker-compose.yml for the dbt_service.
+# We plan to create ./dbt_profiles/profiles.yml
+# and mount it to /root/.dbt/profiles.yml in the dbt_service.
