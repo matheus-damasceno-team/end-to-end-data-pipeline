@@ -346,18 +346,15 @@ services:
       SIMULATION_DELAY_SECONDS: 5
     restart: unless-stopped
 
-  # Serviços opcionais - comentados para reduzir complexidade inicial
-  # Descomente quando precisar deles
-  
   feast_serve:
-    image: feastdev/feature-server:latest
+    image: feastdev/feature-server:0.32.0
     container_name: feast_serve
     networks:
       - agri_platform_net
     depends_on:
       redis:
         condition: service_healthy
-      spark-master:
+      minio:
         condition: service_healthy
     ports:
       - "6566:6566"
@@ -368,8 +365,14 @@ services:
       AWS_ACCESS_KEY_ID: admin
       AWS_SECRET_ACCESS_KEY: password123
       AWS_DEFAULT_REGION: us-east-1
+      AWS_S3_ENDPOINT_URL: http://minio:9000
     working_dir: /feature_repo
     command: ["feast", "serve", "--host", "0.0.0.0", "--port", "6566"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6566/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   # dbt_trino_service:
   #   image: ghcr.io/dbt-labs/dbt-trino:latest
