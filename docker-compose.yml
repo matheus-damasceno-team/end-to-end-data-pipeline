@@ -402,50 +402,13 @@ services:
       SIMULATION_DELAY_SECONDS: 5
     # restart: on-failure
 
-  # Service for running the Curation Platform (Nimtable role) Spark job via spark-submit
-  # This service itself does not run Spark, but executes spark-submit on the master
-  # An alternative is to build a Python image with pyspark and run the script directly,
-  # connecting to the Spark master. For now, we use spark-master's exec.
-  curation_platform_job: # This is a one-off job, can be run via `docker-compose run` or from setup.sh
-    image: bitnami/spark:3.4.1 # Use the same Spark image as master for spark-submit compatibility
-    container_name: curation_platform_job_runner # Temporary container
-    networks:
-      - agri_platform_net
-    volumes:
-      - ./services/curation_platform:/app/curation_platform:ro
-      - ./config/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf:ro
-    depends_on: # Ensure these are healthy before job submission
-      - spark-master
-      - hive-metastore
-      - minio
-    command: >
-      spark-submit \
-      --master spark://spark-master:7077 \
-      --deploy-mode client \
-      /app/curation_platform/curator.py
-    # This service will run, submit the job, and then exit.
-    # For setup.sh, we might prefer `docker-compose exec spark-master spark-submit ...`
-
-  # Service for running the Feature Engineering Spark job via spark-submit
-  feature_engineering_job: # Similar to curation_platform_job
-    image: bitnami/spark:3.4.1
-    container_name: feature_engineering_job_runner
-    networks:
-      - agri_platform_net
-    volumes:
-      - ./spark_jobs:/app/spark_jobs:ro
-      - ./config/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf:ro
-    depends_on:
-      - spark-master
-      - hive-metastore
-      - minio
-      # Potentially depends on the output of the curation job, but Docker Compose can't manage that logic.
-      # The setup.sh script will handle sequential execution.
-    command: >
-      spark-submit \
-      --master spark://spark-master:7077 \
-      --deploy-mode client \
-      /app/spark_jobs/feature_engineering.py
+  # Spark jobs (curation_platform_job, feature_engineering_job) will be run via
+  # `docker-compose exec spark-master spark-submit ...` in setup.sh
+  # This simplifies the docker-compose.yml file.
+  # Ensure job scripts are mounted into spark-master and spark-worker:
+  # In spark-master/spark-worker volumes:
+  #   - ./services/curation_platform:/opt/bitnami/spark/curation_platform_jobs
+  #   - ./spark_jobs:/opt/bitnami/spark/jobs
 
   # dbt service - for running dbt commands against Trino
   dbt_trino_service:
@@ -513,3 +476,7 @@ Key changes and considerations:
     *   Mounts `spark-defaults.conf` and sets `SPARK_MASTER` and `SPARK_CONF_DIR` to help Feast interact with the Spark cluster for materialization or offline data access.
 *   **Spark Job Execution:** Removed the one-off `xxx_job_runner` services. The plan is now to use `docker-compose exec spark-master spark-submit ...` from the `setup.sh` script for running the curation and feature engineering PySpark jobs. This is a cleaner approach for one-off batch jobs.
 *   **Dockerfiles:** We will still need Dockerfiles for services that are not standard images, primarily `producer_simulator`. The PySpark scripts (`curator.py`, `feature_engineering.py`) will be executed by Spark itself, so they don't need their own service Dockerfiles if submitted to the Spark cluster.
+
+I believe this revised `docker-compose.yml` aligns well with the Iceberg architecture.
+
+Next, I'll proceed to generate the dbt files for Trino.
