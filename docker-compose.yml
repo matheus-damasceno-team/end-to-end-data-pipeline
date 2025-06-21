@@ -1,5 +1,3 @@
-version: '3.8'
-
 networks:
   agri_platform_net:
     driver: bridge
@@ -276,8 +274,7 @@ services:
       retries: 3
 
   feast_serve: # Feast Serving API
-    image: ghcr.io/feast-dev/feast-spark:0.36.0 # Using feast-spark for Spark offline store capabilities
-    # Alternative: feast-python-server and configure Spark connection if materializing externally
+    image: ghcr.io/feast-dev/feast-python-server:0.36.0 # Using standard python server, will connect to Spark
     container_name: feast_serve
     networks:
       - agri_platform_net
