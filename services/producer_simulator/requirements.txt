@@ -1,0 +1,6 @@
+# Producer Simulator Dependencies
+# PATH: services/producer_simulator/requirements.txt
+
+kafka-python==2.0.2
+faker==21.0.0
+python-dotenv==1.0.0

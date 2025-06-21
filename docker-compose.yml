@@ -4,24 +4,29 @@ networks:
 
 volumes:
   minio_data:
-  postgres_hive_data: # For Hive Metastore DB
-  postgres_superset_data: # For Superset DB
+  postgres_hive_data:
+  postgres_superset_data:
   clickhouse_data:
   redis_data:
-  # Volume for Spark's shared /tmp, useful for some operations
-  # spark_tmp:
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.4.0 # Using a more recent version
+    image: confluentinc/cp-zookeeper:7.4.0
     container_name: zookeeper
     networks:
       - agri_platform_net
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
     ports:
       - "2181:2181"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
@@ -29,10 +34,11 @@ services:
     networks:
       - agri_platform_net
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     ports:
-      - "9092:9092" # For internal Docker network communication
-      - "29092:29092" # For access from host machine (e.g. local dev tools)
+      - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
@@ -44,22 +50,29 @@ services:
       KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_delete_topic_enable: "true" # Allow topic deletion for dev
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   minio:
-    image: minio/minio:RELEASE.2023-09-07T22-05-05Z # Using a recent MinIO version
+    image: minio/minio:latest
     container_name: minio
     networks:
       - agri_platform_net
     ports:
-      - "9000:9000"  # MinIO API
-      - "9001:9001"  # MinIO Console
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio_data:/data
     environment:
       MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: password
-      MINIO_SERVER_URL: http://minio:9000 # Used by some tools
+      MINIO_ROOT_PASSWORD: password123
+      MINIO_SERVER_URL: http://minio:9000
     command: server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -67,8 +80,8 @@ services:
       timeout: 20s
       retries: 3
 
-  mc: # MinIO Client for setup.sh
-    image: minio/mc:RELEASE.2023-09-07T22-05-05Z
+  mc:
+    image: minio/mc:latest
     container_name: mc
     networks:
       - agri_platform_net
@@ -76,25 +89,28 @@ services:
       minio:
         condition: service_healthy
     environment:
-      MC_HOST_localminio: http://admin:password@minio:9000 # Configure alias
+      MC_HOST_localminio: http://admin:password123@minio:9000
     entrypoint: >
       /bin/sh -c "
-      echo 'mc waiting for MinIO...' &&
-      until mc alias ls localminio; do
-        mc alias set localminio http://minio:9000 admin password && sleep 1 || sleep 1;
+      echo 'Configurando MinIO Client...' &&
+      until mc alias set localminio http://minio:9000 admin password123; do
+        echo 'Aguardando MinIO...' && sleep 2;
       done;
-      echo 'MinIO is ready. mc is configured for localminio.';
-      mc ls localminio;
+      echo 'MinIO Client configurado com sucesso';
+      mc ls localminio || mc mb localminio/datalake;
+      mc mb localminio/warehouse || true;
+      mc mb localminio/feast-registry || true;
+      echo 'Buckets criados com sucesso';
       tail -f /dev/null;
-      " # Keep container running
+      "
 
-  postgres_hive: # Database for Hive Metastore
-    image: postgres:14-alpine
+  postgres_hive:
+    image: postgres:15-alpine
     container_name: postgres_hive
     networks:
       - agri_platform_net
     ports:
-      - "5432:5432" # Default PostgreSQL port
+      - "5432:5432"
     environment:
       POSTGRES_DB: metastore
       POSTGRES_USER: hive
@@ -108,17 +124,17 @@ services:
       retries: 5
 
   hive-metastore:
-    image: apache/hive:3.1.3 # A version known to work well with Iceberg
+    image: apache/hive:3.1.3
     container_name: hive-metastore
     networks:
       - agri_platform_net
     depends_on:
       postgres_hive:
         condition: service_healthy
-      minio: # Hive might need to write to MinIO for some table types (though Iceberg manages its own files)
+      minio:
         condition: service_healthy
     ports:
-      - "9083:9083" # Metastore Thrift port
+      - "9083:9083"
     environment:
       SERVICE_NAME: metastore
       DB_TYPE: postgres
@@ -126,123 +142,100 @@ services:
       POSTGRES_HOST: postgres_hive
       POSTGRES_USER: hive
       POSTGRES_PASSWORD: hivepassword
-      # S3 settings for Hive Metastore itself if it needs to access S3 (e.g. for non-Iceberg external tables)
-      # These are NOT for Iceberg data access, which is configured in Spark/Trino.
       AWS_ACCESS_KEY_ID: admin
-      AWS_SECRET_ACCESS_KEY: password
-      AWS_S3_ENDPOINT: http://minio:9000 # Note: This is for Hive's own S3 access, not Iceberg through Spark/Trino
-      HADOOP_AWS_S3_PATHSTYLEACCESS: "true" # For Hive to use path-style access with MinIO
-      # HADOOP_OPTS: "-Djavax.jdo.option.ConnectionURL=jdbc:postgresql://postgres_hive:5432/metastore" # Already set by DB_TYPE etc.
+      AWS_SECRET_ACCESS_KEY: password123
+      AWS_S3_ENDPOINT: http://minio:9000
+      HADOOP_AWS_S3_PATHSTYLEACCESS: "true"
+      HIVE_METASTORE_WAREHOUSE_DIR: s3a://warehouse/
     command: /opt/hive/bin/hive --service metastore
-    healthcheck: # Basic check, ideally you'd check if thrift port is responsive
-        test: ["CMD", "/opt/hive/bin/schematool", "-dbType", "postgres", "-info"]
-        interval: 60s
-        timeout: 30s
-        retries: 3
-
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9083"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
 
   spark-master:
-    image: bitnami/spark:3.4.1 # Ensure this Spark version matches Iceberg runtime (e.g., 3.4)
+    image: bitnami/spark:3.5
     container_name: spark-master
     networks:
       - agri_platform_net
     ports:
-      - "8080:8080" # Spark Master Web UI
-      - "7077:7077" # Spark Master Port
+      - "8080:8080"
+      - "7077:7077"
     volumes:
-      - ./spark_jobs:/opt/bitnami/spark/jobs # Mount custom Spark jobs
-      - ./config/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf:ro # Mount common Spark conf for Iceberg
-      - ./services/curation_platform:/opt/bitnami/spark/curation_platform_jobs # Mount curation jobs
-      # - spark_tmp:/tmp # Optional shared /tmp
+      - ./spark_jobs:/opt/bitnami/spark/jobs
+      - ./config/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf:ro
+      - ./services/curation_platform:/opt/bitnami/spark/curation_platform_jobs
     environment:
       SPARK_MODE: master
       SPARK_RPC_AUTHENTICATION_ENABLED: "no"
       SPARK_RPC_ENCRYPTION_ENABLED: "no"
       SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
       SPARK_SSL_ENABLED: "no"
-      # The following S3A Hadoop configs are now in spark-defaults.conf, but can be overridden here if needed
-      # SPARK_HADOOP_FS_S3A_ENDPOINT: http://minio:9000
-      # SPARK_HADOOP_FS_S3A_ACCESS_KEY: admin
-      # SPARK_HADOOP_FS_S3A_SECRET_KEY: password
-      # SPARK_HADOOP_FS_S3A_PATH_STYLE_ACCESS: "true"
-      # SPARK_HADOOP_FS_S3A_IMPL: org.apache.hadoop.fs.s3a.S3AFileSystem
-      # Iceberg related configurations are primarily in spark-defaults.conf
-      # SPARK_SUBMIT_OPTS: "-Dlog4j.configuration=file:///opt/bitnami/spark/conf/log4j.properties"
+      SPARK_MASTER_OPTS: "-Dspark.deploy.recoveryMode=NONE"
     healthcheck:
-      test: curl -f http://localhost:8080 | grep "Spark Master at"
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 30s
       timeout: 10s
       retries: 5
 
   spark-worker:
-    image: bitnami/spark:3.4.1
+    image: bitnami/spark:3.5
     container_name: spark-worker
     networks:
       - agri_platform_net
     depends_on:
       spark-master:
-        condition: service_healthy # Wait for master to be healthy
+        condition: service_healthy
       minio:
-        condition: service_healthy # Workers also access MinIO
+        condition: service_healthy
       hive-metastore:
-        condition: service_healthy # Workers might interact with HMS
+        condition: service_healthy
     volumes:
-      - ./spark_jobs:/opt/bitnami/spark/jobs # Mount custom Spark jobs
-      - ./config/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf:ro # Mount common Spark conf for Iceberg
-      - ./services/curation_platform:/opt/bitnami/spark/curation_platform_jobs # Mount curation jobs
-      # - spark_tmp:/tmp # Optional shared /tmp
+      - ./spark_jobs:/opt/bitnami/spark/jobs
+      - ./config/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf:ro
+      - ./services/curation_platform:/opt/bitnami/spark/curation_platform_jobs
     environment:
       SPARK_MODE: worker
       SPARK_MASTER_URL: spark://spark-master:7077
-      SPARK_WORKER_MEMORY: 1G # Adjust as needed
-      SPARK_WORKER_CORES: 1 # Adjust as needed
+      SPARK_WORKER_MEMORY: 2G
+      SPARK_WORKER_CORES: 2
       SPARK_RPC_AUTHENTICATION_ENABLED: "no"
       SPARK_RPC_ENCRYPTION_ENABLED: "no"
       SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
       SPARK_SSL_ENABLED: "no"
-      # S3A and Iceberg configs are inherited from spark-defaults.conf
-      # SPARK_HADOOP_FS_S3A_ENDPOINT: http://minio:9000 # etc.
-      # SPARK_WORKER_OPTS: "-Dlog4j.configuration=file:///opt/bitnami/spark/conf/log4j.properties"
 
   trino-coordinator:
-    image: trinodb/trino:435 # Use a recent version that supports Iceberg well
+    image: trinodb/trino:latest
     container_name: trino-coordinator
     networks:
       - agri_platform_net
     ports:
-      - "8081:8080" # Trino UI and API (avoid conflict with Spark Master UI)
+      - "8081:8080"
     depends_on:
       hive-metastore:
         condition: service_healthy
       minio:
         condition: service_healthy
     volumes:
-      # Mount catalog configuration files for Trino
-      # We will need to create these files (e.g., iceberg.properties, clickhouse.properties)
       - ./trino_catalogs:/etc/trino/catalog
     environment:
-      # Trino itself doesn't usually need these directly if connectors are configured for HMS/MinIO
-      # However, some connectors might try to pick them up.
-      # AWS_ACCESS_KEY_ID: admin # These should be in connector properties if needed
-      # AWS_SECRET_ACCESS_KEY: password
-      # HIVE_METASTORE_URIS: thrift://hive-metastore:9083 # This is set in the Iceberg connector properties
-      TRINO_NODE_ID: "trino-coordinator-1" # Example, will be generated if not set
       TRINO_ENVIRONMENT: "development"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/v1/info"] # Trino's internal port is 8080
+      test: ["CMD", "curl", "-f", "http://localhost:8080/v1/info"]
       interval: 30s
       timeout: 10s
       retries: 5
 
   clickhouse:
-    image: clickhouse/clickhouse-server:23.8-alpine # Using alpine for smaller size
+    image: clickhouse/clickhouse-server:latest
     container_name: clickhouse
     networks:
       - agri_platform_net
     ports:
-      - "8123:8123" # HTTP interface
-      - "9009:9000" # Native TCP interface (MinIO API is on 9000, Trino on 8081, Spark on 8080)
-    ulimits: # Recommended for ClickHouse
+      - "8123:8123"
+      - "9002:9000"
+    ulimits:
       nofile: { soft: 262144, hard: 262144 }
     environment:
       CLICKHOUSE_USER: user
@@ -250,16 +243,14 @@ services:
       CLICKHOUSE_DB: agri_db
     volumes:
       - clickhouse_data:/var/lib/clickhouse
-      # - ./clickhouse_config/config.xml:/etc/clickhouse-server/config.xml # For custom global config
-      # - ./clickhouse_config/users.xml:/etc/clickhouse-server/users.xml # For custom user config
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
       interval: 30s
-      timeout: 5s
-      retries: 3
+      timeout: 10s
+      retries: 5
 
-  redis: # For Feast Online Store and Superset Caching
-    image: redis:7.0-alpine
+  redis:
+    image: redis:7-alpine
     container_name: redis
     networks:
       - agri_platform_net
@@ -267,58 +258,20 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    command: redis-server --appendonly yes
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 3
 
-  feast_serve: # Feast Serving API
-    image: ghcr.io/feast-dev/feast-python-server:0.36.0 # Using standard python server, will connect to Spark
-    container_name: feast_serve
-    networks:
-      - agri_platform_net
-    depends_on:
-      redis:
-        condition: service_healthy
-      spark-master:
-        condition: service_healthy
-      hive-metastore:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-    ports:
-      - "6566:6566" # Feast Serving API
-    volumes:
-      - ./feast_repo:/app/feast_repo # Mount our Feast repository
-      # Mount Spark conf for Feast to use when interacting with Spark (e.g., materialization)
-      - ./config/spark/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf:ro # Standard path for Spark conf
-      # If feast_serve needs to run spark-submit, it needs access to spark binaries.
-      # The feast-spark image should have Spark. If not, mount from spark-master or use a common Spark installation.
-    environment:
-      FEAST_PROJECT: feast_repo
-      FEAST_FS_YAML_FILE: /app/feast_repo/feature_store.yaml
-      # S3/MinIO access for Feast (if registry is S3, or for Spark interaction with S3)
-      AWS_ACCESS_KEY_ID: admin
-      AWS_SECRET_ACCESS_KEY: password
-      FEAST_S3_ENDPOINT_URL: http://minio:9000 # For MinIO
-      AWS_DEFAULT_REGION: us-east-1 # Some AWS SDKs require a region
-      # Spark specific envs for Feast if it needs to connect to Spark
-      SPARK_MASTER: spark://spark-master:7077 # For Spark offline store
-      SPARK_CONF_DIR: /opt/spark/conf # Points to where spark-defaults.conf is
-      # HIVE_METASTORE_URIS: thrift://hive-metastore:9083 # Spark gets this from spark-defaults.conf
-      # For materialization logs if running in feast-spark image:
-      # SPARK_SUBMIT_ARGS: "--verbose"
-    command: feast serve --host 0.0.0.0 --port 6566 --project feast_repo
-    working_dir: /app/feast_repo
-
-  postgres_superset: # Database for Superset metadata
-    image: postgres:14-alpine
+  postgres_superset:
+    image: postgres:15-alpine
     container_name: postgres_superset
     networks:
       - agri_platform_net
     ports:
-      - "5433:5432" # Expose on a different host port
+      - "5433:5432"
     environment:
       POSTGRES_DB: superset
       POSTGRES_USER: superset
@@ -332,7 +285,7 @@ services:
       retries: 5
 
   superset:
-    image: apache/superset:3.0.3 # Use a recent tagged version
+    image: apache/superset:latest
     container_name: superset
     networks:
       - agri_platform_net
@@ -341,23 +294,17 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      trino-coordinator:
-        condition: service_healthy
-      clickhouse:
-        condition: service_healthy
     ports:
-      - "8088:8088" # Superset UI
+      - "8088:8088"
     environment:
-      SUPERSET_SECRET_KEY: "a_very_secure_secret_key_for_dev_only_CHANGE_ME" # CHANGE THIS!
+      SUPERSET_SECRET_KEY: "your-secret-key-change-this-in-production"
       SUPERSET_CONFIG_PATH: "/app/pythonpath/superset_config.py"
       PYTHONPATH: "/app/pythonpath"
-      # Superset DB (Postgres)
       POSTGRES_USER: superset
       POSTGRES_PASSWORD: supersetpassword
       POSTGRES_HOST: postgres_superset
-      POSTGRES_PORT: 5432 # Internal port
+      POSTGRES_PORT: 5432
       POSTGRES_DB: superset
-      # Redis for caching
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SUPERSET_LOAD_EXAMPLES: "false"
@@ -368,10 +315,10 @@ services:
     entrypoint: >
       bash -c "
         if [ ! -f /app/superset_init_done ]; then
-          echo 'Initializing Superset...' &&
-          pip install -r /app/requirements-local.txt &&
+          echo 'Inicializando Superset...' &&
+          pip install --no-cache-dir -r /app/requirements-local.txt &&
           superset db upgrade &&
-          superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@superset.com --password admin &&
+          superset fab create-admin --username admin --firstname Admin --lastname User --email admin@superset.com --password admin &&
           superset init &&
           touch /app/superset_init_done;
         fi;
@@ -383,7 +330,6 @@ services:
       timeout: 30s
       retries: 5
 
-  # --- Custom Application Services ---
   producer_simulator:
     build:
       context: ./services/producer_simulator
@@ -392,88 +338,54 @@ services:
     networks:
       - agri_platform_net
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_TOPIC: raw_land_data
       SIMULATION_DELAY_SECONDS: 5
-    # restart: on-failure
+    restart: unless-stopped
 
-  # Spark jobs (curation_platform_job, feature_engineering_job) will be run via
-  # `docker-compose exec spark-master spark-submit ...` in setup.sh
-  # This simplifies the docker-compose.yml file.
-  # Ensure job scripts are mounted into spark-master and spark-worker:
-  # In spark-master/spark-worker volumes:
-  #   - ./services/curation_platform:/opt/bitnami/spark/curation_platform_jobs
-  #   - ./spark_jobs:/opt/bitnami/spark/jobs
-
-  # dbt service - for running dbt commands against Trino
-  dbt_trino_service:
-    image: ghcr.io/dbt-labs/dbt-trino:1.6.0 # Changed from 1.6.latest to specific version
-    container_name: dbt_trino_service
+  # Serviços opcionais - comentados para reduzir complexidade inicial
+  # Descomente quando precisar deles
+  
+  feast_serve:
+    image: feastdev/feature-server:latest
+    container_name: feast_serve
     networks:
       - agri_platform_net
     depends_on:
-      - trino-coordinator
+      redis:
+        condition: service_healthy
+      spark-master:
+        condition: service_healthy
+    ports:
+      - "6566:6566"
     volumes:
-      - ./dbt_project:/usr/app/dbt_project
-      - ./dbt_profiles/profiles.yml:/root/.dbt/profiles.yml:ro
-    working_dir: /usr/app/dbt_project
-    entrypoint: /bin/sh -c "echo 'dbt-trino service ready. Use: docker-compose exec dbt_trino_service dbt ...' && tail -f /dev/null"
+      - ./feast_repo:/feature_repo
+    environment:
+      FEAST_USAGE: "False"
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: password123
+      AWS_DEFAULT_REGION: us-east-1
+    working_dir: /feature_repo
+    command: ["feast", "serve", "--host", "0.0.0.0", "--port", "6566"]
 
-# Notes:
-# - Spark Job Submission:
-#   The `curation_platform_job` and `feature_engineering_job` services are defined to run `spark-submit`.
-#   These are one-off tasks. In `setup.sh`, it's often cleaner to use
-#   `docker-compose exec spark-master spark-submit --master spark://spark-master:7077 /path/to/job_in_container.py`
-#   rather than defining separate services that run and exit.
-#   I've mounted the job scripts directly into spark-master and spark-worker for this purpose.
-#   The `curation_platform_job` and `feature_engineering_job` services are illustrative and can be removed if setup.sh uses `exec`.
-#   I've kept `spark-master` and `spark-worker` with mounted job directories and will use `docker-compose exec` in `setup.sh`.
-#
-# - Trino Catalogs: `./trino_catalogs` directory will need `iceberg.properties` and `clickhouse.properties`.
-#
-# - Dockerfiles: For `producer_simulator` (needs kafka-python).
-#   The curation and feature engineering scripts are PySpark, so they run via `spark-submit`.
-#   No separate Dockerfiles are strictly needed for them if we use `spark-submit` from the Spark containers,
-#   but the `build` context was in the original plan, so I've left placeholders.
-#   I will generate Dockerfiles for producer_simulator, and for the Spark job runners if we decide to use dedicated runner services.
-#   For now, I've assumed Spark jobs will be submitted via `docker-compose exec spark-master spark-submit ...`
-#   and jobs are mounted into `spark-master` and `spark-worker`.
-#
-# - Superset custom drivers: `./superset_config/requirements-local.txt` will list `sqlalchemy-trino`, `clickhouse-sqlalchemy`.
-#
-# - Feast Image: Changed to `feast-spark` as it's more aligned with using Spark as an offline store/compute engine for Feast.
-#   It should bundle Spark or be compatible with an external Spark setup.
-#   Ensure `SPARK_HOME` is correctly set if `feast-spark` image doesn't bundle a full Spark distribution but relies on one.
-#   The `feast-spark` image often includes Spark, so `SPARK_MASTER` and `SPARK_CONF_DIR` help it connect.
-#
-# - Hive Metastore S3 config: `AWS_S3_ENDPOINT` and `HADOOP_AWS_S3_PATHSTYLEACCESS` added to hive-metastore for its own S3 access if needed.
-#   This is separate from Spark/Trino's S3 config for Iceberg data.
-#
-# - Spark Job Runners: I've removed the dedicated `curation_platform_runner` and `feature_engineering_runner` services.
-#   Instead, the `setup.sh` will use `docker-compose exec spark-master spark-submit ...`
-#   The job scripts are mounted into `/opt/bitnami/spark/jobs` and `/opt/bitnami/spark/curation_platform_jobs` in `spark-master` and `spark-worker`.
-#   This simplifies the docker-compose file. We'll need Dockerfiles for `producer_simulator` and potentially for a base python image for other services if they were not spark-submit based.
-#   The `build` context for `curation_platform` and `spark_jobs` in the original plan's directory structure implies they might have their own Dockerfiles.
-#   I'll create simple Dockerfiles for services that need them (producer, and if spark jobs were not submitted via spark-master).
-#   For now, assuming `producer_simulator` needs a Dockerfile. `curator.py` and `feature_engineering.py` are PySpark scripts.
-```
-
-The `docker-compose.yml` has been updated with the new Iceberg-centric architecture.
-
-Key changes and considerations:
-*   **Hive Metastore (`hive-metastore` service):** Explicitly added S3 configuration (`AWS_S3_ENDPOINT`, `HADOOP_AWS_S3_PATHSTYLEACCESS`) in case Hive itself needs to interact with S3 for non-Iceberg tables or specific Hive operations, though Iceberg data access is primarily handled by Spark/Trino using their own S3 configurations (from `spark-defaults.conf` or Trino connector properties).
-*   **Spark Master/Worker (`spark-master`, `spark-worker` services):**
-    *   Mounts `config/spark/spark-defaults.conf` which is the core of Spark's Iceberg setup.
-    *   Mounts `spark_jobs` to `/opt/bitnami/spark/jobs/` and `services/curation_platform` to `/opt/bitnami/spark/curation_platform_jobs/`. This allows `spark-submit` to be executed from within the `spark-master` container (e.g., via `docker-compose exec` in `setup.sh`).
-*   **Trino (`trino-coordinator` service):** Mounts `./trino_catalogs` where `iceberg.properties` and `clickhouse.properties` will reside. These files will configure Trino's access to Iceberg (via Hive Metastore and MinIO) and ClickHouse.
-*   **Feast (`feast_serve` service):**
-    *   Image changed to `ghcr.io/feast-dev/feast-spark:0.36.0` to better support Spark as an offline store.
-    *   Mounts `spark-defaults.conf` and sets `SPARK_MASTER` and `SPARK_CONF_DIR` to help Feast interact with the Spark cluster for materialization or offline data access.
-*   **Spark Job Execution:** Removed the one-off `xxx_job_runner` services. The plan is now to use `docker-compose exec spark-master spark-submit ...` from the `setup.sh` script for running the curation and feature engineering PySpark jobs. This is a cleaner approach for one-off batch jobs.
-*   **Dockerfiles:** We will still need Dockerfiles for services that are not standard images, primarily `producer_simulator`. The PySpark scripts (`curator.py`, `feature_engineering.py`) will be executed by Spark itself, so they don't need their own service Dockerfiles if submitted to the Spark cluster.
-
-I believe this revised `docker-compose.yml` aligns well with the Iceberg architecture.
-
-Next, I'll proceed to generate the dbt files for Trino.
+  # dbt_trino_service:
+  #   image: ghcr.io/dbt-labs/dbt-trino:latest
+  #   container_name: dbt_trino_service
+  #   networks:
+  #     - agri_platform_net
+  #   depends_on:
+  #     trino-coordinator:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./dbt_project:/usr/app/dbt_project
+  #     - ./dbt_profiles/profiles.yml:/root/.dbt/profiles.yml:ro
+  #   working_dir: /usr/app/dbt_project
+  #   entrypoint: >
+  #     /bin/sh -c "
+  #       echo 'dbt-trino service pronto para uso.' &&
+  #       echo 'Execute: docker-compose exec dbt_trino_service dbt run' &&
+  #       tail -f /dev/null
+  #     "
