@@ -1,0 +1,68 @@
+version: 2
+
+sources:
+  - name: clickhouse_gold # This is how you'll refer to the source in source() macro
+    description: "Source tables from the Gold layer in ClickHouse, typically populated by Spark jobs."
+    # database: default # Optional: Defaults to profile target's database/schema if not specified.
+                       # If your ClickHouse setup uses a specific database for these tables, specify it here.
+    schema: gold # The schema (or database in ClickHouse single-db terms) where the gold tables reside.
+    tables:
+      - name: gold_proponente_features # The actual table name in ClickHouse
+        description: "Aggregated features per proponente from the Spark feature engineering job."
+        # loaded_at_field: data_carga_gold # Optional: for freshness checks if you use them
+        # columns: # Optional: Define columns for documentation, tests, and type checking
+        #   - name: proponente_id
+        #     description: "Unique identifier for the applicant/proponente."
+        #     tests:
+        #       - unique
+        #       - not_null
+        #   - name: data_snapshot
+        #     description: "Date of the feature snapshot or analysis."
+        #     tests:
+        #       - not_null
+        #   - name: score_credito
+        #     description: "Pre-calculated credit score for the proponente."
+        #     data_type: Nullable(Float64) # Example ClickHouse data type
+        #   - name: renda_estimada_anual
+        #     description: "Estimated annual income of the proponente."
+        #     data_type: Nullable(Decimal(18,2))
+        #   - name: divida_total_consolidada
+        #     description: "Total consolidated debt of the proponente."
+        #     data_type: Nullable(Decimal(18,2))
+        #   - name: avg_ndvi_90d
+        #     description: "Average NDVI over the last 90 days for the proponente's area."
+        #     data_type: Nullable(Float64)
+        #   - name: distancia_porto_km
+        #     description: "Distance to the nearest port or silo in kilometers."
+        #     data_type: Nullable(Float64)
+        #   - name: anos_experiencia_agricola
+        #     description: "Years of agricultural experience of the proponente."
+        #     data_type: Nullable(UInt8)
+        #   - name: possui_seguro_agricola
+        #     description: "Flag indicating if the proponente has agricultural insurance (1 for true, 0 for false)."
+        #     data_type: Nullable(UInt8)
+        #   - name: area_total_cultivada_ha
+        #     description: "Total cultivated area in hectares."
+        #     data_type: Nullable(Float64)
+        #   - name: percentual_area_irrigada
+        #     description: "Percentage of cultivated area that is irrigated."
+        #     data_type: Nullable(Float32)
+        #   - name: historico_pagamentos_atrasados
+        #     description: "Count of late payments in the proponente's history."
+        #     data_type: Nullable(UInt16)
+        #   - name: consultas_credito_ultimos_6m
+        #     description: "Number of credit inquiries in the last 6 months."
+        #     data_type: Nullable(UInt8)
+        #   - name: data_carga_gold
+        #     description: "Timestamp when the record was loaded/updated in the gold layer."
+        #     data_type: DateTime64(3) # Example ClickHouse data type
+        #
+        # You can add dbt source freshness checks here if needed:
+        # freshness:
+        #   warn_after: {count: 24, period: hour}
+        #   error_after: {count: 48, period: hour}
+        #   loaded_at_field: data_carga_gold
+
+      # You can define other gold tables here if your dbt project uses them.
+      # - name: another_gold_table
+      #   description: "Description of another gold table."
