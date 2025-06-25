@@ -1,0 +1,232 @@
+# feast_repo/feature_store.yaml
+project: agronegocio_feast # Name of the Feast project, should match the directory name or a chosen identifier
+registry: data/registry.db # Path to the Feast registry SQLite file. Relative to this feature_store.yaml.
+                           # The docker-compose setup for feast-serve might override this path via FEAST_REGISTRY_PATH.
+                           # For the current docker-compose.yml, it's set to /app/feast_repo/registry.db
+                           # So, if running `feast apply` locally vs in container, this might differ.
+                           # Let's assume this path is relative to the feast_repo directory.
+provider: local # Specifies the local provider. For production, this would be 'gcp', 'aws', etc.
+
+online_store:
+  type: redis
+  connection_string: "redis:6379,db=0" # Points to the Redis service name and port from docker-compose.yml
+                                       # db=0 is the default Redis database.
+  # Alternatively, you can use separate host and port:
+  # host: redis
+  # port: 6379
+  # db: 0 # Optional: specify Redis database number
+
+offline_store:
+  type: file # Using 'file' to represent data in MinIO/S3.
+             # Feast's 'file' offline store reads Parquet files from a local filesystem path.
+             # When using MinIO, Spark jobs will write to MinIO (e.g., s3a://gold/features.parquet).
+             # For Feast to read this for materialization or serving (if not pre-materialized),
+             # it needs access to these files.
+             # The `FileSource` in definitions.py will point to a path.
+             # If Feast itself needs to *read* these Parquet files (e.g., for `feast materialize`),
+             # the container running `feast` CLI needs S3/MinIO access configured
+             # (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_ENDPOINT_URL)
+             # and the `path` in `FileSource` should be an S3 path (e.g., "s3://gold/proponente_features_view").
+             # However, the `type: file` for offline store strictly means local filesystem.
+             # For a true S3 offline store, you'd configure something like:
+             # type: s3
+             # s3_endpoint_override: "http://minio:9000" # For MinIO
+             # region: "us-east-1" # Dummy region for MinIO if required by SDK
+             # bucket: "gold" # The bucket where features are stored.
+             # The current request implies Spark handles MinIO, and Feast's "offline store" is more conceptual here,
+             # with `FileSource` pointing to where data *would be* if it were local Parquet.
+             # Let's stick to `type: file` as requested, implying Feast will read Parquet files
+             # that are assumed to be accessible at the path specified in `FileSource`.
+             # The `definitions.py` will use a `FileSource` with a path like `/data/gold/features.parquet`.
+             # This path needs to be accessible by the Feast service or CLI if it directly reads it.
+             # In our setup, Spark generates data in MinIO. Feast primarily serves from online store.
+             # Materialization `feast materialize` would read from offline (MinIO via Spark SQL source or FileSource if data is copied locally)
+             # and write to online (Redis).
+
+# Feature Serving Configuration (optional, defaults are usually fine for local)
+# feature_server:
+#   port: 6566 # gRPC port, matches docker-compose
+#   # host: "0.0.0.0" # Default, listens on all interfaces
+
+# Data Source Configuration (if using complex data sources not defined directly in feature views)
+# data_sources:
+#   - name: proponente_features_source
+#     type: FILE # Corresponds to FileSource
+#     file_options:
+#       file_format: parquet # or "csv", "json", etc.
+#       file_url: "file:///data/gold/proponente_features.parquet" # Example path, must be accessible by Feast
+#     # For S3/MinIO, it would be something like:
+#     # type: S3
+#     # s3_options:
+#     #   s3_path: "s3://gold/proponente_features_view/" # Path to Parquet files in S3/MinIO
+#     #   s3_endpoint_override: "http://minio:9000" # For MinIO
+#     #   aws_region: "us-east-1" # Can be a dummy region for MinIO
+#     # event_timestamp_column: "event_timestamp"
+#     # created_timestamp_column: "created_timestamp"
+
+# Entity definitions (can also be fully in definitions.py)
+# entities:
+#   - name: proponente
+#     join_keys:
+#       - proponente_id
+#     value_type: STRING # Or INT, etc.
+
+# Feature View definitions (can also be fully in definitions.py)
+# feature_views:
+#   - name: proponente_agri_features
+#     entities:
+#       - proponente
+#     ttl: "30d" # Time-to-live for features in the online store
+#     source: # Inline source definition or reference a data_source defined above
+#       type: FILE
+#       file_options:
+#         file_format: parquet
+#         file_url: "file:///data/gold/proponente_features.parquet"
+#       event_timestamp_column: "data_snapshot"
+#       created_timestamp_column: "data_carga_gold" # Optional
+#     schema:
+#       - name: avg_ndvi_90d
+#         dtype: FLOAT
+#       - name: distancia_porto_km
+#         dtype: FLOAT
+#     online: true # Whether to serve these features online
+
+# Logging configuration (optional)
+# logging:
+#   level: INFO # DEBUG, INFO, WARNING, ERROR
+#   # file_path: "/var/log/feast/feast.log" # If logging to a file
+
+# Configuration for `feast apply` behavior
+# flags:
+#   alpha_features: true # Enable experimental features if needed
+#   keep_infra_on_destroy: false # For `feast teardown`
+
+# Note: The environment variables AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_S3_ENDPOINT_URL
+# set in the feast-serve container's docker-compose definition are important if Feast needs to
+# interact with MinIO directly (e.g., for a SparkSource or if a FileSource path is actually an s3 path
+# that Feast is made to understand via Hadoop client libs).
+# For `offline_store: type: file`, Feast expects local file paths.
+# The `FileSource` in `definitions.py` will point to `/data/gold/features.parquet`. This path
+# implies that the Parquet files are somehow made available at this path inside the Feast container
+# if Feast itself needs to read them (e.g. for `feast materialize-incremental`).
+# In our architecture, Spark writes to MinIO. The "offline store" concept for Feast here
+# is primarily that the data *exists* in Parquet format, and `FileSource` describes its schema.
+# `feast materialize` would typically use a `SparkSource` or a custom source to read from MinIO/Hive
+# and write to Redis. If using `FileSource` directly with MinIO paths (like "s3a://..."),
+# Feast needs Hadoop S3A libraries and config.
+# For simplicity, the current setup assumes `FileSource` describes local files, and materialization
+# might be handled by a separate process or Spark job that reads from MinIO and writes to Redis,
+# or `feast materialize` is run in an environment with access to the Parquet files (e.g., by copying them or using S3-aware FileSource).
+# The provided prompt asks for `offline_store: type: file` representing MinIO. This is a common simplification
+# where the `FileSource` points to a conceptual path, and the actual data loading into the online store
+# might use other mechanisms (like a Spark job feeding Redis or `feast materialize` with a Spark source).
+
+# Let's ensure the registry path is consistent with docker-compose.yml.
+# The `feast-serve` service has `FEAST_REGISTRY_PATH: /app/feast_repo/registry.db`.
+# If `feast apply` is run inside that container (working_dir: /app/feast_repo), then `registry: data/registry.db`
+# would resolve to `/app/feast_repo/data/registry.db`.
+# To match `FEAST_REGISTRY_PATH`, it should be `registry: registry.db` if `feast apply` runs from `/app/feast_repo`.
+# Let's simplify and use `registry: registry.db` and assume `feast apply` is run from the root of the feast repo.
+# The volume mount is `./feast_repo:/app/feast_repo`.
+# The command is `serve ... --registry-path /app/feast_repo/registry.db --project feast_repo`
+# `feast apply` run by `setup.sh` inside `feast-serve` container (working_dir /app/feast_repo) will use this feature_store.yaml.
+# So, `registry: registry.db` would look for `/app/feast_repo/registry.db`. This is consistent.
+registry: registry.db # Path relative to feature_store.yaml
+offline_store:
+  type: file # Represents data in MinIO; actual access for materialize may use Spark or S3-aware source.
+  # path: /data/offline_store # Example path if Feast were to manage local file storage for offline data.
+                              # This 'path' is for the FileOfflineStore itself, not for FileSource.
+                              # For FileSource, paths are defined in definitions.py.
+                              # The primary role here is to declare its type.
+# For a more direct MinIO integration as an offline store (if Feast itself is reading/writing parquet to MinIO):
+# offline_store:
+#   type: s3
+#   s3_options:
+#     path: "s3://feast-offline-store/" # A dedicated bucket/path for Feast's offline store Parquet files
+#     endpoint_override: "http://minio:9000"
+#     aws_access_key_id: ${AWS_ACCESS_KEY_ID} # Use environment variables
+#     aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+#   # For Spark-based retrieval from this S3 offline store:
+#   spark_config:
+#     spark.hadoop.fs.s3a.endpoint: "http://minio:9000"
+#     spark.hadoop.fs.s3a.access.key: ${AWS_ACCESS_KEY_ID}
+#     spark.hadoop.fs.s3a.secret.key: ${AWS_SECRET_ACCESS_KEY}
+#     spark.hadoop.fs.s3a.path.style.access: "true"
+
+# Sticking to the prompt's `offline_store: type: file` for simplicity,
+# assuming `FileSource` in definitions.py points to where Spark outputs Parquet files (conceptually).
+# Materialization would use `feast materialize` which can take a `SparkSource` or similar to read from MinIO.
+# The `FileSource` in `definitions.py` will use a placeholder path like `/mnt/minio_data/gold/features.parquet`,
+# which implies data is accessible at that path during `feast apply` or `feast materialize`.
+# A more robust setup would use `SparkSource` or `CustomSource` for MinIO.
+# For this exercise, we'll use `FileSource` with a path assuming data is accessible.
+# The `feast-serve` has MinIO creds, so it *could* use S3-aware sources if configured.
+# The `offline_store: type: file` is a bit of a simplification when MinIO is the true offline store.
+# It works if `FileSource` paths are S3 paths and Feast is configured with S3 access (Hadoop libs).
+# Or, if data is copied to a local path for Feast to read.
+# Let's assume the `FileSource` path will be a MinIO path (e.g., s3a://...) and Feast's Java server + Python SDK
+# will use the provided AWS credentials and endpoint to access it.
+# This requires Hadoop S3A client libraries to be available in the Feast environment.
+# The official Feast images usually include these for Spark/S3 sources.
+
+# Final simplified version based on initial request:
+# project: agronegocio_feast
+# registry: registry.db
+# provider: local
+# online_store:
+#   type: redis
+#   connection_string: "redis:6379,db=0"
+# offline_store: # This declares the type of offline store, not necessarily its direct access path here.
+#   type: file   # `FileSource` in definitions.py will specify the actual data path (e.g., s3a:// or local).
+#                # If s3a://, Feast needs S3 client libs and credentials.
+#
+# The AWS credentials in feast-serve are for this purpose.
+# The `FileSource` path in `definitions.py` should be `s3a://gold/proponente_features_view/features.parquet` (example).
+# This aligns with Spark writing to MinIO and Feast reading from it.
+# Let's adjust the FileSource path in definitions.py accordingly.
+# The `offline_store: type: file` is a bit of a misnomer if paths are s3a://, but it's how Feast handles it
+# when not using a dedicated `type: s3` offline store (which has different config options).
+# `FileSource` is flexible.
+#
+# Let's stick to the exact prompt: `offline_store: type: file` (representing MinIO).
+# This implies `FileSource` in `definitions.py` points to a path like `/data/gold/features.parquet`
+# and this path must be made accessible to Feast (e.g. by mounting MinIO data or using a local copy).
+# The prompt's example for FileSource is `/data/gold/features.parquet`.
+# This means the Feast container needs this path. The `feast-serve` container currently only mounts `./feast_repo`.
+# If Spark writes to MinIO, and MinIO data is persisted in `minio_data` volume,
+# then `/data/gold/features.parquet` inside Feast container implies that `minio_data` is mounted there,
+# or a copy mechanism is in place.
+# Let's assume `FileSource` will use a path like `s3a://gold/features_parquet/` and Feast will use its S3 creds.
+# This is more realistic for MinIO.
+# The `offline_store: type: file` is kept as per prompt, but understand `FileSource` can point to S3.
+
+# To be very precise with "offline_store: type: file (representing MinIO data)":
+# This setup works if:
+# 1. Spark job writes Parquet to MinIO (e.g., s3a://gold/my_features/)
+# 2. `definitions.py` uses a `FileSource` with `path="s3a://gold/my_features/"`
+# 3. The Feast environment (e.g., `feast-serve` container) has:
+#    a. Hadoop S3A client libraries.
+#    b. AWS credentials and S3 endpoint configured (which our `feast-serve` does).
+# This way, `FileSource` effectively reads from MinIO. "type: file" in `feature_store.yaml` for `offline_store`
+# is a general declaration; the actual access method is determined by the `FileSource` path and environment.
+
+# Final structure for feature_store.yaml:
+project: agronegocio_feast
+registry: registry.db # Relative to this file, resolves to /app/feast_repo/registry.db in container
+provider: local
+online_store:
+  type: redis
+  connection_string: "redis:6379,db=0"
+offline_store: # This is a declaration. Actual data paths are in FileSource.
+  type: file   # When FileSource uses s3a:// paths, Feast needs S3 libs & creds.
+# flags: # Optional, for enabling features like on_demand_feature_views if used
+#   on_demand_feature_view: True
+#   go_feature_serving: True # If using Go server components, not relevant for feast-java-server
+entity_key_serialization_version: 2 # Recommended for newer Feast versions for compatibility
+# Ensure AWS credentials and S3 endpoint are set in the environment for feast-serve
+# for FileSource to access s3a:// paths to MinIO.
+# These are: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_ENDPOINT_URL
+# which are already in the docker-compose.yml for feast-serve.
+# Also, Spark needs to be configured to write to MinIO using s3a.
+# (e.g., spark.hadoop.fs.s3a.endpoint, .access.key, .secret.key, .path.style.access)
+# These are planned for spark-defaults.conf.

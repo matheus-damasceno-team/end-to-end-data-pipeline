@@ -1,0 +1,92 @@
+<yandex>
+    <!-- Default settings -->
+    <logger>
+        <level>information</level>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <size>1000M</size>
+        <count>10</count>
+    </logger>
+
+    <http_port>8123</http_port>
+    <tcp_port>9000</tcp_port>
+
+    <path>/var/lib/clickhouse/</path> <!-- Default path for local data -->
+
+    <users_config>users.xml</users_config>
+    <default_profile>default</default_profile>
+
+    <!-- Listen on all interfaces -->
+    <listen_host>::</listen_host>
+    <listen_host>0.0.0.0</listen_host>
+
+    <!-- S3/MinIO Disk Configuration -->
+    <!-- This allows ClickHouse to read from/write to MinIO directly using MergeTree tables on S3 -->
+    <storage_configuration>
+        <disks>
+            <minio_s3_disk>
+                <type>s3</type>
+                <endpoint>http://minio:9000/clickhouse/</endpoint> <!-- URL to a specific bucket and prefix for ClickHouse data -->
+                                                              <!-- Ensure 'clickhouse' bucket exists in MinIO -->
+                <access_key_id>admin</access_key_id>
+                <secret_access_key>password</secret_access_key>
+                <!-- <region>us-east-1</region> --> <!-- Region can often be omitted or set to a dummy value for MinIO -->
+                <use_environment_credentials>false</use_environment_credentials>
+                <path_style_mode>true</path_style_mode> <!-- Important for MinIO -->
+                <header>x-amz-acl,public-read</header> <!-- Optional: for public access if objects are created by CH -->
+                <s3_max_inflight_parts_for_one_file>10</s3_max_inflight_parts_for_one_file>
+                <s3_min_upload_part_size>16777216</s3_min_upload_part_size> <!-- 16MB -->
+                <s3_max_single_part_upload_size>33554432</s3_max_single_part_upload_size> <!-- 32MB -->
+                <!-- <s3_max_connections>100</s3_max_connections> -->
+                <!-- <s3_max_put_rps>100</s3_max_put_rps> -->
+                <!-- <s3_max_get_rps>100</s3_max_get_rps> -->
+                <cache_enabled>true</cache_enabled> <!-- Enable local caching for S3 disk -->
+                <cache_path>/var/lib/clickhouse/s3_cache/</cache_path>
+                <data_path_on_disk>/</data_path_on_disk> <!-- Path relative to cache_path -->
+                <cache_max_size>10737418240</cache_max_size> <!-- 10GB cache size -->
+                <cache_on_write>true</cache_on_write>
+            </minio_s3_disk>
+        </disks>
+        <policies>
+            <s3_main_policy> <!-- A storage policy using the S3 disk -->
+                <volumes>
+                    <s3_volume>
+                        <disk>minio_s3_disk</disk>
+                        <!-- <max_data_part_size_bytes>1073741824</max_data_part_size_bytes> --> <!-- 1GB -->
+                    </s3_volume>
+                </volumes>
+                <!-- <move_factor>0.1</move_factor> --> <!-- How much free space to keep on default disk -->
+            </s3_main_policy>
+            <default_local_policy> <!-- Example of a policy using only local disk -->
+                 <volumes>
+                    <local_volume>
+                        <disk>default</disk>
+                    </local_volume>
+                </volumes>
+            </default_local_policy>
+        </policies>
+    </storage_configuration>
+
+    <!-- Default storage policy for new MergeTree tables. Can be overridden per table. -->
+    <!-- Set to 'default_local_policy' if you want local storage by default. -->
+    <!-- Set to 's3_main_policy' if you want S3 storage by default for MergeTree tables. -->
+    <merge_tree>
+        <default_storage_policy>default_local_policy</default_storage_policy>
+    </merge_tree>
+
+    <!-- Allow ClickHouse to use S3 table function and S3-backed tables -->
+    <s3>
+        <minio> <!-- Named endpoint for S3 table function, not strictly needed if using disks -->
+            <endpoint>http://minio:9000</endpoint>
+            <access_key_id>admin</access_key_id>
+            <secret_access_key>password</secret_access_key>
+            <use_default_credentials>false</use_default_credentials>
+        </minio>
+    </s3>
+
+    <!-- Include other configuration files if needed -->
+    <!-- <include_from>/etc/clickhouse-server/config.d/some_other_config.xml</include_from> -->
+
+    <!-- Ensure the 'clickhouse' bucket is created in MinIO by setup.sh for the S3 disk -->
+    <!-- The path /var/lib/clickhouse/s3_cache/ needs to be writable by the clickhouse user -->
+</yandex>
