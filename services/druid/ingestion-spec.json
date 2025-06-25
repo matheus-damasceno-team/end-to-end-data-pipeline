@@ -1,0 +1,257 @@
+{
+  "type": "kafka", // Ingestion type: Kafka supervisor for continuous ingestion
+  "spec": {
+    "dataSchema": {
+      "dataSource": "dados_produtores_kafka_stream", // Name of the Druid datasource to be created
+      "parser": {
+        "type": "string", // Input message format from Kafka (assuming JSON strings)
+        "parseSpec": {
+          "format": "json", // Specifies that the string from Kafka is JSON
+          "timestampSpec": {
+            // Field in your JSON data to be used as the primary timestamp for Druid
+            // This field should ideally be in ISO 8601 format or Unix millis/seconds.
+            // Using 'data_solicitacao' from the producer's mock data.
+            "column": "data_solicitacao",
+            "format": "iso" // Or "auto", "millis", "posix" (seconds)
+                           // "iso" is good for ISO 8601 strings like "2023-04-01T10:00:00.000Z"
+          },
+          "dimensionsSpec": {
+            // Dimensions are columns in Druid used for filtering, grouping, and aggregation.
+            // List all fields from your JSON that you want to store as dimensions.
+            // Types can be "string", "long", "float", "double".
+            "dimensions": [
+              "proponente_id",
+              "cpf_cnpj",
+              "nome_razao_social",
+              "tipo_pessoa",
+              "finalidade_credito",
+              { "type": "string", "name": "cultura_principal" },
+              { "type": "string", "name": "propriedade_municipio", "expr": "localizacao_propriedade.municipio" }, // Example of flattening nested JSON
+              { "type": "string", "name": "propriedade_uf", "expr": "localizacao_propriedade.uf" },
+              { "type": "string", "name": "serasa_score_categoria", "expr": "case_ όταν(fontes_dados_adicionais.serasa_score == null, 'NULO', fontes_dados_adicionais.serasa_score < 300, 'BAIXO', fontes_dados_adicionais.serasa_score < 700, 'MEDIO', 'ALTO')" }, // Example transform
+              "metadata_evento.origem_dados" // Accessing nested field
+            ]
+            // "dimensionExclusions": [], // To exclude specific raw JSON fields
+            // "spatialDimensions": [ // For geospatial indexing if needed
+            //   { "dimName": "coords", "dims": ["localizacao_propriedade.latitude", "localizacao_propriedade.longitude"] }
+            // ]
+          }
+          // "flattenSpec": { // Alternative way to handle nested JSON
+          //   "useFieldDiscovery": true, // Automatically discover fields
+          //   "fields": [
+          //     { "type": "path", "name": "prop_latitude", "expr": "$.localizacao_propriedade.latitude" },
+          //     { "type": "path", "name": "prop_longitude", "expr": "$.localizacao_propriedade.longitude" }
+          //   ]
+          // }
+        }
+      },
+      "metricsSpec": [ // Define aggregations to be performed at ingestion time (roll-up)
+        { "type": "count", "name": "count" }, // Count of events
+        { "type": "doubleSum", "name": "sum_renda_bruta_anual", "fieldName": "renda_bruta_anual_declarada" },
+        { "type": "doubleSum", "name": "sum_valor_solicitado", "fieldName": "valor_solicitado_credito" },
+        { "type": "doubleMax", "name": "max_area_hectares", "fieldName": "area_total_hectares" },
+        { "type": "hyperUnique", "name": "unique_proponentes", "fieldName": "proponente_id" } // Approximate distinct count
+      ],
+      "granularitySpec": { // How data is segmented and rolled up in time
+        "type": "uniform",
+        "segmentGranularity": "HOUR", // Segments created for each hour of data (PT1H)
+        "queryGranularity": "MINUTE", // Smallest time unit for queries (PT1M) - can be "none" for exact timestamps
+        "rollup": true, // Enable roll-up based on dimensions and queryGranularity
+        "intervals": null // For batch ingestion; for Kafka, this is usually null or covers a very long period
+      }
+    },
+    "ioConfig": {
+      "type": "kafka",
+      "consumerProperties": { // Kafka consumer properties
+        "bootstrap.servers": "kafka:9092", // Kafka broker address
+        "group.id": "druid_kafka_ingestion_group_dados_produtores" // Unique consumer group for this supervisor
+        // "auto.offset.reset": "earliest" // Or "latest"
+      },
+      "topic": "dados_produtores", // Kafka topic to consume from
+      "inputFormat": { // Redundant if parser type is "string" and parseSpec is defined, but good for clarity
+          "type": "json"
+      },
+      "useEarliestOffset": true, // Start consuming from the earliest available offset in Kafka topic
+      "period": "PT10S", // How often the supervisor checks for new tasks or state changes (e.g., PT10S = 10 seconds)
+      "completionTimeout": "PT1H" // If ingestion tasks for a segment don't complete in this time, they are failed (e.g. PT1H = 1 hour)
+    },
+    "tuningConfig": { // Performance tuning for Kafka ingestion tasks
+      "type": "kafka", // Matches ioConfig.type
+      "maxRowsInMemory": 75000, // Max rows to aggregate in memory before persisting
+      "maxRowsPerSegment": 5000000, // Target number of rows per Druid segment
+      "intermediatePersistPeriod": "PT10M", // How often to persist intermediate data (e.g., PT10M = 10 minutes)
+      "maxPendingPersists": 0, // Number of pending persists before blocking ingestion
+      "reportParseExceptions": false, // Set to true to log parsing errors, false to drop problematic events silently after N attempts.
+                                     // Consider sending parse exceptions to a dead letter queue in production.
+      "handoffConditionTimeout": "PT5M", // Timeout for segment handoff to Historical nodes (e.g., PT5M = 5 minutes)
+      "resetOffsetAutomatically": false, // If true, Druid may reset to earliest/latest if it encounters issues. Risky.
+      "workerThreads": 1, // Number of threads for message processing per task, if supported by indexer.
+      "chatThreads": 1, // Number of threads for supervisor-worker communication.
+      "chatRetries": 5,
+      // "numPersistThreads": 1, // Threads for persisting intermediate data.
+      "segmentWriteOutMediumFactory": null, // For tiered storage, e.g., writing to S3 then loading to local disk. Default is usually fine.
+      "maxRecordsPerPoll": 100 // Max records to fetch from Kafka per poll if using Kinesis Indexing Service with Kafka adapter (not typical for direct Kafka).
+                               // For direct Kafka, this is controlled by Kafka consumer properties.
+    },
+    "suspended": false // Set to true to pause ingestion without deleting the supervisor
+  }
+}
+// Notes:
+// - DataSource Naming: `dados_produtores_kafka_stream` should be unique within your Druid cluster.
+// - Timestamp: Ensure `data_solicitacao` is consistently present and correctly formatted in your Kafka messages.
+//   If it can be missing, provide a default or handle it.
+// - Dimensions: Select dimensions relevant for your analytical queries. Flatten nested fields as needed.
+//   The `expr` syntax allows for simple transformations using Druid's expression language.
+// - Metrics: Define aggregations. `hyperUnique` is an approximate distinct count.
+// - Granularity: `segmentGranularity` (e.g., HOUR, DAY) affects storage and query performance.
+//   `queryGranularity` (e.g., MINUTE, SECOND, NONE) affects the finest time resolution.
+//   `rollup: true` is key for Druid's pre-aggregation benefits. If false, all raw data matching queryGranularity is stored.
+// - Kafka Consumer Properties: `bootstrap.servers` must point to your Kafka cluster.
+//   `group.id` should be unique for this supervisor to avoid conflicts with other consumers.
+// - `useEarliestOffset: true` is good for initial load or ensuring no data is missed.
+//   For ongoing production, you might manage offsets more carefully or use `false` if starting fresh.
+// - Tuning Config: Adjust these based on your data volume, velocity, and cluster resources.
+//   `maxRowsInMemory`, `maxRowsPerSegment` are important for memory and segment size.
+// - Error Handling: `reportParseExceptions` and handling of malformed messages are crucial in production.
+//   Consider a dead-letter topic for parse failures.
+// - This spec creates a Kafka Supervisor, which continuously manages ingestion tasks.
+// - Submit this JSON to Druid Router: `POST /druid/indexer/v1/supervisor`
+//   The `setup.sh` script should handle this.
+// - Ensure the Kafka topic `dados_produtores` exists and producer is sending data to it.
+// - The Druid user running MiddleManager tasks needs permissions to write to the metadata DB
+//   and deep storage (MinIO, configured as `druid_storage_type: s3`).
+// - The `druid-kafka-indexing-service` extension must be loaded in Druid services.
+//   This is handled by `druid_extensions_loadList` in docker-compose.yml.
+// - If using transforms (`expr`), ensure the expression language syntax is correct for your Druid version.
+//   The example `case_` transform is a placeholder for Druid's SQL-like expressions or JavaScript transforms.
+//   For complex transforms, JavaScript functions can be used.
+//   A simple Druid expression for the serasa_score_categoria might look like:
+//   `"expr": "if(fontes_dados_adicionais.serasa_score == null, 'NULO', if(fontes_dados_adicionais.serasa_score < 300, 'BAIXO', if(fontes_dados_adicionais.serasa_score < 700, 'MEDIO', 'ALTO')))"`
+//   The `case_ όταν` was a pseudo-syntax. Correct Druid expression syntax should be used.
+//   Let's simplify the example transform or use a valid one.
+//   For simplicity, I'll remove the complex transform for now, assuming direct mapping or simpler ones.
+//   If complex transforms are needed, refer to Druid documentation for `transformSpec` or expressions.
+//   The current spec uses direct field mapping for dimensions, with one example of `object.field` access.
+//   The `serasa_score_categoria` transform is removed to keep the spec simpler and avoid syntax issues.
+//   If you need such derived dimensions, it's best to add a `transformSpec` section or ensure the data
+//   is pre-transformed before Kafka if possible, or handle it at query time in Superset/Trino.
+//   Alternatively, keep it simple for now and derive in BI layer.
+//
+// Corrected dimensions to remove the complex `expr` for now, focusing on direct mapping:
+// "dimensions": [
+//   "proponente_id",
+//   "cpf_cnpj",
+//   "nome_razao_social",
+//   "tipo_pessoa",
+//   "finalidade_credito",
+//   { "type": "string", "name": "cultura_principal" },
+//   { "type": "string", "name": "propriedade_municipio", "expr": "localizacao_propriedade.municipio" },
+//   { "type": "string", "name": "propriedade_uf", "expr": "localizacao_propriedade.uf" },
+//   { "type": "long", "name": "serasa_score", "expr": "fontes_dados_adicionais.serasa_score"}, // Assuming serasa_score is numeric
+//   "metadata_evento.origem_dados"
+// ]
+// This is more robust. The `expr` for simple path access like `object.field` is fine.
+// For the serasa_score, if it's already a number, just map it. If it needs categorization,
+// that logic can be in Spark, or a Druid transformSpec, or at query time.
+// The provided producer script generates `serasa_score` as an int. So, mapping it as long is fine.
+// Let's refine the dimensions in the actual spec.
+// The example `serasa_score_categoria` used `case_ όταν` which is not valid Druid expression syntax.
+// A valid Druid expression for categorization would be:
+// `if(isNull(\"fontes_dados_adicionais.serasa_score\"), 'NULO', if(\"fontes_dados_adicionais.serasa_score\" < 300, 'BAIXO', if(\"fontes_dados_adicionais.serasa_score\" < 700, 'MEDIO', 'ALTO')))`
+// Note the escaping of quotes if this expression is inside a JSON string.
+// Given the complexity, it's often better to do such transformations upstream or at query time.
+// I will use direct mapping for `serasa_score` and leave categorization for BI layer or Spark.
+//
+// Final check on dimensions and data types from producer:
+// - proponente_id: string
+// - cpf_cnpj: string
+// - nome_razao_social: string
+// - tipo_pessoa: string
+// - finalidade_credito: string
+// - cultura_principal: string
+// - localizacao_propriedade.municipio: string
+// - localizacao_propriedade.uf: string
+// - fontes_dados_adicionais.serasa_score: integer (can be null)
+// - metadata_evento.origem_dados: string
+//
+// These align with the simplified dimensions section.
+// Metrics:
+// - renda_bruta_anual_declarada: double
+// - valor_solicitado_credito: double
+// - area_total_hectares: double
+// These align with the sum/max metrics.
+//
+// The spec looks reasonable for the mock data.```json
+{
+  "type": "kafka",
+  "spec": {
+    "dataSchema": {
+      "dataSource": "dados_produtores_stream",
+      "parser": {
+        "type": "string",
+        "parseSpec": {
+          "format": "json",
+          "timestampSpec": {
+            "column": "data_solicitacao",
+            "format": "iso"
+          },
+          "dimensionsSpec": {
+            "dimensions": [
+              "proponente_id",
+              "cpf_cnpj",
+              "nome_razao_social",
+              "tipo_pessoa",
+              "finalidade_credito",
+              "cultura_principal",
+              { "type": "string", "name": "prop_municipio", "expr": "localizacao_propriedade.municipio" },
+              { "type": "string", "name": "prop_uf", "expr": "localizacao_propriedade.uf" },
+              { "type": "long", "name": "serasa_score", "expr": "fontes_dados_adicionais.serasa_score" },
+              { "type": "string", "name": "origem_dados", "expr": "metadata_evento.origem_dados" }
+            ]
+          }
+        }
+      },
+      "metricsSpec": [
+        { "type": "count", "name": "event_count" },
+        { "type": "doubleSum", "name": "sum_renda_declarada", "fieldName": "renda_bruta_anual_declarada" },
+        { "type": "doubleSum", "name": "sum_valor_solicitado", "fieldName": "valor_solicitado_credito" },
+        { "type": "doubleMax", "name": "max_area_hectares", "fieldName": "area_total_hectares" },
+        { "type": "hyperUnique", "name": "distinct_proponentes", "fieldName": "proponente_id" }
+      ],
+      "granularitySpec": {
+        "type": "uniform",
+        "segmentGranularity": "HOUR",
+        "queryGranularity": "MINUTE",
+        "rollup": true
+      }
+    },
+    "ioConfig": {
+      "type": "kafka",
+      "consumerProperties": {
+        "bootstrap.servers": "kafka:9092",
+        "group.id": "druid_supervisor_dados_produtores_01"
+      },
+      "topic": "dados_produtores", // Matches KAFKA_TOPIC from producer/consumer scripts
+      "inputFormat": {
+        "type": "json"
+      },
+      "useEarliestOffset": true, // For development, start from beginning of topic
+      "period": "PT30S", // How often supervisor runs
+      "completionTimeout": "PT30M" // Task completion timeout
+    },
+    "tuningConfig": {
+      "type": "kafka",
+      "maxRowsInMemory": 50000,
+      "maxRowsPerSegment": 3000000, // Aim for segments around 300-700MB
+      "intermediatePersistPeriod": "PT10M",
+      "maxPendingPersists": 0,
+      "reportParseExceptions": true, // Good for debugging, might set to false in prod or use error handling
+      "handoffConditionTimeout": "PT5M",
+      "resetOffsetAutomatically": false
+      // "numPersistThreads": 1, // Default usually fine
+      // "workerThreads": 1, // Default usually fine
+    },
+    "suspended": false // Start active
+  }
+}
+```

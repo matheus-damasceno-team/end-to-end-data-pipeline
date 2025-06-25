@@ -1,0 +1,53 @@
+<!-- Placeholder for ClickHouse users configuration. Will be populated later. -->
+<!-- This file is mounted into the ClickHouse server container. -->
+<!-- It defines users, passwords, profiles, quotas, and access rights. -->
+<yandex>
+    <users>
+        <default>
+            <password></password> <!-- Empty password for default user, consider setting one -->
+            <networks>
+                <ip>::/0</ip>
+            </networks>
+            <profile>default</profile>
+            <quota>default</quota>
+            <access_management>1</access_management>
+        </default>
+
+        <!-- You can define other users here, for example, one for dbt or applications -->
+        <!--
+        <dbt_user>
+            <password>dbt_password</password>
+            <networks>
+                <ip>::/0</ip>
+            </networks>
+            <profile>default</profile>
+            <quota>default</quota>
+            <databases>
+                <my_database>
+                    <grant>CREATE TABLE, INSERT, SELECT, ALTER, DROP TABLE</grant>
+                </my_database>
+            </databases>
+        </dbt_user>
+        -->
+    </users>
+
+    <profiles>
+        <default>
+            <max_memory_usage>10000000000</max_memory_usage>
+            <load_balancing>random</load_balancing>
+        </default>
+    </profiles>
+
+    <quotas>
+        <default>
+            <interval>
+                <duration>3600</duration>
+                <queries>0</queries>
+                <errors>0</errors>
+                <result_rows>0</result_rows>
+                <read_rows>0</read_rows>
+                <execution_time>0</execution_time>
+            </interval>
+        </default>
+    </quotas>
+</yandex>
