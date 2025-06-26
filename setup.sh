@@ -10,7 +10,7 @@ MINIO_ALIAS="local" # Alias used in mc config
 MINIO_ENDPOINT="http://minio:9000"
 MINIO_ACCESS_KEY="admin"
 MINIO_SECRET_KEY="password"
-MINIO_BUCKETS=("bronze" "silver" "gold" "druid" "warehouse" "clickhouse") # Added clickhouse bucket for CH S3 disk
+MINIO_BUCKETS=("bronze" "silver" "gold" "druid" "warehouse" "clickhouse")
 DRUID_ROUTER_URL="http://druid-router:8888" # Druid Router for submitting tasks
 DRUID_INGESTION_SPEC_PATH="/opt/druid/ingestion/ingestion-spec.json" # Path inside Druid MiddleManager
 DBT_PROJECT_DIR="/usr/app/dbt_project" # Path inside dbt container
@@ -204,6 +204,25 @@ echo "---"
 # Or, if using Docker Compose to manage this script as a one-off task:
 # docker-compose run --rm setup_runner ./setup.sh (requires defining setup_runner service)
 # For now, designed to be run from the host where docker-compose commands are available.
+
+# --- Download PostgreSQL JDBC Driver for Hive Metastore ---
+DRIVER_DIR="./drivers"
+DRIVER_JAR="postgresql-42.7.5.jar"
+DRIVER_URL="https://jdbc.postgresql.org/download/postgresql-42.7.5.jar"
+
+if [ ! -f "${DRIVER_DIR}/${DRIVER_JAR}" ]; then
+  echo "PostgreSQL JDBC driver not found. Downloading..."
+  mkdir -p "${DRIVER_DIR}"
+  if curl -L -o "${DRIVER_DIR}/${DRIVER_JAR}" "${DRIVER_URL}"; then
+    echo "PostgreSQL JDBC driver downloaded successfully to ${DRIVER_DIR}/${DRIVER_JAR}"
+  else
+    echo "Failed to download PostgreSQL JDBC driver. Please download it manually and place it in ${DRIVER_DIR}/"
+    exit 1
+  fi
+else
+  echo "PostgreSQL JDBC driver already exists at ${DRIVER_DIR}/${DRIVER_JAR}"
+fi
+# --- End Download PostgreSQL JDBC Driver ---
 
 # Notes for robustness:
 # - Healthchecks in docker-compose.yml for services like Kafka, MinIO, Postgres, Druid components.

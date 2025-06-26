@@ -166,8 +166,8 @@ services:
       SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
       SPARK_SSL_ENABLED: "no"
       # MinIO/S3 and Hive Metastore config is now primarily in spark-defaults.conf
-      AWS_ACCESS_KEY_ID: admin # Covered by spark-defaults.conf
-      AWS_SECRET_ACCESS_KEY: password # Covered by spark-defaults.conf
+      # AWS_ACCESS_KEY_ID: admin # Covered by spark-defaults.conf
+      # AWS_SECRET_ACCESS_KEY: password # Covered by spark-defaults.conf
     depends_on: # Ensure Hive Metastore is somewhat ready, though Spark jobs connect directly
      - hive-metastore
 
@@ -193,8 +193,8 @@ services:
       SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
       SPARK_SSL_ENABLED: "no"
       # MinIO/S3 and Hive Metastore config is now primarily in spark-defaults.conf
-      AWS_ACCESS_KEY_ID: admin # Covered by spark-defaults.conf
-      AWS_SECRET_ACCESS_KEY: password # Covered by spark-defaults.conf
+      # AWS_ACCESS_KEY_ID: admin # Covered by spark-defaults.conf
+      # AWS_SECRET_ACCESS_KEY: password # Covered by spark-defaults.conf
 
   clickhouse:
     image: clickhouse/clickhouse-server:24.5 # Use a recent stable version
