@@ -4,39 +4,34 @@ from pyspark.sql.types import FloatType, StringType, StructType, StructField, Ti
 import os
 from datetime import datetime
 
-# MinIO/S3 Configuration (passed via spark-defaults.conf or environment variables)
-# AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "admin")
-# AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "password")
-# MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "http://minio:9000")
+# MinIO/S3 Configuration will be picked from spark-defaults.conf which is mounted.
+# Hive Metastore Configuration will be picked from spark-defaults.conf.
 
-# Hive Metastore Configuration (passed via spark-defaults.conf)
-# HIVE_METASTORE_URIS = os.getenv("HIVE_METASTORE_URIS", "thrift://hive-metastore:9083")
+# Define input and output paths using s3a protocol for MinIO
+BRONZE_DATA_PATH = "s3a://bronze/" # Raw JSON data from ingestion_consumer.py
+# The ingestion_consumer.py writes data in subdirectories like YYYY/MM/DD/HH/*.json
+# So, Spark will read all JSON files under the bronze bucket.
+# Example: "s3a://bronze/*/*/*/*/*.json" or "s3a://bronze/" and Spark will scan recursively.
 
-# Define input and output paths (conceptual MinIO paths)
-# Spark will use s3a:// protocol to interact with MinIO
-SILVER_DATA_PATH = "s3a://silver/enriched_producer_data/" # Data from ingestion consumer + initial enrichment
 GOLD_FEATURES_PATH = "s3a://gold/proponente_features_parquet/" # Output for Feast FileSource
-GOLD_CLICKHOUSE_TABLE_PATH = "s3a://gold/proponente_features_clickhouse/" # Output for ClickHouse external table or direct load
+GOLD_CLICKHOUSE_TABLE_PATH = "s3a://gold/proponente_features_clickhouse/" # Output for ClickHouse table
 
 # Define table names for Hive Metastore registration
-GOLD_HIVE_TABLE_NAME = "gold_agri_features" # For Trino/Superset access via Hive
-CLICKHOUSE_TARGET_TABLE_NAME = "gold_proponente_features" # Table in ClickHouse (dbt source)
+GOLD_HIVE_TABLE_NAME = "gold_agri_features" # For Trino/Superset access via Hive (points to GOLD_FEATURES_PATH)
 
 def create_spark_session():
-    """Creates and returns a Spark session configured for MinIO and Hive Metastore."""
+    """Creates and returns a Spark session."""
+    # Configurations for MinIO and Hive Metastore are expected to be in spark-defaults.conf
     spark = SparkSession.builder \
         .appName("AgronegocioFeatureEngineering") \
         .config("spark.sql.sources.partitionOverwriteMode", "dynamic") \
-        .config("spark.hadoop.fs.s3a.endpoint", os.getenv("MINIO_ENDPOINT", "http://minio:9000")) \
-        .config("spark.hadoop.fs.s3a.access.key", os.getenv("AWS_ACCESS_KEY_ID", "admin")) \
-        .config("spark.hadoop.fs.s3a.secret.key", os.getenv("AWS_SECRET_ACCESS_KEY", "password")) \
-        .config("spark.hadoop.fs.s3a.path.style.access", "true") \
-        .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
-        .config("spark.sql.catalogImplementation", "hive") \
-        .config("spark.hive.metastore.uris", os.getenv("HIVE_METASTORE_URIS", "thrift://hive-metastore:9083")) \
         .enableHiveSupport() \
         .getOrCreate()
-    print("Spark session created with Hive support and S3A configured.")
+
+    # Log effective S3 endpoint for verification (optional)
+    s3_endpoint = spark.sparkContext._jsc.hadoopConfiguration().get("fs.s3a.endpoint")
+    hive_uris = spark.conf.get("spark.hive.metastore.uris")
+    print(f"Spark session created. Effective S3A Endpoint: {s3_endpoint}, Hive URIs: {hive_uris}")
     return spark
 
 # --- Mock UDFs for feature calculation (replace with real logic) ---
@@ -74,16 +69,13 @@ calculate_credit_score_udf = udf(calculate_credit_score_mock, IntegerType())
 def main():
     spark = create_spark_session()
 
-    print(f"Reading data from Silver layer: {SILVER_DATA_PATH}")
+    print(f"Reading data from Bronze layer: {BRONZE_DATA_PATH}")
     try:
-        # Assuming silver data is partitioned by date of ingestion or event date
-        # For this example, let's assume it's not explicitly partitioned in the read path
-        # but the data contains relevant date columns.
-        # The schema should ideally be predefined or inferred correctly.
-        # This schema should match what the ingestion_consumer.py (or a previous Spark job) creates in Silver.
-        silver_df_schema = StructType([
+        # Define the schema for the raw JSON data from the producer
+        # This schema must match the structure of JSON files in the bronze bucket.
+        bronze_schema = StructType([
             StructField("proponente_id", StringType(), True),
-            StructField("data_solicitacao", TimestampType(), True), # Changed from String to Timestamp
+            StructField("data_solicitacao", StringType(), True), # Read as String, then convert to Timestamp
             StructField("cpf_cnpj", StringType(), True),
             StructField("nome_razao_social", StringType(), True),
             StructField("tipo_pessoa", StringType(), True),
@@ -101,43 +93,44 @@ def main():
             StructField("possui_experiencia_atividade", BooleanType(), True),
             StructField("anos_experiencia", IntegerType(), True),
             StructField("fontes_dados_adicionais", StructType([
-                StructField("serasa_score", IntegerType(), True),
-                StructField("ibama_autuacoes_ativas", BooleanType(), True),
+                StructField("serasa_score", IntegerType(), True), # Can be null
+                StructField("ibama_autuacoes_ativas", BooleanType(), True), # Can be null
                 StructField("numero_matricula_imovel", StringType(), True)
             ]), True),
             StructField("metadata_evento", StructType([
                 StructField("versao_schema", StringType(), True),
                 StructField("origem_dados", StringType(), True),
-                StructField("timestamp_geracao_evento", TimestampType(), True) # Changed
-            ]), True),
-            # Add partition columns if Silver data is partitioned, e.g.,
-            # StructField("year", IntegerType(), True),
-            # StructField("month", IntegerType(), True),
-            # StructField("day", IntegerType(), True)
+                StructField("timestamp_geracao_evento", DoubleType(), True) # Read as Double (Unix timestamp)
+            ]), True)
         ])
 
-        silver_df = spark.read.format("parquet") \
-            .schema(silver_df_schema) \
-            .load(SILVER_DATA_PATH)
+        # Read all JSON files from the bronze path.
+        # Spark can read partitioned data (YYYY/MM/DD/HH/*.json) by pointing to the base path.
+        bronze_df = spark.read.format("json") \
+            .schema(bronze_schema) \
+            .load(BRONZE_DATA_PATH) \
+            .withColumn("data_solicitacao_ts", col("data_solicitacao").cast(TimestampType())) \
+            .withColumn("timestamp_geracao_evento_ts", col("metadata_evento.timestamp_geracao_evento").cast(TimestampType()))
 
-        print("Silver data schema:")
-        silver_df.printSchema()
-        silver_df.show(5, truncate=False)
+        print("Bronze data schema after loading and timestamp conversion:")
+        bronze_df.printSchema()
+        bronze_df.show(5, truncate=False)
 
     except Exception as e:
-        print(f"Error reading from Silver layer {SILVER_DATA_PATH}: {e}")
+        print(f"Error reading from Bronze layer {BRONZE_DATA_PATH}: {e}")
         spark.stop()
         return
 
     # --- Feature Engineering ---
     print("Starting feature engineering...")
 
-    features_df = silver_df.withColumn(
+    # Use the converted timestamp column for features
+    features_df = bronze_df.withColumn(
         "avg_ndvi_90d",
         calculate_ndvi_udf(
             col("localizacao_propriedade.latitude"),
             col("localizacao_propriedade.longitude"),
-            col("data_solicitacao") # Assuming NDVI is relevant around solicitation date
+            col("data_solicitacao_ts") # Use the converted timestamp
         )
     ).withColumn(
         "distancia_porto_km",
@@ -145,102 +138,91 @@ def main():
             col("localizacao_propriedade.latitude"),
             col("localizacao_propriedade.longitude")
         )
-    ).withColumn( # Example features for Feast schema
-        "score_credito_externo", col("fontes_dados_adicionais.serasa_score").cast(IntegerType())
     ).withColumn(
-        "idade_cultura_predominante_dias", (rand() * 180 + 30).cast(IntegerType()) # Mock: 30-210 days
+        "score_credito_externo", col("fontes_dados_adicionais.serasa_score") # Already IntegerType
     ).withColumn(
-        "area_total_propriedade_ha", col("area_total_hectares").cast(FloatType())
+        "idade_cultura_predominante_dias", (rand() * 180 + 30).cast(IntegerType()) # Mock
     ).withColumn(
-        "percentual_endividamento_total",
-        (rand() * 0.8 + 0.1).cast(FloatType()) # Mock: 10-90%
-    ).withColumn( # Timestamps for Feast
-        "data_snapshot", col("data_solicitacao").cast(TimestampType()) # Use solicitation date as snapshot time
+        "area_total_propriedade_ha", col("area_total_hectares") # Already DoubleType, Feast expects Float32
     ).withColumn(
-        "data_carga_gold", current_timestamp() # Timestamp for when this Gold record is created
+        "percentual_endividamento_total", (rand() * 0.8 + 0.1) # Mock, already DoubleType
+    ).withColumn(
+        "data_snapshot", col("data_solicitacao_ts") # Key timestamp for Feast
+    ).withColumn(
+        "data_carga_gold", current_timestamp() # Processing timestamp for Gold layer
+    ).withColumn("year", year(col("data_snapshot"))) \
+     .withColumn("month", month(col("data_snapshot"))) \
+     .withColumn("day", dayofmonth(col("data_snapshot")))
+
+    # Select and cast columns for the Gold layer to match Feast and ClickHouse expectations
+    gold_df_selected = features_df.select(
+        col("proponente_id").alias("proponente_id"), # String
+        col("avg_ndvi_90d").cast(FloatType()).alias("avg_ndvi_90d"), # Float
+        col("distancia_porto_km").cast(FloatType()).alias("distancia_porto_km"), # Float - Corrected alias
+        col("score_credito_externo").cast(IntegerType()).alias("score_credito_externo"), # Int
+        col("idade_cultura_predominante_dias").cast(IntegerType()).alias("idade_cultura_predominante_dias"), # Int
+        col("area_total_propriedade_ha").cast(FloatType()).alias("area_total_propriedade_ha"), # Float
+        col("percentual_endividamento_total").cast(FloatType()).alias("percentual_endividamento_total"), # Float
+        col("data_snapshot").cast(TimestampType()).alias("data_snapshot"), # Timestamp for Feast event_timestamp
+        col("data_carga_gold").cast(TimestampType()).alias("data_carga_gold"), # Timestamp for Feast created_timestamp
+        # Partitioning columns for ClickHouse S3 table
+        col("year").cast(IntegerType()).alias("year"),
+        col("month").cast(IntegerType()).alias("month"),
+        col("day").cast(IntegerType()).alias("day")
     )
 
-    # Select only the columns required for the Gold layer / Feast
-    # Ensure these match the schema in feast_repo/definitions.py
-    gold_df = features_df.select(
-        "proponente_id",
-        "avg_ndvi_90d",
-        "distancia_porto_km",
-        "score_credito_externo",
-        "idade_cultura_predominante_dias",
-        "area_total_propriedade_ha",
-        "percentual_endividamento_total",
-        "data_snapshot", # Event timestamp for Feast
-        "data_carga_gold"  # Created timestamp for Feast
-    )
-
-    print("Engineered features schema (for Feast and ClickHouse):")
-    gold_df.printSchema()
-    gold_df.show(5, truncate=False)
+    print("Engineered features schema for Gold Layer (Feast & ClickHouse):")
+    gold_df_selected.printSchema()
+    gold_df_selected.show(5, truncate=False)
 
     # --- Write to Gold Layer (MinIO as Parquet for Feast FileSource) ---
+    # This output is NOT partitioned by date, as Feast FileSource usually expects a single directory or file pattern.
+    # If partitioning is desired for Feast source, adjust FileSource path and this write operation.
+    feast_output_df = gold_df_selected.drop("year", "month", "day") # Drop date partitions for this specific output
     print(f"Writing features to Gold layer (Parquet for Feast): {GOLD_FEATURES_PATH}")
     try:
-        gold_df.write \
+        feast_output_df.write \
             .mode("overwrite") \
             .format("parquet") \
             .save(GOLD_FEATURES_PATH)
-        print(f"Successfully wrote Parquet features to {GOLD_FEATURES_PATH}")
+        print(f"Successfully wrote Parquet features for Feast to {GOLD_FEATURES_PATH}")
     except Exception as e:
-        print(f"Error writing Parquet features to {GOLD_FEATURES_PATH}: {e}")
-        # spark.stop() # Decide if to stop or continue if other writes are pending
-        # return
+        print(f"Error writing Parquet features for Feast to {GOLD_FEATURES_PATH}: {e}")
 
-    # --- Write to Gold Layer (MinIO as Parquet for ClickHouse external table or direct load) ---
-    # This could be the same data, or formatted differently if needed.
-    # For simplicity, let's write the same gold_df.
-    # dbt will then pick this up from ClickHouse (assuming ClickHouse table points to this S3 path or data is loaded).
-    print(f"Writing features to Gold layer (Parquet for ClickHouse): {GOLD_CLICKHOUSE_TABLE_PATH}")
+    # --- Write to Gold Layer (MinIO as Parquet, partitioned for ClickHouse) ---
+    # This output IS partitioned by year, month, day for ClickHouse S3 table.
+    clickhouse_output_df = gold_df_selected # Contains year, month, day columns
+    print(f"Writing features to Gold layer (Partitioned Parquet for ClickHouse): {GOLD_CLICKHOUSE_TABLE_PATH}")
     try:
-        gold_df.write \
-            .partitionBy("year", "month", "day") # Example partitioning for ClickHouse table
+        clickhouse_output_df.write \
+            .partitionBy("year", "month", "day") \
             .mode("overwrite") \
             .format("parquet") \
             .save(GOLD_CLICKHOUSE_TABLE_PATH)
-        print(f"Successfully wrote Parquet features for ClickHouse to {GOLD_CLICKHOUSE_TABLE_PATH}")
+        print(f"Successfully wrote Partitioned Parquet for ClickHouse to {GOLD_CLICKHOUSE_TABLE_PATH}")
     except Exception as e:
-        print(f"Error writing Parquet features for ClickHouse to {GOLD_CLICKHOUSE_TABLE_PATH}: {e}")
+        print(f"Error writing Partitioned Parquet for ClickHouse to {GOLD_CLICKHOUSE_TABLE_PATH}: {e}")
 
     # --- Optional: Register Gold table in Hive Metastore for Trino/Superset ---
-    # This makes the data at GOLD_FEATURES_PATH queryable via SQL engines like Trino.
-    print(f"Registering Gold table '{GOLD_HIVE_TABLE_NAME}' in Hive Metastore...")
+    # This Hive table will point to the non-partitioned Feast data path for simplicity,
+    # as it's a common analytical access pattern for the latest features.
+    # If partitioned access via Hive is needed, point to GOLD_CLICKHOUSE_TABLE_PATH and manage partitions.
+    print(f"Registering Gold Hive table '{GOLD_HIVE_TABLE_NAME}' pointing to {GOLD_FEATURES_PATH}")
     try:
-        # For external tables, schema must be provided if not inferring
-        # Construct DDL for creating an external table
-        # This is a simplified example; column types should be precise
-        # gold_df_for_hive = spark.read.parquet(GOLD_FEATURES_PATH) # Re-read to get schema for DDL
+        # Use the schema from feast_output_df for the Hive table
+        # Drop existing table if it exists to ensure schema consistency on overwrite
+        spark.sql(f"DROP TABLE IF EXISTS default.{GOLD_HIVE_TABLE_NAME}")
 
-        # It's often better to manage Hive table DDL separately or use Spark's saveAsTable for managed tables.
-        # For external tables on S3, ensure location is correct.
-        # spark.sql(f"DROP TABLE IF EXISTS default.{GOLD_HIVE_TABLE_NAME}") # Use database name if not default
-        # gold_df.write.mode("overwrite").saveAsTable(f"default.{GOLD_HIVE_TABLE_NAME}", format="parquet", path=GOLD_FEATURES_PATH)
+        feast_output_df.write \
+            .mode("overwrite") \
+            .format("parquet") \
+            .option("path", GOLD_FEATURES_PATH) \
+            .saveAsTable(f"default.{GOLD_HIVE_TABLE_NAME}")
 
-        # A common way to create an external table if it doesn't exist:
-        if not spark.catalog.tableExists(f"default.{GOLD_HIVE_TABLE_NAME}"):
-             spark.catalog.createExternalTable(
-                 tableName=f"default.{GOLD_HIVE_TABLE_NAME}",
-                 path=GOLD_FEATURES_PATH, # Path to the Parquet data for Feast (not the ClickHouse one)
-                 source="parquet"
-                 # schema=gold_df.schema # Provide schema if needed, or let it infer
-             )
-             print(f"External table default.{GOLD_HIVE_TABLE_NAME} created in Hive Metastore pointing to {GOLD_FEATURES_PATH}")
-        else:
-            # If table exists, refresh partitions if it's partitioned, or simply note it.
-            # For non-partitioned external Parquet, just ensure data is updated at path.
-            # For partitioned tables: spark.sql(f"MSCK REPAIR TABLE default.{GOLD_HIVE_TABLE_NAME}")
-            print(f"Table default.{GOLD_HIVE_TABLE_NAME} already exists in Hive Metastore.")
-            # Consider refreshing table metadata if data path content changes:
-            spark.sql(f"REFRESH TABLE default.{GOLD_HIVE_TABLE_NAME}")
-            print(f"Refreshed table default.{GOLD_HIVE_TABLE_NAME}.")
-
+        print(f"Table default.{GOLD_HIVE_TABLE_NAME} created/updated in Hive Metastore, pointing to {GOLD_FEATURES_PATH}")
 
     except Exception as e:
-        print(f"Error registering table in Hive Metastore: {e}")
+        print(f"Error registering or updating table default.{GOLD_HIVE_TABLE_NAME} in Hive Metastore: {e}")
 
     print("Feature engineering job finished.")
     spark.stop()
