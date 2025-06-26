@@ -11,7 +11,7 @@ profile: 'agronegocio_analytics' # Matches the profile name in profiles.yml
 # These configurations specify where dbt should look for different types of files.
 # The `model-paths` config, for example, states that models in this project can be
 # found in the "models/" directory. You probably won't need to change these!
-model-paths: ["models"]
+model-paths: ["models/marts", "models/gold", "models/sources"] # Added gold and sources
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
@@ -69,9 +69,9 @@ clean-targets:         # directories removed by `dbt clean`
 # On-run-start and on-run-end hooks can be defined here
 on-run-start:
   - "{{ log('Starting dbt run for agronegocio_analytics', info=True) }}"
-  # Create the 'marts' database (schema in ClickHouse terms) if it doesn't exist.
-  # This is where the fct_analise_risco model will be materialized.
+  # Create necessary databases (schemas in ClickHouse terms) if they don't exist.
   - "CREATE DATABASE IF NOT EXISTS marts"
+  - "CREATE DATABASE IF NOT EXISTS gold"
 
 # Seeds configuration (if you use CSV seeds)
 # seeds:
