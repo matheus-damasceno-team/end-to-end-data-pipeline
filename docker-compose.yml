@@ -252,35 +252,24 @@ services:
       retries: 5
 
   feast-serve:
-      # Using Python base image and installing Feast manually
-      image: python:3.9-slim
+      build: ./services/feast_serve # Use the Dockerfile in services/feast_serve
       container_name: feast-serve
       restart: unless-stopped
       networks:
         - data_pipeline_net
       ports:
-        - "6565:6565" # Feast REST API
+        - "6565:6565" # Feast REST API (if enabled by Feast version/config)
         - "6566:6566" # Feast gRPC API
       volumes:
         - ./feast_repo:/app/feast_repo # Mount the feature repository
       environment:
+        # FEAST_USAGE is set in Dockerfile
         AWS_ACCESS_KEY_ID: admin
         AWS_SECRET_ACCESS_KEY: password
         AWS_S3_ENDPOINT_URL: http://minio:9000
-        FEAST_USAGE: "False" # Disable telemetry
-      working_dir: /app/feast_repo
-      command: >
-        bash -c "
-          echo 'Installing system dependencies...' &&
-          apt-get update && apt-get install -y --no-install-recommends 
-            gcc g++ curl netcat-openbsd && 
-          rm -rf /var/lib/apt/lists/* &&
-          echo 'Installing Feast and dependencies...' &&
-          pip install --no-cache-dir feast[aws]==0.37.1 boto3 &&
-          echo 'Feast version:' && feast version &&
-          echo 'Starting Feast server...' &&
-          feast serve --host 0.0.0.0 --port 6566
-        "
+        # Other Feast runtime configurations can be added here if needed
+      working_dir: /app/feast_repo # Matches WORKDIR in Dockerfile where CMD runs
+      # Command is now handled by CMD in Dockerfile
       depends_on:
         redis:
           condition: service_healthy
