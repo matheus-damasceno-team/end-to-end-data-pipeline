@@ -104,6 +104,8 @@ services:
       POSTGRES_PASSWORD: hivepassword
     volumes:
       - hive_metastore_db_data:/var/lib/postgresql/data
+      - ./postgresql_config/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    command: postgres -c hba_file=/etc/postgresql/pg_hba.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U hive -d metastore"]
       interval: 10s
@@ -112,7 +114,7 @@ services:
 
   hive-metastore:
     # Using official Apache Hive image
-    image: apache/hive:4.0.1
+    image: apache/hive:3.1.3
     container_name: hive-metastore
     networks:
       - data_pipeline_net
@@ -222,6 +224,11 @@ services:
       nofile:
         soft: 262144
         hard: 262144
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   trino-coordinator: # Formerly PrestoSQL
     image: trinodb/trino:449 # Pinned to a specific version to avoid 'latest' issues
@@ -232,6 +239,13 @@ services:
       - "8088:8080" # Trino UI and API (remapped to avoid conflict with Spark Master UI)
     volumes:
       - ./trino_config/catalog:/etc/trino/catalog # Catalog configurations
+      - ./trino_config/config.properties:/etc/trino/config.properties
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 8080 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     depends_on:
       - hive-metastore
       - clickhouse
@@ -281,6 +295,7 @@ services:
         timeout: 10s
         retries: 5
         start_period: 60s
+  
   jupyter-lab:
     # Using official Jupyter image with manual installation of required packages
     image: jupyter/all-spark-notebook:latest
@@ -315,188 +330,101 @@ services:
       - trino-coordinator
     command: >
       bash -c "
+        echo 'Installing system dependencies...' &&
+        apt-get update && apt-get install -y --no-install-recommends build-essential && 
+        rm -rf /var/lib/apt/lists/* &&
         echo 'Installing additional packages...' &&
-        pip install --no-cache-dir 
-          feast[aws]==0.37.1 
-          boto3 
-          s3fs 
-          clickhouse-connect 
-          trino 
-          dbt-core 
-          dbt-clickhouse 
-          plotly 
-          seaborn &&
+        pip install --no-cache-dir \
+          feast[aws]==0.37.1 \
+          boto3 \
+          s3fs \
+          clickhouse-connect \
+          trino \
+          dbt-core \
+          dbt-clickhouse \
+          plotly \
+          seaborn && 
         echo 'Fixing permissions...' &&
         fix-permissions /home/jovyan &&
         echo 'Starting Jupyter Lab...' &&
         start-notebook.sh --NotebookApp.token='' --NotebookApp.password='' --ServerApp.disable_check_xsrf=True
       "
 
-  # Druid Services - Minimal setup
-  # Zookeeper is already defined above and will be shared
-  druid-coordinator:
-    image: apache/druid:29.0.0 # Updated to a recent, multi-arch version
-    container_name: druid-coordinator
-    networks:
-      - data_pipeline_net
-    ports:
-      # - "8081:8081" # Druid Coordinator Console (Port conflict with Spark Worker, remapping)
-      #                # Let's map Druid Coordinator to 8091
-      - "8091:8081"
-    depends_on:
-      - zookeeper
-      - hive-metastore-db # Druid uses a DB for metadata, can be Postgres
-    environment:
-      druid.zk.service.host: zookeeper
-      druid.metadata.storage.type: postgresql
-      druid.metadata.storage.connector.connectURI: "jdbc:postgresql://hive-metastore-db:5432/druid" # Use a separate DB or schema
-      druid.metadata.storage.connector.user: druiduser # Create this user in Postgres
-      druid.metadata.storage.connector.password: druidpassword
-      druid.coordinator.balancer.strategy: "cost"
-      druid.coordinator.period: PT30S
-      # For S3/MinIO deep storage
-      druid.storage.type: s3
-      druid.storage.bucket: druid # Create this bucket in MinIO
-      druid.storage.baseKey: segments/
-      druid.s3.accessKey: admin
-      druid.s3.secretKey: password
-      druid.s3.protocol: http
-      druid.s3.endpoint.url: "http://minio:9000" # Full URL for recent versions
-      # For Kafka Indexing Service
-      druid.extensions.loadList: '["druid-kafka-indexing-service", "druid-s3-extensions", "postgresql-metadata-storage"]'
-    volumes:
-      - druid_coordinator_data:/opt/druid/var
-
-  druid-broker:
-    image: apache/druid:29.0.0
-    container_name: druid-broker
-    networks:
-      - data_pipeline_net
-    ports:
-      - "8082:8082" # Druid Broker (Port conflict with Spark Master UI if it were 8080, but it's 8082)
-                     # Let's map Druid Broker to 8092
-      - "8092:8082"
-    depends_on:
-      - zookeeper
-      - druid-coordinator
-    environment:
-      druid.zk.service.host: zookeeper
-      druid.broker.cache.populateCache: "true"
-      druid.broker.cache.useCache: "true"
-      druid.broker.cache.node.size: 10000000
-      druid.extensions.loadList: '["druid-kafka-indexing-service", "druid-s3-extensions", "postgresql-metadata-storage"]'
-
-
-  druid-router:
-    image: apache/druid:29.0.0
-    container_name: druid-router
-    networks:
-      - data_pipeline_net
-    ports:
-      - "8889:8888" # Druid Router (Unified Query Console), remapped to avoid conflict with Jupyter
-    depends_on:
-      - zookeeper
-      - druid-broker
-      - druid-coordinator
-    environment:
-      druid.zk.service.host: zookeeper
-      druid.router.defaultBrokerServiceName: "druid/broker"
-      druid.router.coordinatorServiceName: "druid/coordinator"
-      druid.extensions.loadList: '["druid-kafka-indexing-service", "druid-s3-extensions", "postgresql-metadata-storage"]'
-
-  druid-historical:
-    image: apache/druid:29.0.0
-    container_name: druid-historical
-    networks:
-      - data_pipeline_net
-    ports: # No public ports needed typically, but can expose for debugging
-      - "8083:8083" # Druid Historical (Port conflict with Feast HTTP if enabled, remapping)
-                     # Let's map Druid Historical to 8093
-      - "8093:8083"
-    depends_on:
-      - zookeeper
-      - druid-coordinator
-    environment:
-      druid.zk.service.host: zookeeper
-      druid.segmentCache.locations: '[{"path":"/opt/druid/var/druid/segment-cache","maxSize":10000000000}]'
-      druid.server.maxSize: 10000000000 # Should be sum of segmentCache.locations.maxSize
-      # For S3/MinIO deep storage
-      druid.storage.type: s3
-      druid.storage.bucket: druid
-      druid.storage.baseKey: segments/
-      druid.s3.accessKey: admin
-      druid.s3.secretKey: password
-      druid.s3.protocol: http
-      druid.s3.endpoint.url: "http://minio:9000"
-      druid.extensions.loadList: '["druid-kafka-indexing-service", "druid-s3-extensions", "postgresql-metadata-storage"]'
-    volumes:
-      - druid_historical_data:/opt/druid/var
-
-  druid-middlemanager: # For running ingestion tasks like Kafka indexing
-    image: apache/druid:29.0.0
-    container_name: druid-middlemanager
-    networks:
-      - data_pipeline_net
-    ports: # No public ports needed typically
-      - "8090:8090" # Druid MiddleManager (Port conflict with ClickHouse HTTP if it were 8123, but it's 8090)
-                     # Let's map Druid MiddleManager to 8094
-      - "8094:8090"
-    depends_on:
-      - zookeeper
-      - druid-coordinator
-    environment:
-      druid.zk.service.host: zookeeper
-      druid.indexer.runner.type: remote
-      druid.indexer.storage.type: metadata # Using metadata for tasks, not local
-      # For S3/MinIO deep storage
-      druid.storage.type: s3
-      druid.storage.bucket: druid
-      druid.storage.baseKey: segments/
-      druid.s3.accessKey: admin
-      druid.s3.secretKey: password
-      druid.s3.protocol: http
-      druid.s3.endpoint.url: "http://minio:9000"
-      druid.extensions.loadList: '["druid-kafka-indexing-service", "druid-s3-extensions", "postgresql-metadata-storage"]'
-      # For Kafka Indexing Service
-      druid.kafka.consumer.properties: '{"bootstrap.servers": "kafka:9092"}'
-      druid.middleManager.worker.maxInstances: 2 # Number of peon tasks
-    volumes:
-      - druid_middlemanager_data:/opt/druid/var
-      - ./services/druid:/opt/druid/ingestion # Mount ingestion specs
+  # Lembre-se que este serviço depende de um banco de dados chamado 'superset-db',
+# que também deve estar definido neste arquivo.
 
   superset:
-    image: apache/superset:3.1.1 # Pinned to a specific version for stability
+    image: apache/superset:3.1.1
+    user: root # Executa como root para permitir a instalação de pacotes
     container_name: superset
     networks:
       - data_pipeline_net
     ports:
-      - "8089:8088" # Superset Web UI (remapped to avoid conflict with Trino UI)
+      - "8089:8088"
     depends_on:
+      - superset-db # Certifique-se que o serviço do banco de dados está aqui
       - clickhouse
       - trino-coordinator
-      # - druid-broker # Superset will connect to Druid broker
     environment:
+      # Variáveis para criar o usuário admin
       ADMIN_USERNAME: admin
       ADMIN_EMAIL: admin@superset.com
       ADMIN_PASSWORD: admin
-      SUPERSET_SECRET_KEY: "a_very_secret_key_for_superset" # Change in production
-      # For Postgres backend (optional, default is SQLite)
-      DB_HOST: superset-db
-      DB_PORT: 5432
-      DB_USER: superset
-      DB_PASS: superset
-      DB_NAME: superset
-      PYTHONPATH: "/app/pythonpath" # For custom DB drivers if needed
-      SUPERSET_LOAD_EXAMPLES: "no" # Don't load example data
+      ADMIN_FIRST_NAME: Admin
+      ADMIN_LAST_NAME: User
+
+      # Chave secreta, deve ser alterada em produção
+      SUPERSET_SECRET_KEY: "uma_chave_muito_secreta_para_superset"
+
+      # Configurações para o superset_config.py usar
+      PYTHONPATH: "/app/pythonpath"
+      SUPERSET_LOAD_EXAMPLES: "no"
     volumes:
-      - superset_data:/app/superset_home # Persist Superset metadata (SQLite DB by default)
-      - ./superset_config.py:/app/superset_config.py # For advanced configuration
+      # Arquivo de configuração customizado
+      - ./superset_config.py:/app/pythonpath/superset_config.py
     command: >
-      bash -c "superset db upgrade && \
-               superset init && \
-               superset load_examples && \ # If you want examples
-               gunicorn --bind 0.0.0.0:8088 --workers 2 --timeout 60 'superset.app:create_app()'"
-    # The default entrypoint handles initialization. `superset_config.py` can enable features.
+      bash -c "
+        set -e && \
+        # Instala o cliente do postgres para poder verificar a conexão
+        apt-get update -y && apt-get install -y --no-install-recommends postgresql-client && \
+        
+        # Loop de espera para garantir que o banco de dados esteja pronto
+        echo 'Aguardando o banco de dados...' && \
+        while ! pg_isready -h superset-db -p 5432 -q -U superset; do \
+          sleep 2; \
+        done && \
+        echo 'Banco de dados pronto!' && \
+
+        # Executa as migrações do banco de dados
+        superset db upgrade && \
+
+        # Cria o usuário admin (a role Admin é atribuída por padrão)
+        echo 'Criando usuário admin...' && \
+        superset fab create-admin --username $$ADMIN_USERNAME --firstname $$ADMIN_FIRST_NAME --lastname $$ADMIN_LAST_NAME --email $$ADMIN_EMAIL --password $$ADMIN_PASSWORD && \
+
+        # Inicializa o Superset (cria roles e permissões padrão)
+        echo 'Inicializando o Superset...' && \
+        superset init && \
+
+        # Inicia o servidor web
+        echo 'Iniciando o servidor web...' && \
+        gunicorn --bind 0.0.0.0:8088 --workers 2 --timeout 120 'superset.app:create_app()'
+      "
+
+
+  superset-db: # NOVO SERVIÇO: Banco de dados Postgres para o Superset
+    image: postgres:15
+    container_name: superset-db
+    networks:
+      - data_pipeline_net
+    ports:
+      - "5433:5432" # Expondo em uma porta diferente para não conflitar
+    environment:
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+      POSTGRES_DB: superset
+    volumes:
+      - superset_db_data:/var/lib/postgresql/data
 
   producer-simulator:
     build:
@@ -506,26 +434,47 @@ services:
       - data_pipeline_net
     depends_on:
       - kafka
-    # command: python producer.py # Assuming Dockerfile has CMD
+    command: python producer.py # Assuming Dockerfile has CMD
 
-  ingestion-consumer:
-    build:
-      context: ./services/ingestion_consumer
-    container_name: ingestion-consumer
+
+  spark-ingestion-job:
+    image: bitnami/spark:3.5
+    container_name: spark-ingestion-job
     networks:
       - data_pipeline_net
     depends_on:
-      - kafka
-      - minio
+      spark-master:
+        condition: service_started
+      kafka:
+        condition: service_started
+      minio:
+        condition: service_healthy
+      hive-metastore:
+        condition: service_healthy
+      producer-simulator:
+        condition: service_started
+    volumes:
+      - ./services/spark_jobs:/opt/bitnami/spark/jobs
+      - ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
     environment:
       KAFKA_BROKER: kafka:9092
-      MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: admin
-      MINIO_SECRET_KEY: password
       KAFKA_TOPIC: dados_produtores
-      MINIO_BUCKET: bronze
-    # command: python consumer.py # Assuming Dockerfile has CMD
-
+      SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      ICEBERG_WAREHOUSE: s3a://warehouse/iceberg_data
+      ICEBERG_TABLE_NAME: bronze.dados_produtores
+    command: >
+      bash -c "
+        echo 'Submitting Spark Iceberg Ingestion Job...' &&
+        /opt/bitnami/spark/bin/spark-submit 
+          --master spark://spark-master:7077 
+          --conf spark.sql.catalog.hive_catalog=org.apache.iceberg.spark.SparkSessionCatalog 
+          --conf spark.sql.catalog.hive_catalog.type=hive 
+          --conf spark.sql.catalog.hive_catalog.uri=thrift://hive-metastore:9083 
+          --conf spark.sql.catalog.hive_catalog.warehouse=s3a://warehouse/iceberg_data 
+          --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions 
+          --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.5.2,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.spark:spark-avro_2.12:3.5.0,org.apache.hadoop:hadoop-aws:3.3.1,com.amazonaws:aws-java-sdk-bundle:1.11.901 
+          /opt/bitnami/spark/jobs/ingestion_to_iceberg.py
+      "
   # dbt service - for running dbt commands, typically manually or via setup.sh
   dbt:
     # Using Python base image and installing dbt-clickhouse manually
@@ -538,12 +487,12 @@ services:
       - ./profiles.yml:/root/.dbt/profiles.yml # Mount profiles for dbt
     working_dir: /usr/app/dbt_project
     depends_on:
-      - clickhouse
+      clickhouse:
+        condition: service_healthy
     command: >
       bash -c "
         echo 'Installing system dependencies...' &&
-        apt-get update && apt-get install -y --no-install-recommends 
-          gcc g++ curl git && 
+        apt-get update && apt-get install -y --no-install-recommends build-essential gcc g++ curl git && 
         rm -rf /var/lib/apt/lists/* &&
         echo 'Installing dbt-clickhouse and dependencies...' &&
         pip install --no-cache-dir dbt-core==1.8.2 dbt-clickhouse==1.8.2 &&
@@ -558,10 +507,8 @@ volumes:
   clickhouse_data:
   redis_data:
   superset_data:
-  druid_coordinator_data:
-  druid_historical_data:
-  druid_middlemanager_data:
-  notebook_data: # Persists notebook work if not mounting a local directory
+  superset_db_data:
+  notebook_data:
 
 # Placeholder for spark-defaults.conf, clickhouse_config/*, trino_config/*
 # These will be created in subsequent steps.
