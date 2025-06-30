@@ -1,0 +1,30 @@
+FROM apache/hive:4.0.0
+
+USER root
+
+# Install necessary tools
+RUN apt-get update && \
+    apt-get install -y wget netcat-openbsd && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Download JDBC driver and S3/AWS JARs
+RUN wget -q https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar && \
+    mv mysql-connector-j-8.0.33.jar /opt/hive/lib/ && \
+    \
+    # --- INÍCIO: Adicionado para suporte ao S3 ---
+    wget -q https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar && \
+    wget -q https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar && \
+    mv hadoop-aws-3.3.4.jar /opt/hive/lib/ && \
+    mv aws-java-sdk-bundle-1.12.262.jar /opt/hive/lib/ && \
+    # --- FIM: Adicionado para suporte ao S3 ---
+    \
+    chmod 644 /opt/hive/lib/*.jar && \
+    ln -s /opt/hive/lib/mysql-connector-j-8.0.33.jar /opt/hadoop/share/hadoop/common/lib/
+
+
+# Switch back to hive user
+USER hive
+
+# The entrypoint script from the base image handles the configuration
+ENTRYPOINT ["/entrypoint.sh"]
