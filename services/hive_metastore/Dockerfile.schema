@@ -25,6 +25,9 @@ RUN wget -q https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.33/my
     chmod 644 /opt/hive/lib/*.jar && \
     ln -s /opt/hive/lib/mysql-connector-j-8.0.33.jar /opt/hadoop/share/hadoop/common/lib/
 
+COPY init-schema.sh /opt/hive/bin/init-schema.sh
+RUN chmod +x /opt/hive/bin/init-schema.sh
+
 
 # Volta para o usuário hive
 USER hive

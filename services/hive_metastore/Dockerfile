@@ -33,7 +33,6 @@ RUN wget -q https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.33/my
     chmod 644 /opt/hive/lib/*.jar && \
     chmod 644 /opt/hadoop/share/hadoop/common/lib/*.jar
 
-
 # Volta para o usuário hive
 USER hive
 

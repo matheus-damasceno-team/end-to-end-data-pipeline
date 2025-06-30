@@ -1,6 +1,16 @@
-FROM edilsonathayde/trino:lakehouse-arm64-457
+FROM trinodb/trino:450
 
-COPY hive.properties /etc/trino/catalog/hive.properties
-COPY delta.properties /etc/trino/catalog/delta.properties
-COPY iceberg.properties /etc/trino/catalog/iceberg.properties
-COPY postgres.properties /etc/trino/catalog/postgres.properties
+# Copy configuration files
+COPY config.properties /etc/trino/config.properties
+COPY node.properties /etc/trino/node.properties
+COPY jvm.config /etc/trino/jvm.config
+
+# Copy catalog configuration
+COPY catalog/ /etc/trino/catalog/
+
+# Create data directory
+RUN mkdir -p /data/trino && chown trino:trino /data/trino
+
+USER trino
+
+EXPOSE 8080
