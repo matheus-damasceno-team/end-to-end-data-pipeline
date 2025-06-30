@@ -5,6 +5,8 @@ networks:
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.1
+    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+    platform: linux/amd64
     container_name: zookeeper
     networks:
       - data_pipeline_net
@@ -16,12 +18,14 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.6.1
+    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+    platform: linux/amd64
     container_name: kafka
     networks:
       - data_pipeline_net
     ports:
       - "9092:9092"
-      - "29092:29092" # External access if needed
+      - "29092:29092"
     depends_on:
       - zookeeper
     environment:
@@ -31,41 +35,40 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1 # Confluent specific
-      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1 # Confluent specific
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1             # Confluent specific
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1  # Confluent specific
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
+    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+    platform: linux/amd64
     networks:
       - data_pipeline_net
     ports:
-      - "8085:8080" # Remapped to 8085 to avoid conflict with Spark Master UI (8080)
+      - "8085:8080"
     environment:
-      DYNAMIC_CONFIG_ENABLED: 'true' # Enable dynamic configuration via mounted file
+      DYNAMIC_CONFIG_ENABLED: 'true'
     volumes:
-      # Mount a local config file for dynamic configuration
-      # Create this file at ./config/kafka-ui/config.yml
       - ./config/kafka-ui/config.yml:/etc/kafkaui/dynamic_config.yaml
-    # depends_on:
-    #   kafka:
-    #     condition: service_healthy # Wait for Kafka to be healthy
 
   minio:
     image: minio/minio:latest
+    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+    platform: linux/amd64
     container_name: minio
     networks:
       - data_pipeline_net
     ports:
-      - "9000:9000" # API
-      - "9001:9001" # Console
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio_data:/data
     environment:
-      MINIO_ROOT_USER: admin # For local dev only
-      MINIO_ROOT_PASSWORD: password # For local dev only
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
     command: server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -73,113 +76,174 @@ services:
       timeout: 20s
       retries: 3
 
-  mc: # MinIO Client - used by setup.sh
+  mc:
     image: minio/mc:latest
+    platform: linux/amd64
     container_name: mc
     networks:
       - data_pipeline_net
     depends_on:
       minio:
         condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      until (/usr/bin/mc alias set local http://minio:9000 admin password) do echo '...waiting...' && sleep 1; done;
-      /usr/bin/mc policy set public local/bronze;
-      /usr/bin/mc policy set public local/silver;
-      /usr/bin/mc policy set public local/gold;
-      echo 'MinIO configured and buckets are public for easy access in dev.';
-      tail -f /dev/null;
-      "
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        set -e
+        echo '--- INÍCIO DO SCRIPT MC (Versão Final Simplificada) ---'
 
-  mariadb-hive: # MariaDB for Hive Metastore
-    image: mariadb:10.11
-    container_name: mariadb-hive
-    networks:
-      - data_pipeline_net
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: metastore_db
-      MYSQL_USER: hive
-      MYSQL_PASSWORD: hive
-    volumes:
-      - mariadb_hive_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
-      start_period: 20s
-      interval: 10s
-      timeout: 10s
-      retries: 10
+        echo '[1/2] Configurando alias para o MinIO...'
+        until /usr/bin/mc alias set local http://minio:9000 admin password; do
+          echo '...MinIO não está pronto, aguardando 1s...';
+          sleep 1;
+        done
+        echo 'Alias do MinIO configurado.'
 
-  hive-metastore:
+        echo '[2/2] Criando buckets necessários...'
+        /usr/bin/mc mb local/bronze --ignore-existing
+        /usr/bin/mc mb local/silver --ignore-existing
+        /usr/bin/mc mb local/gold --ignore-existing
+        /usr/bin/mc mb local/warehouse --ignore-existing
+        echo 'Buckets criados. Usando permissões padrão do usuário root.'
+
+        echo '--- SCRIPT MC FINALIZADO COM SUCESSO ---'
+    restart: "no"
+
+  trino:
     build:
-      context: ./hive
-      dockerfile: Dockerfile
-    container_name: hive-metastore
+      context: ./services/trino
+    container_name: trino
+    platform: linux/amd64
+    hostname: trino
     networks:
       - data_pipeline_net
     ports:
-      - "9083:9083" # Thrift port for Metastore
+      - "8080:8080"
     depends_on:
-      mariadb-hive:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-    environment:
-      SERVICE_NAME: metastore
-      HIVE_DB_EXTERNAL: "true"
-      HIVE_DB_TYPE: mysql
-      HIVE_DB_HOST: mariadb-hive
-      HIVE_DB_PORT: 3306
-      HIVE_DB_NAME: metastore_db
-      HIVE_DB_USER: hive
-      HIVE_DB_PASSWORD: hive
-      S3_ENDPOINT: http://minio:9000
-      S3_ACCESS_KEY: admin
-      S3_SECRET_KEY: password
-      S3_PATH_STYLE_ACCESS: "true"
-      HIVE_WAREHOUSE_DIR: s3a://warehouse/
+      - metastore
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  metastore-db:
+    image: mariadb:10.5
+    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+    platform: linux/amd64
+    container_name: metastore-db
+    networks:
+      - data_pipeline_net
     volumes:
-      - ./hive/conf:/opt/hive/conf
-      - ./hive/scripts:/opt/hive/scripts
+      - metastore-db:/var/lib/mysql
+    environment:
+      # A senha é definida aqui para o MariaDB usar na inicialização
+      - MYSQL_ROOT_PASSWORD=password
     healthcheck:
-      test: ["CMD-SHELL", "netstat -ln | grep 9083 || exit 1"]
+      # E a mesma senha é usada diretamente no comando abaixo.
+      # A sintaxe correta é -pSENHA (tudo junto, sem espaço).
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  create-metastore-schema:
+    build:
+      context: ./services/hive_metastore
+      dockerfile: Dockerfile.schema
+    platform: linux/amd64
+    container_name: create-metastore-schema
+    depends_on:
+      metastore-db:
+        condition: service_healthy
+    networks:
+      - data_pipeline_net
+    entrypoint: /bin/bash
+    command: >
+      -c "
+        sleep 5;
+        /opt/hive/bin/schematool -dbType mysql -initSchema && echo 'Schema initialized successfully!';
+      "
+    environment:
+      - DB_DRIVER=mysql
+    restart: "no"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./metastore/core-site.xml:/opt/hive/conf/core-site.xml
+      - ./metastore/hive-site.xml:/opt/hive/conf/hive-site.xml
+
+  metastore:
+    build:
+      context: ./services/hive_metastore
+    platform: linux/amd64
+    container_name: metastore
+    networks:
+      - data_pipeline_net
+    ports:
+      - "9083:9083"
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
+      - SERVICE_NAME=metastore
+      - DB_DRIVER=mysql
+      - IS_RESUME=true
+      - SERVICE_OPTS=-Djavax.jdo.option.ConnectionDriverName=com.mysql.cj.jdbc.Driver -Djavax.jdo.option.ConnectionURL=jdbc:mysql://metastore-db:3306/metastore_db -Djavax.jdo.option.ConnectionUserName=root -Djavax.jdo.option.ConnectionPassword=password -Dfs.s3a.endpoint=http://minio:9000 -Dfs.s3a.access.key=admin -Dfs.s3a.secret.key=password -Dfs.s3a.path.style.access=true -Dhive.metastore.warehouse.dir=s3a://warehouse/ -Dfs.s3a.aws.credentials.provider=org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider -Dfs.s3a.region=us-east-1 -Dfs.s3a.bucket.all.region.lookup.disable=true -Dfs.s3a.signer.override=S3SignerType -Dfs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem -Daws.region=us-east-1
+    depends_on:
+      metastore-db:
+        condition: service_healthy
+      create-metastore-schema:
+        condition: service_completed_successfully
+      mc:
+        condition: service_completed_successfully
+    restart: always
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9083"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 60s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./metastore/core-site.xml:/opt/hive/conf/core-site.xml
+      - ./metastore/hive-site.xml:/opt/hive/conf/hive-site.xml
 
   spark-master:
     image: bitnami/spark:3.5
     container_name: spark-master
+    platform: linux/amd64
     networks:
       - data_pipeline_net
     ports:
-      - "8080:8080" # Spark Master Web UI
-      - "7077:7077" # Spark Master Port
+      - "8081:8080"
+      - "7077:7077"
     volumes:
       - ./services/spark_jobs:/opt/bitnami/spark/jobs
-      - ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf # For S3/MinIO and Hive Metastore config
+      #- ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      - ./metastore/core-site.xml:/opt/bitnami/spark/conf/core-site.xml
+      - ./metastore/hive-site.xml:/opt/bitnami/spark/conf/hive-site.xml
     environment:
       SPARK_MODE: master
       SPARK_RPC_AUTHENTICATION_ENABLED: "no"
       SPARK_RPC_ENCRYPTION_ENABLED: "no"
       SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
       SPARK_SSL_ENABLED: "no"
-      # MinIO/S3 and Hive Metastore config is now primarily in spark-defaults.conf
-      # AWS_ACCESS_KEY_ID: admin # Covered by spark-defaults.conf
-      # AWS_SECRET_ACCESS_KEY: password # Covered by spark-defaults.conf
-    depends_on: # Ensure Hive Metastore is somewhat ready, though Spark jobs connect directly
-     - hive-metastore
+      # Add Hive configuration
+      HIVE_METASTORE_URIS: "thrift://metastore:9083"
+    depends_on:
+     - metastore
 
   spark-worker:
     image: bitnami/spark:3.5
+    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+    platform: linux/amd64
     container_name: spark-worker
     networks:
       - data_pipeline_net
     ports:
-      - "8081:8081" # Spark Worker Web UI
+      - "8082:8081"
     depends_on:
       - spark-master
     volumes:
@@ -188,508 +252,384 @@ services:
     environment:
       SPARK_MODE: worker
       SPARK_MASTER_URL: spark://spark-master:7077
-      SPARK_WORKER_MEMORY: 1G
-      SPARK_WORKER_CORES: 1
+      SPARK_WORKER_MEMORY: 2G
+      SPARK_WORKER_CORES: 2
       SPARK_RPC_AUTHENTICATION_ENABLED: "no"
       SPARK_RPC_ENCRYPTION_ENABLED: "no"
       SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
       SPARK_SSL_ENABLED: "no"
-      # MinIO/S3 and Hive Metastore config is now primarily in spark-defaults.conf
-      # AWS_ACCESS_KEY_ID: admin # Covered by spark-defaults.conf
-      # AWS_SECRET_ACCESS_KEY: password # Covered by spark-defaults.conf
 
-  clickhouse:
-    image: clickhouse/clickhouse-server:24.5 # Use a recent stable version
-    container_name: clickhouse
+  # ingestion-consumer:
+  #   image: bitnami/spark:3.5
+  #   platform: linux/amd64
+  #   container_name: ingestion-consumer
+  #   networks:
+  #     - data_pipeline_net
+  #   depends_on:
+  #     kafka:
+  #       condition: service_started
+  #     metastore:
+  #       condition: service_healthy
+  #     spark-master:
+  #       condition: service_started
+  #     mc:
+  #       condition: service_completed_successfully
+  #   volumes:
+  #     - ./services/spark_jobs:/opt/bitnami/spark/jobs
+  #     - ./services/producer_simulator/producer_schema.avsc:/opt/bitnami/spark/jobs/producer_schema.avsc:ro
+  #     - ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+  #     - ./metastore/core-site.xml:/opt/bitnami/spark/conf/core-site.xml
+  #     - ./metastore/hive-site.xml:/opt/bitnami/spark/conf/hive-site.xml
+  #   environment:
+  #     KAFKA_BROKER: kafka:9092
+  #     KAFKA_TOPIC: dados_produtores
+  #     ICEBERG_WAREHOUSE: s3a://warehouse
+  #     ICEBERG_TABLE_NAME: bronze.dados_produtores_agro
+  #     AWS_ACCESS_KEY_ID: admin
+  #     AWS_SECRET_ACCESS_KEY: password
+  #     AWS_S3_ENDPOINT_URL: http://minio:9000
+  #     AWS_REGION: us-east-1
+  #     AWS_DEFAULT_REGION: us-east-1
+  #   command:
+  #     - /bin/bash
+  #     - -c
+  #     - |
+  #       echo "Setting up AWS environment variables..."
+  #       export AWS_REGION=us-east-1
+  #       export AWS_DEFAULT_REGION=us-east-1
+  #       export AWS_ACCESS_KEY_ID=admin
+  #       export AWS_SECRET_ACCESS_KEY=password
+        
+  #       echo "Waiting for all dependencies to be ready..."
+  #       sleep 30
+        
+  #       echo "Starting Spark job with Iceberg..."
+  #       /opt/bitnami/spark/bin/spark-submit \
+  #         --master spark://spark-master:7077 \
+  #         --packages org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262,org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.5.2,org.apache.iceberg:iceberg-aws-bundle:1.5.2,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.spark:spark-avro_2.12:3.5.0 \
+  #         --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
+  #         --conf spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkCatalog \
+  #         --conf spark.sql.catalog.spark_catalog.type=hive \
+  #         --conf spark.sql.catalog.spark_catalog.uri=thrift://metastore:9083 \
+  #         --conf spark.sql.catalog.spark_catalog.warehouse=s3a://warehouse \
+  #         --conf spark.sql.catalog.spark_catalog.io-impl=org.apache.iceberg.aws.s3.S3FileIO \
+  #         --conf spark.sql.catalog.spark_catalog.s3.endpoint=http://minio:9000 \
+  #         --conf spark.sql.catalog.spark_catalog.s3.path-style-access=true \
+  #         --conf spark.sql.catalog.spark_catalog.s3.access-key-id=admin \
+  #         --conf spark.sql.catalog.spark_catalog.s3.secret-access-key=password \
+  #         --conf spark.sql.catalog.spark_catalog.s3.region=us-east-1 \
+  #         --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000 \
+  #         --conf spark.hadoop.fs.s3a.access.key=admin \
+  #         --conf spark.hadoop.fs.s3a.secret.key=password \
+  #         --conf spark.hadoop.fs.s3a.path.style.access=true \
+  #         --conf spark.hadoop.fs.s3a.aws.credentials.provider=org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider \
+  #         --conf spark.hadoop.fs.s3a.region=us-east-1 \
+  #         --conf spark.hadoop.fs.s3a.bucket.all.region.lookup.disable=true \
+  #         --conf spark.hadoop.fs.s3a.signer.override=S3SignerType \
+  #         /opt/bitnami/spark/jobs/ingestion_to_iceberg.py
+
+  ingestion-consumer:
+    image: bitnami/spark:3.5
+    platform: linux/amd64
+    container_name: ingestion-consumer
     networks:
       - data_pipeline_net
-    ports:
-      - "8123:8123" # HTTP
-      # - "9000:9000" # Native TCP (Note: Port conflict with MinIO API if not managed. Remapping MinIO API to 9000 and Console to 9001)
-      #                # Let's remap ClickHouse native TCP to 9009 to avoid conflict with MinIO API.
-      #                # Actually, MinIO API is on 9000, ClickHouse native TCP is also 9000.
-      #                # Let's expose ClickHouse native on 9009 externally, but internally it's 9000.
-      #                # For service-to-service, this is fine. For external tools, use 9009.
-      #                # The prompt indicates MinIO API is 9000. We'll keep that.
-      #                # ClickHouse native port is also 9000.
-      #                # We need to map one of them to a different host port if accessed directly.
-      #                # For inter-service communication, this is fine if they are on different IPs (container IPs).
-      #                # Let's map ClickHouse native port to 9004 for external access to avoid confusion.
-      - "9004:9000" # ClickHouse Native TCP (remapped for host)
-    volumes:
-      - clickhouse_data:/var/lib/clickhouse
-      - ./clickhouse_config/config.xml:/etc/clickhouse-server/config.xml # For S3/MinIO access
-      - ./clickhouse_config/users.xml:/etc/clickhouse-server/users.xml # For default user if needed
-    ulimits: # Recommended by ClickHouse
-      nofile:
-        soft: 262144
-        hard: 262144
-
-  trino-coordinator: # Formerly PrestoSQL
-    image: trinodb/trino:449 # Pinned to a specific version to avoid 'latest' issues
-    container_name: trino-coordinator
-    networks:
-      - data_pipeline_net
-    ports:
-      - "8088:8080" # Trino UI and API (remapped to avoid conflict with Spark Master UI)
-    volumes:
-      - ./trino_config/catalog:/etc/trino/catalog # Catalog configurations
     depends_on:
-      - hive-metastore
-      - clickhouse
-
-  redis: # For Feast Online Store
-    image: redis:7-alpine
-    container_name: redis
-    networks:
-      - data_pipeline_net
-    ports:
-      - "6379:6379"
+      kafka:
+        condition: service_started
+      metastore:
+        condition: service_healthy
+      spark-master:
+        condition: service_started
+      mc:
+        condition: service_completed_successfully
     volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  feast-serve:
-      # Using Python base image and installing Feast manually
-      image: python:3.9-slim
-      container_name: feast-serve
-      restart: unless-stopped
-      networks:
-        - data_pipeline_net
-      ports:
-        - "6565:6565" # Feast REST API
-        - "6566:6566" # Feast gRPC API
-      volumes:
-        - ./feast_repo:/app/feast_repo # Mount the feature repository
-      environment:
-        AWS_ACCESS_KEY_ID: admin
-        AWS_SECRET_ACCESS_KEY: password
-        AWS_S3_ENDPOINT_URL: http://minio:9000
-        FEAST_USAGE: "False" # Disable telemetry
-      working_dir: /app/feast_repo
-      command: >
-        bash -c "
-          echo 'Installing system dependencies...' &&
-          apt-get update && apt-get install -y --no-install-recommends 
-            gcc g++ curl netcat-openbsd && 
-          rm -rf /var/lib/apt/lists/* &&
-          echo 'Installing Feast and dependencies...' &&
-          pip install --no-cache-dir feast[aws]==0.37.1 boto3 &&
-          echo 'Feast version:' && feast version &&
-          echo 'Starting Feast server...' &&
-          feast serve --host 0.0.0.0 --port 6566
-        "
-      depends_on:
-        redis:
-          condition: service_healthy
-        minio:
-          condition: service_healthy
-      healthcheck:
-        test: ["CMD-SHELL", "nc -z localhost 6566 || exit 1"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
-        start_period: 60s
-  jupyter-lab:
-    # Using official Jupyter image with manual installation of required packages
-    image: jupyter/all-spark-notebook:latest
-    container_name: jupyter-lab
-    user: root # Needed for package installation
-    networks:
-      - data_pipeline_net
-    ports:
-      - "8888:8888"
-    volumes:
-      - ./notebooks:/home/jovyan/work # Mount a local directory for notebooks
-      - ./spark-defaults.conf:/usr/local/spark/conf/spark-defaults.conf:ro # Reuse spark config for S3/Hive access
+      - ./services/spark_jobs:/opt/bitnami/spark/jobs
+      - ./services/producer_simulator/producer_schema.avsc:/opt/bitnami/spark/jobs/producer_schema.avsc:ro
+      - ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      - ./metastore/core-site.xml:/opt/bitnami/spark/conf/core-site.xml
+      - ./metastore/hive-site.xml:/opt/bitnami/spark/conf/hive-site.xml
     environment:
-      JUPYTER_ENABLE_LAB: "yes"
-      # Configure Spark context to connect to our Spark Master
-      SPARK_MASTER: "spark://spark-master:7077"
-      # AWS credentials for MinIO access from within the notebook
+      KAFKA_BROKER: kafka:9092
+      KAFKA_TOPIC: dados_produtores
+      ICEBERG_WAREHOUSE: s3a://warehouse
+      ICEBERG_TABLE_NAME: bronze.dados_produtores_agro
       AWS_ACCESS_KEY_ID: admin
       AWS_SECRET_ACCESS_KEY: password
-      # This is crucial for boto3/s3fs to find MinIO
-      AWS_S3_ENDPOINT_URL: "http://minio:9000"
-      # Disable token for local development
-      JUPYTER_TOKEN: ""
-      NB_UID: 1000
-      NB_GID: 100
-      CHOWN_HOME: "yes"
-      CHOWN_HOME_OPTS: "-R"
+      AWS_S3_ENDPOINT_URL: http://minio:9000
+      AWS_REGION: us-east-1
+      AWS_DEFAULT_REGION: us-east-1
+      PYTHONPATH: /opt/bitnami/spark/python:/opt/bitnami/spark/python/lib/pyspark.zip:/opt/bitnami/spark/python/lib/py4j-0.10.9.7-src.zip
+    command:
+      - /bin/bash
+      - -c
+      - |
+        echo "Setting up environment..."
+        export AWS_REGION=us-east-1
+        export AWS_DEFAULT_REGION=us-east-1
+        export AWS_ACCESS_KEY_ID=admin
+        export AWS_SECRET_ACCESS_KEY=password
+        
+        echo "Ensuring file permissions..."
+        chmod +x /opt/bitnami/spark/jobs/ingestion_to_iceberg.py
+        
+        echo "Waiting for dependencies..."
+        sleep 30
+        
+        echo "Starting Spark job with Iceberg..."
+        cd /opt/bitnami/spark/jobs
+        
+        /opt/bitnami/spark/bin/spark-submit \
+          --master spark://spark-master:7077 \
+          --deploy-mode client \
+          --packages org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262,org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.spark:spark-avro_2.12:3.5.0 \
+          --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
+          --conf spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkCatalog \
+          --conf spark.sql.catalog.spark_catalog.type=hive \
+          --conf spark.sql.catalog.spark_catalog.uri=thrift://metastore:9083 \
+          --conf spark.sql.catalog.spark_catalog.warehouse=s3a://warehouse \
+          --conf spark.sql.catalog.spark_catalog.io-impl=org.apache.iceberg.hadoop.HadoopFileIO \
+          --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000 \
+          --conf spark.hadoop.fs.s3a.access.key=admin \
+          --conf spark.hadoop.fs.s3a.secret.key=password \
+          --conf spark.hadoop.fs.s3a.path.style.access=true \
+          --conf spark.hadoop.fs.s3a.aws.credentials.provider=org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider \
+          --conf spark.hadoop.fs.s3a.region=us-east-1 \
+          --conf spark.hadoop.fs.s3a.bucket.all.region.lookup.disable=true \
+          --conf spark.hadoop.fs.s3a.signer.override=S3SignerType \
+          --conf spark.hadoop.fs.s3a.connection.ssl.enabled=false \
+          --conf spark.hadoop.fs.s3a.fast.upload=true \
+          --conf spark.hadoop.fs.s3a.multipart.size=67108864 \
+          --conf spark.hadoop.fs.s3a.fast.upload.buffer=bytebuffer \
+          --conf spark.driver.extraJavaOptions="-Daws.region=us-east-1" \
+          --conf spark.executor.extraJavaOptions="-Daws.region=us-east-1" \
+          ./ingestion_to_iceberg.py
+
+  kafka-cleaner:
+    image: confluentinc/cp-kafka:7.6.1
+    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+    platform: linux/amd64
+    container_name: kafka-cleaner
+    networks:
+      - data_pipeline_net
     depends_on:
-      - spark-master
-      - minio
-      - feast-serve
-      - trino-coordinator
+      - kafka
     command: >
       bash -c "
-        echo 'Installing additional packages...' &&
-        pip install --no-cache-dir 
-          feast[aws]==0.37.1 
-          boto3 
-          s3fs 
-          clickhouse-connect 
-          trino 
-          dbt-core 
-          dbt-clickhouse 
-          plotly 
-          seaborn &&
-        echo 'Fixing permissions...' &&
-        fix-permissions /home/jovyan &&
-        echo 'Starting Jupyter Lab...' &&
-        start-notebook.sh --NotebookApp.token='' --NotebookApp.password='' --ServerApp.disable_check_xsrf=True
+        echo 'Waiting for Kafka to be ready...' &&
+        sleep 15 &&
+        echo 'Deleting Kafka topic: dados_produtores...' &&
+        kafka-topics --bootstrap-server kafka:9092 --delete --topic dados_produtores --if-exists &&
+        echo 'Topic deleted. Creating a new one...' &&
+        kafka-topics --bootstrap-server kafka:9092 --create --topic dados_produtores --partitions 3 --replication-factor 1 &&
+        echo 'Topic created successfully.'
       "
-
-  # Druid Services - Minimal setup
-  # Zookeeper is already defined above and will be shared
-  mariadb-druid: # MariaDB for Druid Metadata
-    image: mariadb:10.11
-    container_name: mariadb-druid
-    networks:
-      - data_pipeline_net
-    ports:
-      - "3307:3306" # Different port to avoid conflict with Hive MariaDB
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: druid
-      MYSQL_USER: druid
-      MYSQL_PASSWORD: druid
-    volumes:
-      - mariadb_druid_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
-      start_period: 20s
-      interval: 10s
-      timeout: 10s
-      retries: 10
-
-  druid-coordinator:
-    image: apache/druid:29.0.0 # Updated to a recent, multi-arch version
-    container_name: druid-coordinator
-    networks:
-      - data_pipeline_net
-    ports:
-      # - "8081:8081" # Druid Coordinator Console (Port conflict with Spark Worker, remapping)
-      #                # Let's map Druid Coordinator to 8091
-      - "8091:8081"
-    depends_on:
-      - zookeeper
-      - mariadb-druid
-    environment:
-      druid.zk.service.host: zookeeper
-      druid.metadata.storage.type: mysql
-      druid.metadata.storage.connector.connectURI: "jdbc:mysql://mariadb-druid:3306/druid"
-      druid.metadata.storage.connector.user: druid
-      druid.metadata.storage.connector.password: druid
-      druid.coordinator.balancer.strategy: "cost"
-      druid.coordinator.period: PT30S
-      # For S3/MinIO deep storage
-      druid.storage.type: s3
-      druid.storage.bucket: druid # Create this bucket in MinIO
-      druid.storage.baseKey: segments/
-      druid.s3.accessKey: admin
-      druid.s3.secretKey: password
-      druid.s3.protocol: http
-      druid.s3.endpoint.url: "http://minio:9000" # Full URL for recent versions
-      # For Kafka Indexing Service
-      druid.extensions.loadList: '["druid-kafka-indexing-service", "druid-s3-extensions", "mysql-metadata-storage"]'
-    volumes:
-      - druid_coordinator_data:/opt/druid/var
-
-  druid-broker:
-    image: apache/druid:29.0.0
-    container_name: druid-broker
-    networks:
-      - data_pipeline_net
-    ports:
-      - "8082:8082" # Druid Broker (Port conflict with Spark Master UI if it were 8080, but it's 8082)
-                     # Let's map Druid Broker to 8092
-      - "8092:8082"
-    depends_on:
-      - zookeeper
-      - druid-coordinator
-    environment:
-      druid.zk.service.host: zookeeper
-      druid.broker.cache.populateCache: "true"
-      druid.broker.cache.useCache: "true"
-      druid.broker.cache.node.size: 10000000
-      druid.extensions.loadList: '["druid-kafka-indexing-service", "druid-s3-extensions", "mysql-metadata-storage"]'
-
-
-  druid-router:
-    image: apache/druid:29.0.0
-    container_name: druid-router
-    networks:
-      - data_pipeline_net
-    ports:
-      - "8889:8888" # Druid Router (Unified Query Console), remapped to avoid conflict with Jupyter
-    depends_on:
-      - zookeeper
-      - druid-broker
-      - druid-coordinator
-    environment:
-      druid.zk.service.host: zookeeper
-      druid.router.defaultBrokerServiceName: "druid/broker"
-      druid.router.coordinatorServiceName: "druid/coordinator"
-      druid.extensions.loadList: '["druid-kafka-indexing-service", "druid-s3-extensions", "mysql-metadata-storage"]'
-
-  druid-historical:
-    image: apache/druid:29.0.0
-    container_name: druid-historical
-    networks:
-      - data_pipeline_net
-    ports: # No public ports needed typically, but can expose for debugging
-      - "8083:8083" # Druid Historical (Port conflict with Feast HTTP if enabled, remapping)
-                     # Let's map Druid Historical to 8093
-      - "8093:8083"
-    depends_on:
-      - zookeeper
-      - druid-coordinator
-    environment:
-      druid.zk.service.host: zookeeper
-      druid.segmentCache.locations: '[{"path":"/opt/druid/var/druid/segment-cache","maxSize":10000000000}]'
-      druid.server.maxSize: 10000000000 # Should be sum of segmentCache.locations.maxSize
-      # For S3/MinIO deep storage
-      druid.storage.type: s3
-      druid.storage.bucket: druid
-      druid.storage.baseKey: segments/
-      druid.s3.accessKey: admin
-      druid.s3.secretKey: password
-      druid.s3.protocol: http
-      druid.s3.endpoint.url: "http://minio:9000"
-      druid.extensions.loadList: '["druid-kafka-indexing-service", "druid-s3-extensions", "mysql-metadata-storage"]'
-    volumes:
-      - druid_historical_data:/opt/druid/var
-
-  druid-middlemanager: # For running ingestion tasks like Kafka indexing
-    image: apache/druid:29.0.0
-    container_name: druid-middlemanager
-    networks:
-      - data_pipeline_net
-    ports: # No public ports needed typically
-      - "8090:8090" # Druid MiddleManager (Port conflict with ClickHouse HTTP if it were 8123, but it's 8090)
-                     # Let's map Druid MiddleManager to 8094
-      - "8094:8090"
-    depends_on:
-      - zookeeper
-      - druid-coordinator
-    environment:
-      druid.zk.service.host: zookeeper
-      druid.indexer.runner.type: remote
-      druid.indexer.storage.type: metadata # Using metadata for tasks, not local
-      # For S3/MinIO deep storage
-      druid.storage.type: s3
-      druid.storage.bucket: druid
-      druid.storage.baseKey: segments/
-      druid.s3.accessKey: admin
-      druid.s3.secretKey: password
-      druid.s3.protocol: http
-      druid.s3.endpoint.url: "http://minio:9000"
-      druid.extensions.loadList: '["druid-kafka-indexing-service", "druid-s3-extensions", "mysql-metadata-storage"]'
-      # For Kafka Indexing Service
-      druid.kafka.consumer.properties: '{"bootstrap.servers": "kafka:9092"}'
-      druid.middleManager.worker.maxInstances: 2 # Number of peon tasks
-    volumes:
-      - druid_middlemanager_data:/opt/druid/var
-      - ./services/druid:/opt/druid/ingestion # Mount ingestion specs
-
-  superset:
-    image: apache/superset:3.1.1 # Pinned to a specific version for stability
-    container_name: superset
-    networks:
-      - data_pipeline_net
-    ports:
-      - "8089:8088" # Superset Web UI (remapped to avoid conflict with Trino UI)
-    depends_on:
-      - clickhouse
-      - trino-coordinator
-      # - druid-broker # Superset will connect to Druid broker
-    environment:
-      ADMIN_USERNAME: admin
-      ADMIN_EMAIL: admin@superset.com
-      ADMIN_PASSWORD: admin
-      SUPERSET_SECRET_KEY: "a_very_secret_key_for_superset" # Change in production
-      # For Postgres backend (optional, default is SQLite)
-      DB_HOST: superset-db
-      DB_PORT: 5432
-      DB_USER: superset
-      DB_PASS: superset
-      DB_NAME: superset
-      PYTHONPATH: "/app/pythonpath" # For custom DB drivers if needed
-      SUPERSET_LOAD_EXAMPLES: "no" # Don't load example data
-    volumes:
-      - superset_data:/app/superset_home # Persist Superset metadata (SQLite DB by default)
-      - ./superset_config.py:/app/superset_config.py # For advanced configuration
-    command: >
-      bash -c "superset db upgrade && \
-               superset init && \
-               superset load_examples && \ # If you want examples
-               gunicorn --bind 0.0.0.0:8088 --workers 2 --timeout 60 'superset.app:create_app()'"
-    # The default entrypoint handles initialization. `superset_config.py` can enable features.
+    restart: on-failure
 
   producer-simulator:
     build:
       context: ./services/producer_simulator
+    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+    platform: linux/amd64
     container_name: producer-simulator
     networks:
       - data_pipeline_net
     depends_on:
       - kafka
-    # command: python producer.py # Assuming Dockerfile has CMD
-
-  ingestion-consumer:
-    build:
-      context: ./services/ingestion_consumer
-    container_name: ingestion-consumer
-    networks:
-      - data_pipeline_net
-    depends_on:
-      - kafka
-      - minio
     environment:
       KAFKA_BROKER: kafka:9092
-      MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: admin
-      MINIO_SECRET_KEY: password
       KAFKA_TOPIC: dados_produtores
-      MINIO_BUCKET: bronze
-    # command: python consumer.py # Assuming Dockerfile has CMD
+      
+  # SERVIÇOS COMENTADOS PRESERVADOS ABAIXO
 
-  # dbt service - for running dbt commands, typically manually or via setup.sh
-  dbt:
-    # Using Python base image and installing dbt-clickhouse manually
-    image: python:3.9-slim
-    container_name: dbt-clickhouse
-    networks:
-      - data_pipeline_net
-    volumes:
-      - ./dbt_project:/usr/app/dbt_project # Mount dbt project
-      - ./profiles.yml:/root/.dbt/profiles.yml # Mount profiles for dbt
-    working_dir: /usr/app/dbt_project
-    depends_on:
-      - clickhouse
-    command: >
-      bash -c "
-        echo 'Installing system dependencies...' &&
-        apt-get update && apt-get install -y --no-install-recommends 
-          gcc g++ curl git && 
-        rm -rf /var/lib/apt/lists/* &&
-        echo 'Installing dbt-clickhouse and dependencies...' &&
-        pip install --no-cache-dir dbt-core==1.8.2 dbt-clickhouse==1.8.2 &&
-        echo 'dbt version:' && dbt --version &&
-        echo 'dbt-clickhouse installed successfully. Container ready for exec commands.' &&
-        tail -f /dev/null
-      "
+  # clickhouse:
+  #   image: clickhouse/clickhouse-server:24.5
+  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+  #   platform: linux/amd64
+  #   container_name: clickhouse
+  #   networks:
+  #     - data_pipeline_net
+  #   ports:
+  #     - "8123:8123"
+  #     - "9004:9000"
+  #   volumes:
+  #     - clickhouse_data:/var/lib/clickhouse
+  #     - ./clickhouse_config/config.xml:/etc/clickhouse-server/config.xml
+  #     - ./clickhouse_config/users.xml:/etc/clickhouse-server/users.xml
+  #   ulimits:
+  #     nofile:
+  #       soft: 262144
+  #       hard: 262144
+
+  # redis:
+  #   image: redis:7-alpine
+  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+  #   platform: linux/amd64
+  #   container_name: redis
+  #   networks:
+  #     - data_pipeline_net
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  # feast-serve:
+  #   image: python:3.9-slim
+  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+  #   platform: linux/amd64
+  #   container_name: feast-serve
+  #   restart: unless-stopped
+  #   networks:
+  #     - data_pipeline_net
+  #   ports:
+  #     - "6565:6565"
+  #     - "6566:6566"
+  #   volumes:
+  #     - ./feast_repo:/app/feast_repo
+  #   environment:
+  #     AWS_ACCESS_KEY_ID: admin
+  #     AWS_SECRET_ACCESS_KEY: password
+  #     AWS_S3_ENDPOINT_URL: http://minio:9000
+  #     FEAST_USAGE: "False"
+  #   working_dir: /app/feast_repo
+  #   command: >
+  #     bash -c "
+  #       echo 'Installing system dependencies...' &&
+  #       apt-get update && apt-get install -y --no-install-recommends 
+  #         gcc g++ curl netcat-openbsd && 
+  #       rm -rf /var/lib/apt/lists/* &&
+  #       echo 'Installing Feast and dependencies...' &&
+  #       pip install --no-cache-dir feast[aws]==0.37.1 boto3 &&
+  #       echo 'Feast version:' && feast version &&
+  #       echo 'Starting Feast server...' &&
+  #       feast serve --host 0.0.0.0 --port 6566
+  #     "
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #     minio:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "nc -z localhost 6566 || exit 1"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 60s
+
+  # jupyter-lab:
+  #   image: jupyter/all-spark-notebook:latest
+  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+  #   platform: linux/amd64
+  #   container_name: jupyter-lab
+  #   user: root
+  #   networks:
+  #     - data_pipeline_net
+  #   ports:
+  #     - "8888:8888"
+  #   volumes:
+  #     - ./notebooks:/home/jovyan/work
+  #     - ./spark-defaults.conf:/usr/local/spark/conf/spark-defaults.conf:ro
+  #   environment:
+  #     JUPYTER_ENABLE_LAB: "yes"
+  #     SPARK_MASTER: "spark://spark-master:7077"
+  #     AWS_ACCESS_KEY_ID: admin
+  #     AWS_SECRET_ACCESS_KEY: password
+  #     AWS_S3_ENDPOINT_URL: "http://minio:9000"
+  #     JUPYTER_TOKEN: ""
+  #     NB_UID: 1000
+  #     NB_GID: 100
+  #     CHOWN_HOME: "yes"
+  #     CHOWN_HOME_OPTS: "-R"
+  #   depends_on:
+  #     - spark-master
+  #     - minio
+  #     - feast-serve
+  #     - trino
+  #   command: >
+  #     bash -c "
+  #       echo 'Installing additional packages...' &&
+  #       pip install --no-cache-dir 
+  #         feast[aws]==0.37.1 
+  #         boto3 
+  #         s3fs 
+  #         clickhouse-connect 
+  #         trino 
+  #         dbt-core 
+  #         dbt-clickhouse 
+  #         plotly 
+  #         seaborn &&
+  #       echo 'Fixing permissions...' &&
+  #       fix-permissions /home/jovyan &&
+  #       echo 'Starting Jupyter Lab...' &&
+  #       start-notebook.sh --NotebookApp.token='' --NotebookApp.password='' --ServerApp.disable_check_xsrf=True
+  #     "
+
+  # superset:
+  #   image: apache/superset:3.1.1
+  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+  #   platform: linux/amd64
+  #   container_name: superset
+  #   networks:
+  #     - data_pipeline_net
+  #   ports:
+  #     - "8089:8088"
+  #   depends_on:
+  #     - clickhouse
+  #     - trino
+  #   environment:
+  #     ADMIN_USERNAME: admin
+  #     ADMIN_EMAIL: admin@superset.com
+  #     ADMIN_PASSWORD: admin
+  #     SUPERSET_SECRET_KEY: "a_very_secret_key_for_superset"
+  #     DB_HOST: superset-db
+  #     DB_PORT: 5432
+  #     DB_USER: superset
+  #     DB_PASS: superset
+  #     DB_NAME: superset
+  #     PYTHONPATH: "/app/pythonpath"
+  #     SUPERSET_LOAD_EXAMPLES: "no"
+  #   volumes:
+  #     - superset_data:/app/superset_home
+  #     - ./superset_config.py:/app/superset_config.py
+  #   command: >
+  #     bash -c "superset db upgrade && \
+  #               superset init && \
+  #               gunicorn --bind 0.0.0.0:8088 --workers 2 --timeout 60 'superset.app:create_app()'"
+
+  # dbt:
+  #   image: python:3.9-slim
+  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
+  #   platform: linux/amd64
+  #   container_name: dbt-clickhouse
+  #   networks:
+  #     - data_pipeline_net
+  #   volumes:
+  #     - ./dbt_project:/usr/app/dbt_project
+  #     - ./profiles.yml:/root/.dbt/profiles.yml
+  #   working_dir: /usr/app/dbt_project
+  #   depends_on:
+  #     - clickhouse
+  #   command: >
+  #     bash -c "
+  #       echo 'Installing system dependencies...' &&
+  #       apt-get update && apt-get install -y --no-install-recommends 
+  #         gcc g++ curl git && 
+  #       rm -rf /var/lib/apt/lists/* &&
+  #       echo 'Installing dbt-clickhouse and dependencies...' &&
+  #       pip install --no-cache-dir dbt-core==1.8.2 dbt-clickhouse==1.8.2 &&
+  #       echo 'dbt version:' && dbt --version &&
+  #       echo 'dbt-clickhouse installed successfully. Container ready for exec commands.' &&
+  #       tail -f /dev/null
+  #     "
 
 volumes:
   minio_data:
-  mariadb_hive_data:
-  mariadb_druid_data:
+  metastore-db:
   clickhouse_data:
   redis_data:
   superset_data:
-  druid_coordinator_data:
-  druid_historical_data:
-  druid_middlemanager_data:
-  notebook_data: # Persists notebook work if not mounting a local directory
-
-# Placeholder for spark-defaults.conf, clickhouse_config/*, trino_config/*
-# These will be created in subsequent steps.
-# We need to create dummy files for Docker Compose to not fail on volume mounts if they are essential at build/up time.
-# However, for config files, they are usually mounted at runtime.
-
-# Note on Druid Metadata DB:
-# The Druid services are configured to use a MariaDB database named 'druid'
-# with user 'druid' and password 'druid'.
-# This database is created automatically by MariaDB when the container starts.
-
-# Note on Spark MinIO/S3 and Hive Metastore Configuration:
-# A `spark-defaults.conf` file will be created and mounted into Spark containers.
-# It should contain:
-# spark.hadoop.fs.s3a.endpoint http://minio:9000
-# spark.hadoop.fs.s3a.access.key admin
-# spark.hadoop.fs.s3a.secret.key password
-# spark.hadoop.fs.s3a.path.style.access true
-# spark.hadoop.fs.s3a.impl org.apache.hadoop.fs.s3a.S3AFileSystem
-# spark.sql.catalogImplementation hive
-# spark.hive.metastore.uris thrift://hive-metastore:9083
-
-# Note on Trino Catalogs:
-# Files like `hive.properties` and `clickhouse.properties` need to be in `./trino_config/catalog/`
-# Example `hive.properties`:
-# connector.name=hive
-# hive.metastore.uri=thrift://hive-metastore:9083
-# hive.s3.endpoint=http://minio:9000
-# hive.s3.aws-access-key=admin
-# hive.s3.aws-secret-key=password
-# hive.s3.path-style-access=true
-
-# Example `clickhouse.properties`:
-# connector.name=clickhouse
-# connection-url=jdbc:clickhouse://clickhouse:8123/default
-# connection-user=default # Or your ClickHouse user
-# connection-password= # Your ClickHouse password if set
-
-# Note on ClickHouse S3/MinIO Configuration:
-# A `config.xml` (or a file included by it) for ClickHouse should define a disk or policy for S3.
-# Example for S3 disk in `config.xml` or a separate file in `config.d`:
-# <yandex>
-#  <storage_configuration>
-#    <disks>
-#      <s3_disk>
-#        <type>s3</type>
-#        <endpoint>http://minio:9000/clickhouse_data/</endpoint> <!-- Bucket and path prefix -->
-#        <access_key_id>admin</access_key_id>
-#        <secret_access_key>password</secret_access_key>
-#        <use_environment_credentials>false</use_environment_credentials>
-#        <header>x-amz-acl,public-read</header> <!-- Optional: for public access -->
-#      </s3_disk>
-#    </disks>
-#    <policies>
-#      <s3_policy>
-#        <volumes>
-#          <main>
-#            <disk>s3_disk</disk>
-#          </main>
-#        </volumes>
-#      </s3_policy>
-#    </policies>
-#  </storage_configuration>
-# </yandex>
-# This allows `CREATE TABLE ... ON CLUSTER default SETTINGS storage_policy = 's3_policy'`
-
-# Note on Feast `feature_store.yaml` and `REDIS_HOST/PORT`:
-# The `feast-serve` environment variables `REDIS_HOST` and `REDIS_PORT` are illustrative.
-# Feast's `feature_store.yaml` would directly use these or similar configurations:
-# online_store:
-#   type: redis
-#   connection_string: "redis:6379" # or host: redis, port: 6379
-
-# General Port Management:
-# - Kafka: 9092 (internal), 29092 (external example)
-# - MinIO: 9000 (API), 9001 (Console)
-# - MariaDB Hive: 3306
-# - MariaDB Druid: 3307 (host port, internal is 3306)
-# - Hive Metastore: 9083
-# - Spark Master: 8080 (UI), 7077 (Master)
-# - Spark Worker: 8081 (UI)
-# - ClickHouse: 8123 (HTTP), 9004 (Native TCP mapped from container 9000)
-# - Trino Coordinator: 8088 (UI/API mapped from container 8080)
-# - Redis: 6379
-# - Feast Serve: 6566 (gRPC), 6565 (HTTP)
-# - Druid Coordinator: 8091 (UI mapped from container 8081)
-# - Druid Broker: 8092 (API mapped from container 8082)
-# - Druid Router: 8889 (Query UI mapped from container 8888)
-# - Druid Historical: 8093 (API mapped from container 8083)
-# - Druid MiddleManager: 8094 (API mapped from container 8090)
-# - Superset: 8089 (UI mapped from container 8088)
-# - Jupyter Lab: 8888
-# - Kafka UI: 8085 (mapped from container 8080)
-# Ensure no host port conflicts. Remapping is done where potential conflicts were identified.
-# The producer/consumer services do not expose ports as they are event-driven or batch.
-# Zookeeper: 2181
