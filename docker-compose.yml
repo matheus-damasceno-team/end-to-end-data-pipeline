@@ -121,8 +121,14 @@ services:
       - "8080:8080"
     depends_on:
       - metastore
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/ui/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     extra_hosts:
       - "host.docker.internal:host-gateway"
+      - "trino:127.0.0.1"
 
   metastore-db:
     image: mariadb:10.5
@@ -158,11 +164,7 @@ services:
     networks:
       - data_pipeline_net
     entrypoint: /bin/bash
-    command: >
-      -c "
-        sleep 5;
-        /opt/hive/bin/schematool -dbType mysql -initSchema && echo 'Schema initialized successfully!';
-      "
+    command: ["/opt/hive/bin/init-schema.sh"]
     environment:
       - DB_DRIVER=mysql
     restart: "no"
