@@ -34,24 +34,29 @@ def create_minio_client():
         print(f"Error creating MinIO client: {e}")
         return None
 
-def create_kafka_consumer():
-    """Creates and returns a Kafka consumer."""
-    try:
-        consumer = KafkaConsumer(
-            KAFKA_TOPIC,
-            bootstrap_servers=KAFKA_BROKER,
-            auto_offset_reset='earliest',  # Start reading at the earliest message if no offset found
-            enable_auto_commit=True,       # Auto commit offsets
-            group_id=KAFKA_CONSUMER_GROUP,
-            value_deserializer=lambda x: json.loads(x.decode('utf-8')), # Deserialize JSON messages
-            consumer_timeout_ms=10000 # Timeout after 10s of no messages, to allow graceful shutdown
-        )
-        print(f"KafkaConsumer connected to {KAFKA_BROKER}, subscribed to topic '{KAFKA_TOPIC}' with group '{KAFKA_CONSUMER_GROUP}'")
-        return consumer
-    except Exception as e:
-        print(f"Error creating Kafka consumer: {e}")
-        # Consider retry logic or exiting
-        return None
+def create_kafka_consumer(max_retries=5, retry_delay=10):
+    """Creates and returns a Kafka consumer with retry logic."""
+    for attempt in range(max_retries):
+        try:
+            consumer = KafkaConsumer(
+                KAFKA_TOPIC,
+                bootstrap_servers=KAFKA_BROKER,
+                auto_offset_reset='earliest',  # Start reading at the earliest message if no offset found
+                enable_auto_commit=True,       # Auto commit offsets
+                group_id=KAFKA_CONSUMER_GROUP,
+                value_deserializer=lambda x: json.loads(x.decode('utf-8')), # Deserialize JSON messages
+                consumer_timeout_ms=10000 # Timeout after 10s of no messages, to allow graceful shutdown
+            )
+            print(f"KafkaConsumer connected to {KAFKA_BROKER}, subscribed to topic '{KAFKA_TOPIC}' with group '{KAFKA_CONSUMER_GROUP}'")
+            return consumer
+        except Exception as e:
+            print(f"Error creating Kafka consumer (attempt {attempt + 1}/{max_retries}): {e}")
+            if attempt < max_retries - 1:
+                print(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+            else:
+                print("Max retries reached. Could not create Kafka consumer.")
+                return None
 
 def upload_to_minio(client, bucket_name, object_name, data_bytes):
     """Uploads data (bytes) to a MinIO bucket."""
