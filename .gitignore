@@ -1,4 +1,5 @@
 .env
+airflow/logs/*
 dbt_iceberg/*
 services/dbt-trino/target/*
 services/dbt-trino/logs/*
