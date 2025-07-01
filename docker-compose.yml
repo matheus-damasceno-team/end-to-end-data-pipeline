@@ -670,25 +670,18 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
       # - ./airflow/config:/opt/airflow/config # Optional: if you have a custom airflow.cfg
-    entrypoint: /bin/bash
+    # Not overriding entrypoint, so it uses the image's default entrypoint
+    # which handles user setup based on AIRFLOW_UID.
     command:
+      - bash
       - -c
       - |
         set -e
-        # Ensure AIRFLOW_UID is set, default if not. The base Airflow image's entrypoint
-        # should handle user creation and switch to this user.
-        : "$${AIRFLOW_UID:=1000}"
-        echo "Airflow initialization script started. AIRFLOW_UID is set to $${AIRFLOW_UID}."
-        echo "The base image entrypoint is expected to handle user setup based on AIRFLOW_UID."
-
-        # Wait for the database to be ready.
-        # depends_on with service_healthy condition should cover this,
-        # but an explicit wait can be useful for diagnostics.
-        echo "Waiting for airflow-db at $${POSTGRES_HOST:-airflow-db}:$${POSTGRES_PORT:-5432}..."
-
+        echo "Airflow initialization: Waiting for database..."
+        # The default entrypoint should have set up the user.
+        # We still need to wait for DB before running airflow commands.
         timeout_duration=60 # seconds
         start_time=$$(date +%s)
-
         until nc -z "$${POSTGRES_HOST:-airflow-db}" "$${POSTGRES_PORT:-5432}"; do
           current_time=$$(date +%s)
           elapsed_time=$((current_time - start_time))
@@ -699,24 +692,21 @@ services:
           echo "PostgreSQL is unavailable - sleeping for 1 second..."
           sleep 1
         done
-        echo "PostgreSQL is up - proceeding with Airflow initialization."
+        echo "PostgreSQL is up."
 
         echo "Running 'airflow db upgrade'..."
-        # The Airflow commands should be executed by the user configured by the image's entrypoint (based on AIRFLOW_UID).
         airflow db upgrade
 
         echo "Creating Airflow admin user: $${_AIRFLOW_WWW_USER_USERNAME:-airflow}"
-        # Attempt to create the admin user. If it already exists, this command might fail gracefully or do nothing.
-        # The `|| true` or checking the exit code can make this more robust if needed.
         airflow users create \
           --username "$${_AIRFLOW_WWW_USER_USERNAME:-airflow}" \
           --password "$${_AIRFLOW_WWW_USER_PASSWORD:-airflow}" \
           --firstname "$${_AIRFLOW_WWW_USER_FIRSTNAME:-Airflow}" \
           --lastname "$${_AIRFLOW_WWW_USER_LASTNAME:-Admin}" \
           --email "$${_AIRFLOW_WWW_USER_EMAIL:-admin@example.com}" \
-          --role Admin || echo "Admin user already exists or command failed (which might be okay if user exists)."
+          --role Admin || echo "Admin user already exists or command failed (this might be okay if user exists)."
 
-        echo "Airflow initialization process complete."
+        echo "Airflow initialization process complete. Container will exit."
     restart: "no"
 
   airflow-webserver:
