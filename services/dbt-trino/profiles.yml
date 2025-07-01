@@ -1,0 +1,19 @@
+# profiles.yml para Trino com Iceberg
+agronegocio_iceberg:
+  target: dev
+  outputs:
+    dev:
+      type: trino
+      method: none  # sem autenticação
+      host: trino
+      port: 8080
+      catalog: iceberg  # Catálogo Iceberg configurado no Trino
+      schema: silver    # Schema padrão
+      user: trino
+      threads: 2
+      
+      # Configurações opcionais
+      http_scheme: http
+      session_properties:
+        query_max_run_time: 5m
+        exchange_compression: true
