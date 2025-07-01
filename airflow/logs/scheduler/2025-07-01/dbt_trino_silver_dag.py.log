@@ -1551,3 +1551,17 @@
 [2025-07-01T23:20:29.571+0000] {processor.py:840} INFO - DAG(s) 'dbt_trino_silver_pipeline' retrieved from /opt/airflow/dags/dbt_trino_silver_dag.py
 [2025-07-01T23:20:29.640+0000] {logging_mixin.py:188} INFO - [2025-07-01T23:20:29.640+0000] {dag.py:3089} INFO - Sync 1 DAGs
 [2025-07-01T23:20:29.699+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dbt_trino_silver_dag.py took 0.161 seconds
+[2025-07-01T23:20:59.770+0000] {processor.py:161} INFO - Started process (PID=962) to work on /opt/airflow/dags/dbt_trino_silver_dag.py
+[2025-07-01T23:20:59.771+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dbt_trino_silver_dag.py for tasks to queue
+[2025-07-01T23:20:59.774+0000] {logging_mixin.py:188} INFO - [2025-07-01T23:20:59.773+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dbt_trino_silver_dag.py
+[2025-07-01T23:20:59.789+0000] {processor.py:840} INFO - DAG(s) 'dbt_trino_silver_pipeline' retrieved from /opt/airflow/dags/dbt_trino_silver_dag.py
+[2025-07-01T23:20:59.818+0000] {logging_mixin.py:188} INFO - [2025-07-01T23:20:59.818+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2025-07-01T23:20:59.852+0000] {logging_mixin.py:188} INFO - [2025-07-01T23:20:59.852+0000] {dag.py:3947} INFO - Setting next_dagrun for dbt_trino_silver_pipeline to 2025-07-01 23:20:00+00:00, run_after=2025-07-01 23:22:00+00:00
+[2025-07-01T23:20:59.875+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dbt_trino_silver_dag.py took 0.118 seconds
+[2025-07-01T23:21:29.994+0000] {processor.py:161} INFO - Started process (PID=967) to work on /opt/airflow/dags/dbt_trino_silver_dag.py
+[2025-07-01T23:21:29.994+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dbt_trino_silver_dag.py for tasks to queue
+[2025-07-01T23:21:29.997+0000] {logging_mixin.py:188} INFO - [2025-07-01T23:21:29.996+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dbt_trino_silver_dag.py
+[2025-07-01T23:21:30.011+0000] {processor.py:840} INFO - DAG(s) 'dbt_trino_silver_pipeline' retrieved from /opt/airflow/dags/dbt_trino_silver_dag.py
+[2025-07-01T23:21:30.038+0000] {logging_mixin.py:188} INFO - [2025-07-01T23:21:30.038+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2025-07-01T23:21:30.065+0000] {logging_mixin.py:188} INFO - [2025-07-01T23:21:30.064+0000] {dag.py:3947} INFO - Setting next_dagrun for dbt_trino_silver_pipeline to 2025-07-01 23:20:00+00:00, run_after=2025-07-01 23:22:00+00:00
+[2025-07-01T23:21:30.094+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dbt_trino_silver_dag.py took 0.109 seconds
