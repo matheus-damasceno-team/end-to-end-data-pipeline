@@ -2,7 +2,7 @@
 airflow/logs/
 dbt_iceberg/*
 services/dbt-trino/target/
-dbt-trino/dbt_internal_packages/
+services/dbt-trino/dbt_internal_packages/
 services/dbt-trino/logs/
 airflow/dags/__pycache__/
 airflow/dags/dbt_trino_silver_dag.pyc
