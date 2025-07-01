@@ -261,75 +261,6 @@ services:
       SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
       SPARK_SSL_ENABLED: "no"
 
-  # ingestion-consumer:
-  #   image: bitnami/spark:3.5
-  #   platform: linux/amd64
-  #   container_name: ingestion-consumer
-  #   networks:
-  #     - data_pipeline_net
-  #   depends_on:
-  #     kafka:
-  #       condition: service_started
-  #     metastore:
-  #       condition: service_healthy
-  #     spark-master:
-  #       condition: service_started
-  #     mc:
-  #       condition: service_completed_successfully
-  #   volumes:
-  #     - ./services/spark_jobs:/opt/bitnami/spark/jobs
-  #     - ./services/producer_simulator/producer_schema.avsc:/opt/bitnami/spark/jobs/producer_schema.avsc:ro
-  #     - ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
-  #     - ./metastore/core-site.xml:/opt/bitnami/spark/conf/core-site.xml
-  #     - ./metastore/hive-site.xml:/opt/bitnami/spark/conf/hive-site.xml
-  #   environment:
-  #     KAFKA_BROKER: kafka:9092
-  #     KAFKA_TOPIC: dados_produtores
-  #     ICEBERG_WAREHOUSE: s3a://warehouse
-  #     ICEBERG_TABLE_NAME: bronze.dados_produtores_agro
-  #     AWS_ACCESS_KEY_ID: admin
-  #     AWS_SECRET_ACCESS_KEY: password
-  #     AWS_S3_ENDPOINT_URL: http://minio:9000
-  #     AWS_REGION: us-east-1
-  #     AWS_DEFAULT_REGION: us-east-1
-  #   command:
-  #     - /bin/bash
-  #     - -c
-  #     - |
-  #       echo "Setting up AWS environment variables..."
-  #       export AWS_REGION=us-east-1
-  #       export AWS_DEFAULT_REGION=us-east-1
-  #       export AWS_ACCESS_KEY_ID=admin
-  #       export AWS_SECRET_ACCESS_KEY=password
-        
-  #       echo "Waiting for all dependencies to be ready..."
-  #       sleep 30
-        
-  #       echo "Starting Spark job with Iceberg..."
-  #       /opt/bitnami/spark/bin/spark-submit \
-  #         --master spark://spark-master:7077 \
-  #         --packages org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262,org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.5.2,org.apache.iceberg:iceberg-aws-bundle:1.5.2,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.spark:spark-avro_2.12:3.5.0 \
-  #         --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
-  #         --conf spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkCatalog \
-  #         --conf spark.sql.catalog.spark_catalog.type=hive \
-  #         --conf spark.sql.catalog.spark_catalog.uri=thrift://metastore:9083 \
-  #         --conf spark.sql.catalog.spark_catalog.warehouse=s3a://warehouse \
-  #         --conf spark.sql.catalog.spark_catalog.io-impl=org.apache.iceberg.aws.s3.S3FileIO \
-  #         --conf spark.sql.catalog.spark_catalog.s3.endpoint=http://minio:9000 \
-  #         --conf spark.sql.catalog.spark_catalog.s3.path-style-access=true \
-  #         --conf spark.sql.catalog.spark_catalog.s3.access-key-id=admin \
-  #         --conf spark.sql.catalog.spark_catalog.s3.secret-access-key=password \
-  #         --conf spark.sql.catalog.spark_catalog.s3.region=us-east-1 \
-  #         --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000 \
-  #         --conf spark.hadoop.fs.s3a.access.key=admin \
-  #         --conf spark.hadoop.fs.s3a.secret.key=password \
-  #         --conf spark.hadoop.fs.s3a.path.style.access=true \
-  #         --conf spark.hadoop.fs.s3a.aws.credentials.provider=org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider \
-  #         --conf spark.hadoop.fs.s3a.region=us-east-1 \
-  #         --conf spark.hadoop.fs.s3a.bucket.all.region.lookup.disable=true \
-  #         --conf spark.hadoop.fs.s3a.signer.override=S3SignerType \
-  #         /opt/bitnami/spark/jobs/ingestion_to_iceberg.py
-
   ingestion-consumer:
     image: bitnami/spark:3.5
     platform: linux/amd64
@@ -441,336 +372,153 @@ services:
     environment:
       KAFKA_BROKER: kafka:9092
       KAFKA_TOPIC: dados_produtores
-      
-  # SERVIÇOS COMENTADOS PRESERVADOS ABAIXO
 
-  # clickhouse:
-  #   image: clickhouse/clickhouse-server:24.5
-  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
-  #   platform: linux/amd64
-  #   container_name: clickhouse
-  #   networks:
-  #     - data_pipeline_net
-  #   ports:
-  #     - "8123:8123"
-  #     - "9004:9000"
-  #   volumes:
-  #     - clickhouse_data:/var/lib/clickhouse
-  #     - ./clickhouse_config/config.xml:/etc/clickhouse-server/config.xml
-  #     - ./clickhouse_config/users.xml:/etc/clickhouse-server/users.xml
-  #   ulimits:
-  #     nofile:
-  #       soft: 262144
-  #       hard: 262144
-
-  # redis:
-  #   image: redis:7-alpine
-  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
-  #   platform: linux/amd64
-  #   container_name: redis
-  #   networks:
-  #     - data_pipeline_net
-  #   ports:
-  #     - "6379:6379"
-  #   volumes:
-  #     - redis_data:/data
-  #   healthcheck:
-  #     test: ["CMD", "redis-cli", "ping"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-
-  # feast-serve:
-  #   image: python:3.9-slim
-  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
-  #   platform: linux/amd64
-  #   container_name: feast-serve
-  #   restart: unless-stopped
-  #   networks:
-  #     - data_pipeline_net
-  #   ports:
-  #     - "6565:6565"
-  #     - "6566:6566"
-  #   volumes:
-  #     - ./feast_repo:/app/feast_repo
-  #   environment:
-  #     AWS_ACCESS_KEY_ID: admin
-  #     AWS_SECRET_ACCESS_KEY: password
-  #     AWS_S3_ENDPOINT_URL: http://minio:9000
-  #     FEAST_USAGE: "False"
-  #   working_dir: /app/feast_repo
-  #   command: >
-  #     bash -c "
-  #       echo 'Installing system dependencies...' &&
-  #       apt-get update && apt-get install -y --no-install-recommends 
-  #         gcc g++ curl netcat-openbsd && 
-  #       rm -rf /var/lib/apt/lists/* &&
-  #       echo 'Installing Feast and dependencies...' &&
-  #       pip install --no-cache-dir feast[aws]==0.37.1 boto3 &&
-  #       echo 'Feast version:' && feast version &&
-  #       echo 'Starting Feast server...' &&
-  #       feast serve --host 0.0.0.0 --port 6566
-  #     "
-  #   depends_on:
-  #     redis:
-  #       condition: service_healthy
-  #     minio:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "nc -z localhost 6566 || exit 1"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  #     start_period: 60s
-
-  # jupyter-lab:
-  #   image: jupyter/all-spark-notebook:latest
-  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
-  #   platform: linux/amd64
-  #   container_name: jupyter-lab
-  #   user: root
-  #   networks:
-  #     - data_pipeline_net
-  #   ports:
-  #     - "8888:8888"
-  #   volumes:
-  #     - ./notebooks:/home/jovyan/work
-  #     - ./spark-defaults.conf:/usr/local/spark/conf/spark-defaults.conf:ro
-  #   environment:
-  #     JUPYTER_ENABLE_LAB: "yes"
-  #     SPARK_MASTER: "spark://spark-master:7077"
-  #     AWS_ACCESS_KEY_ID: admin
-  #     AWS_SECRET_ACCESS_KEY: password
-  #     AWS_S3_ENDPOINT_URL: "http://minio:9000"
-  #     JUPYTER_TOKEN: ""
-  #     NB_UID: 1000
-  #     NB_GID: 100
-  #     CHOWN_HOME: "yes"
-  #     CHOWN_HOME_OPTS: "-R"
-  #   depends_on:
-  #     - spark-master
-  #     - minio
-  #     - feast-serve
-  #     - trino
-  #   command: >
-  #     bash -c "
-  #       echo 'Installing additional packages...' &&
-  #       pip install --no-cache-dir 
-  #         feast[aws]==0.37.1 
-  #         boto3 
-  #         s3fs 
-  #         clickhouse-connect 
-  #         trino 
-  #         dbt-core 
-  #         dbt-clickhouse 
-  #         plotly 
-  #         seaborn &&
-  #       echo 'Fixing permissions...' &&
-  #       fix-permissions /home/jovyan &&
-  #       echo 'Starting Jupyter Lab...' &&
-  #       start-notebook.sh --NotebookApp.token='' --NotebookApp.password='' --ServerApp.disable_check_xsrf=True
-  #     "
-
-  # superset:
-  #   image: apache/superset:3.1.1
-  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
-  #   platform: linux/amd64
-  #   container_name: superset
-  #   networks:
-  #     - data_pipeline_net
-  #   ports:
-  #     - "8089:8088"
-  #   depends_on:
-  #     - clickhouse
-  #     - trino
-  #   environment:
-  #     ADMIN_USERNAME: admin
-  #     ADMIN_EMAIL: admin@superset.com
-  #     ADMIN_PASSWORD: admin
-  #     SUPERSET_SECRET_KEY: "a_very_secret_key_for_superset"
-  #     DB_HOST: superset-db
-  #     DB_PORT: 5432
-  #     DB_USER: superset
-  #     DB_PASS: superset
-  #     DB_NAME: superset
-  #     PYTHONPATH: "/app/pythonpath"
-  #     SUPERSET_LOAD_EXAMPLES: "no"
-  #   volumes:
-  #     - superset_data:/app/superset_home
-  #     - ./superset_config.py:/app/superset_config.py
-  #   command: >
-  #     bash -c "superset db upgrade && \
-  #               superset init && \
-  #               gunicorn --bind 0.0.0.0:8088 --workers 2 --timeout 60 'superset.app:create_app()'"
-
-  # dbt:
-  #   image: python:3.9-slim
-  #   ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
-  #   platform: linux/amd64
-  #   container_name: dbt-clickhouse
-  #   networks:
-  #     - data_pipeline_net
-  #   volumes:
-  #     - ./dbt_project:/usr/app/dbt_project
-  #     - ./profiles.yml:/root/.dbt/profiles.yml
-  #   working_dir: /usr/app/dbt_project
-  #   depends_on:
-  #     - clickhouse
-  #   command: >
-  #     bash -c "
-  #       echo 'Installing system dependencies...' &&
-  #       apt-get update && apt-get install -y --no-install-recommends 
-  #         gcc g++ curl git && 
-  #       rm -rf /var/lib/apt/lists/* &&
-  #       echo 'Installing dbt-clickhouse and dependencies...' &&
-  #       pip install --no-cache-dir dbt-core==1.8.2 dbt-clickhouse==1.8.2 &&
-  #       echo 'dbt version:' && dbt --version &&
-  #       echo 'dbt-clickhouse installed successfully. Container ready for exec commands.' &&
-  #       tail -f /dev/null
-  #     "
-
-  airflow-db:
+  postgres:
     image: postgres:13
-    container_name: airflow-db
+    container_name: postgres
     platform: linux/amd64
     networks:
       - data_pipeline_net
     environment:
-      - POSTGRES_USER=${POSTGRES_USER:-airflow}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-airflow}
-      - POSTGRES_DB=${POSTGRES_DB:-airflow}
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow_password_here
+      - POSTGRES_DB=airflow
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8
     volumes:
-      - airflow_db_data:/var/lib/postgresql/data # Named volume defined below
+      - airflow_db_data:/var/lib/postgresql/data
     ports:
-      - "5433:5432" # Host:Container
+      - "5434:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-airflow} -d $${POSTGRES_DB:-airflow} -q"]
+      test: ["CMD-SHELL", "pg_isready -U airflow -d airflow -q"]
       interval: 10s
       timeout: 5s
       retries: 5
     restart: unless-stopped
 
+  airflow-webserver:
+    build:
+      context: ./services/airflow
+    container_name: airflow-webserver
+    platform: linux/amd64
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+      - data_pipeline_net
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow_password_here@postgres:5432/airflow
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__WEBSERVER__SECRET_KEY=your-secret-key
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=true
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW_UID=50000
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW__CORE__BASE_LOG_FOLDER=/opt/airflow/logs
+      - AIRFLOW__CORE__PLUGINS_FOLDER=/opt/airflow/plugins
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags:rw
+      - ./airflow/logs:/opt/airflow/logs:rw
+      - ./airflow/plugins:/opt/airflow/plugins:rw
+    ports:
+      - "8086:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    user: "50000:0"
+
+  airflow-scheduler:
+    build:
+      context: ./services/airflow
+    container_name: airflow-scheduler
+    platform: linux/amd64
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+      - data_pipeline_net
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow_password_here@postgres:5432/airflow
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=true
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW_UID=50000
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW__CORE__BASE_LOG_FOLDER=/opt/airflow/logs
+      - AIRFLOW__CORE__PLUGINS_FOLDER=/opt/airflow/plugins
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags:rw
+      - ./airflow/logs:/opt/airflow/logs:rw
+      - ./airflow/plugins:/opt/airflow/plugins:rw
+    command: scheduler
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname \"$(hostname)\" --limit 1 --allow-multiple || exit 1"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+    user: "50000:50000"
+
   airflow-init:
-    image: apache/airflow:2.8.1
+    build:
+      context: ./services/airflow
     container_name: airflow-init
     platform: linux/amd64
     depends_on:
-      airflow-db:
+      postgres:
         condition: service_healthy
     networks:
       - data_pipeline_net
-    env_file:
-      - .env
     environment:
-      - AIRFLOW_UID=${AIRFLOW_UID:-1000}
-      # Ensure SQL_ALCHEMY_CONN is correctly interpreted by entrypoint
-      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER:-airflow}:${POSTGRES_PASSWORD:-airflow}@airflow-db:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-airflow}
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow_password_here@postgres:5432/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW_UID=50000
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW__CORE__BASE_LOG_FOLDER=/opt/airflow/logs
+      - AIRFLOW__CORE__PLUGINS_FOLDER=/opt/airflow/plugins
     volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
-      # - ./airflow/config:/opt/airflow/config # Optional: if you have a custom airflow.cfg
-    # Not overriding entrypoint, so it uses the image's default entrypoint
-    # which handles user setup based on AIRFLOW_UID.
+      - ./airflow/dags:/opt/airflow/dags:rw
+      - ./airflow/logs:/opt/airflow/logs:rw
+      - ./airflow/plugins:/opt/airflow/plugins:rw
     command:
       - bash
       - -c
       - |
         set -e
-        echo "Airflow initialization: Waiting for database..."
-        # The default entrypoint should have set up the user.
-        # We still need to wait for DB before running airflow commands.
-        timeout_duration=60 # seconds
-        start_time=$$(date +%s)
-        until nc -z "$${POSTGRES_HOST:-airflow-db}" "$${POSTGRES_PORT:-5432}"; do
-          current_time=$$(date +%s)
-          elapsed_time=$((current_time - start_time))
-          if [ "$$elapsed_time" -ge "$$timeout_duration" ]; then
-            echo "Timeout waiting for PostgreSQL. Exiting."
-            exit 1
-          fi
-          echo "PostgreSQL is unavailable - sleeping for 1 second..."
-          sleep 1
-        done
-        echo "PostgreSQL is up."
-
-        echo "Running 'airflow db upgrade'..."
-        airflow db upgrade
-
-        echo "Creating Airflow admin user: $${_AIRFLOW_WWW_USER_USERNAME:-airflow}"
+        echo "Creating necessary directories..."
+        mkdir -p /opt/airflow/{dags,logs,plugins}
+        
+        echo "Checking Airflow version..."
+        airflow version
+        
+        echo "Initializing Airflow database..."
+        airflow db init
+        
+        echo "Creating admin user..."
         airflow users create \
-          --username "$${_AIRFLOW_WWW_USER_USERNAME:-airflow}" \
-          --password "$${_AIRFLOW_WWW_USER_PASSWORD:-airflow}" \
-          --firstname "$${_AIRFLOW_WWW_USER_FIRSTNAME:-Airflow}" \
-          --lastname "$${_AIRFLOW_WWW_USER_LASTNAME:-Admin}" \
-          --email "$${_AIRFLOW_WWW_USER_EMAIL:-admin@example.com}" \
-          --role Admin || echo "Admin user already exists or command failed (this might be okay if user exists)."
-
-        echo "Airflow initialization process complete. Container will exit."
+          --username airflow \
+          --password airflow \
+          --firstname Airflow \
+          --lastname Admin \
+          --email admin@example.com \
+          --role Admin
+        
+        echo "Listing users to confirm creation..."
+        airflow users list
+        
+        echo "Airflow initialization completed successfully!"
+    user: "50000:50000"
     restart: "no"
 
-  airflow-webserver:
-    image: apache/airflow:2.8.1
-    container_name: airflow-webserver
-    platform: linux/amd64
-    restart: unless-stopped
-    depends_on:
-      airflow-init:
-        condition: service_completed_successfully
-    networks:
-      - data_pipeline_net
-    env_file:
-      - .env
-    environment:
-      - AIRFLOW_UID=${AIRFLOW_UID:-1000}
-      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER:-airflow}:${POSTGRES_PASSWORD:-airflow}@airflow-db:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-airflow}
-      # AIRFLOW__CORE__EXECUTOR is already in .env
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
-      # - ./airflow/config/airflow.cfg:/opt/airflow/airflow.cfg # If using custom config
-    ports:
-      - "8081:8080" # Mapped to 8081 on host to avoid conflict with Trino's 8080
-    command: airflow webserver
-    healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
-    user: "${AIRFLOW_UID:-1000}" # Run as the specified UID
 
-  airflow-scheduler:
-    image: apache/airflow:2.8.1
-    container_name: airflow-scheduler
-    platform: linux/amd64
-    restart: unless-stopped
-    depends_on:
-      airflow-init:
-        condition: service_completed_successfully
-    networks:
-      - data_pipeline_net
-    env_file:
-      - .env
-    environment:
-      - AIRFLOW_UID=${AIRFLOW_UID:-1000}
-      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER:-airflow}:${POSTGRES_PASSWORD:-airflow}@airflow-db:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-airflow}
-      # AIRFLOW__CORE__EXECUTOR is already in .env
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
-      # - ./airflow/config/airflow.cfg:/opt/airflow/config/airflow.cfg # If using custom config
-    command: airflow scheduler
-    healthcheck:
-      # The official healthcheck for scheduler is more involved; this is a basic check
-      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname \"$$(hostname)\" --limit 1 --allow-multiple || exit 1"]
-      interval: 60s
-      timeout: 30s
-      retries: 5
-      start_period: 90s
-    user: "${AIRFLOW_UID:-1000}" # Run as the specified UID
 
 volumes:
   minio_data:

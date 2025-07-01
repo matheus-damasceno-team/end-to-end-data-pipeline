@@ -1,4 +1,0 @@
-# This file is intentionally left empty.
-# It's used to ensure that the 'airflow/logs' directory is tracked by Git,
-# as Git does not track empty directories.
-# Airflow task logs will be stored here when using local logging.
