@@ -7745,3 +7745,1869 @@ select
 [0m23:08:29.198521 [debug] [MainThread]: Command `dbt test` failed at 23:08:29.198244 after 10.80 seconds
 [0m23:08:29.199368 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x78e2e3be3820>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x78e2e1552910>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x78e2e0f6ec10>]}
 [0m23:08:29.199931 [debug] [MainThread]: Flushing usage events
+
+
+============================== 23:10:05.665108 | 78a5cd67-033f-41e3-a3eb-f45bb3b112e0 ==============================
+[0m23:10:05.665108 [info ] [MainThread]: Running with dbt=1.7.0
+[0m23:10:06.139116 [info ] [MainThread]: Registered adapter: trino=1.7.0
+[0m23:10:06.181587 [info ] [MainThread]: Unable to do partial parsing because config vars, config profile, or config target have changed
+[0m23:10:07.969689 [info ] [MainThread]: Iniciando execução do dbt com Trino/Iceberg
+[0m23:10:08.000278 [info ] [MainThread]: Execução finalizada
+[0m23:10:08.615162 [info ] [MainThread]: Found 1 model, 29 tests, 5 operations, 1 source, 0 exposures, 0 metrics, 541 macros, 0 groups, 0 semantic models
+[0m23:10:08.619651 [info ] [MainThread]: 
+[0m23:10:08.800752 [info ] [MainThread]: 
+[0m23:10:08.802003 [info ] [MainThread]: Running 4 on-run-start hooks
+[0m23:10:08.808326 [info ] [MainThread]: Iniciando execução do dbt com Trino/Iceberg
+[0m23:10:08.816931 [info ] [MainThread]: 1 of 4 START hook: agronegocio_iceberg.on-run-start.0 .......................... [RUN]
+[0m23:10:08.818076 [info ] [MainThread]: 1 of 4 OK hook: agronegocio_iceberg.on-run-start.0 ............................. [[32mOK[0m in 0.00s]
+[0m23:10:08.851240 [info ] [MainThread]: Schema bronze criado/verificado
+[0m23:10:08.853119 [info ] [MainThread]: 2 of 4 START hook: agronegocio_iceberg.on-run-start.1 .......................... [RUN]
+[0m23:10:08.853968 [info ] [MainThread]: 2 of 4 OK hook: agronegocio_iceberg.on-run-start.1 ............................. [[32mOK[0m in 0.00s]
+[0m23:10:08.872806 [info ] [MainThread]: Schema silver criado/verificado
+[0m23:10:08.874399 [info ] [MainThread]: 3 of 4 START hook: agronegocio_iceberg.on-run-start.2 .......................... [RUN]
+[0m23:10:08.875226 [info ] [MainThread]: 3 of 4 OK hook: agronegocio_iceberg.on-run-start.2 ............................. [[32mOK[0m in 0.00s]
+[0m23:10:08.894313 [info ] [MainThread]: Schema gold criado/verificado
+[0m23:10:08.896290 [info ] [MainThread]: 4 of 4 START hook: agronegocio_iceberg.on-run-start.3 .......................... [RUN]
+[0m23:10:08.897420 [info ] [MainThread]: 4 of 4 OK hook: agronegocio_iceberg.on-run-start.3 ............................. [[32mOK[0m in 0.00s]
+[0m23:10:08.898203 [info ] [MainThread]: 
+[0m23:10:08.900537 [info ] [MainThread]: Concurrency: 2 threads (target='dev')
+[0m23:10:08.901011 [info ] [MainThread]: 
+[0m23:10:08.909270 [info ] [Thread-1  ]: 1 of 1 START sql incremental model silver.silver_dados_produtores_agro_trino ... [RUN]
+[0m23:10:10.457069 [info ] [Thread-1  ]: 1 of 1 OK created sql incremental model silver.silver_dados_produtores_agro_trino  [[32mSUCCESS[0m in 1.55s]
+[0m23:10:10.460427 [info ] [MainThread]: 
+[0m23:10:10.460942 [info ] [MainThread]: Running 1 on-run-end hook
+[0m23:10:10.465043 [info ] [MainThread]: Execução finalizada
+[0m23:10:10.466301 [info ] [MainThread]: 1 of 1 START hook: agronegocio_iceberg.on-run-end.0 ............................ [RUN]
+[0m23:10:10.466956 [info ] [MainThread]: 1 of 1 OK hook: agronegocio_iceberg.on-run-end.0 ............................... [[32mOK[0m in 0.00s]
+[0m23:10:10.467588 [info ] [MainThread]: 
+[0m23:10:10.469946 [info ] [MainThread]: 
+[0m23:10:10.470418 [info ] [MainThread]: Finished running 1 incremental model, 5 hooks in 0 hours 0 minutes and 1.85 seconds (1.85s).
+[0m23:10:10.485571 [info ] [MainThread]: 
+[0m23:10:10.486187 [info ] [MainThread]: [32mCompleted successfully[0m
+[0m23:10:10.486879 [info ] [MainThread]: 
+[0m23:10:10.487553 [info ] [MainThread]: Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
+[0m23:10:16.730862 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2f2a949d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2f0830340>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2f0830d30>]}
+
+
+============================== 23:10:16.739356 | 8a9f5935-3611-4ff7-9819-1791c8387cbf ==============================
+[0m23:10:16.739356 [info ] [MainThread]: Running with dbt=1.7.0
+[0m23:10:16.740513 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'fail_fast': 'False', 'profiles_dir': '/dbt', 'log_path': '/dbt/logs', 'version_check': 'True', 'debug': 'False', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'log_format': 'default', 'introspect': 'True', 'invocation_command': 'dbt test --models silver.* --store-failures', 'static_parser': 'True', 'target_path': 'None', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'send_anonymous_usage_stats': 'True'}
+[0m23:10:17.059696 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '8a9f5935-3611-4ff7-9819-1791c8387cbf', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2f32b00a0>]}
+[0m23:10:17.186988 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '8a9f5935-3611-4ff7-9819-1791c8387cbf', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2f05f0fd0>]}
+[0m23:10:17.187767 [info ] [MainThread]: Registered adapter: trino=1.7.0
+[0m23:10:17.227036 [debug] [MainThread]: checksum: 8434eacd4ffdf0ca3ab22bf0e2d55b45306c9599613e842b959405abc489e606, vars: {}, profile: , target: , version: 1.7.0
+[0m23:10:17.262926 [info ] [MainThread]: Unable to do partial parsing because config vars, config profile, or config target have changed
+[0m23:10:17.263784 [debug] [MainThread]: previous checksum: 8434eacd4ffdf0ca3ab22bf0e2d55b45306c9599613e842b959405abc489e606, current checksum: 685b597d4d9f2ee92ab11f3fc0ef3b0b778d1974d46167ed0bf59ad13d69b161
+[0m23:10:17.264448 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'partial_parser', 'label': '8a9f5935-3611-4ff7-9819-1791c8387cbf', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2f045c160>]}
+[0m23:10:20.317729 [info ] [MainThread]: Iniciando execução do dbt com Trino/Iceberg
+[0m23:10:20.367148 [info ] [MainThread]: Execução finalizada
+[0m23:10:21.142927 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '8a9f5935-3611-4ff7-9819-1791c8387cbf', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2efca90d0>]}
+[0m23:10:21.178281 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '8a9f5935-3611-4ff7-9819-1791c8387cbf', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2efe63940>]}
+[0m23:10:21.179189 [info ] [MainThread]: Found 1 model, 29 tests, 5 operations, 1 source, 0 exposures, 0 metrics, 541 macros, 0 groups, 0 semantic models
+[0m23:10:21.179892 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '8a9f5935-3611-4ff7-9819-1791c8387cbf', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2f04fe7c0>]}
+[0m23:10:21.186208 [info ] [MainThread]: 
+[0m23:10:21.194280 [debug] [MainThread]: Acquiring new trino connection 'master'
+[0m23:10:21.200065 [debug] [ThreadPool]: Acquiring new trino connection 'list_iceberg'
+[0m23:10:21.249810 [debug] [ThreadPool]: Using trino connection "list_iceberg"
+[0m23:10:21.250612 [debug] [ThreadPool]: On list_iceberg: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "connection_name": "list_iceberg"} */
+
+    select schema_name
+    from "iceberg".INFORMATION_SCHEMA.schemata
+[0m23:10:21.251234 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m23:10:21.308997 [debug] [ThreadPool]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:21.310691 [debug] [ThreadPool]: On list_iceberg: Close
+[0m23:10:21.317468 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_iceberg, now list_iceberg_silver)
+[0m23:10:21.332120 [debug] [ThreadPool]: Acquiring new trino connection 'list_iceberg_silver_dbt_test__audit'
+[0m23:10:21.360828 [debug] [ThreadPool]: Using trino connection "list_iceberg_silver_dbt_test__audit"
+[0m23:10:21.362487 [debug] [ThreadPool]: Using trino connection "list_iceberg_silver"
+[0m23:10:21.364252 [debug] [ThreadPool]: On list_iceberg_silver: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "connection_name": "list_iceberg_silver"} */
+select
+      t.table_catalog as database,
+      t.table_name as name,
+      t.table_schema as schema,
+      case when mv.name is not null then 'materialized_view'
+           when t.table_type = 'BASE TABLE' then 'table'
+           when t.table_type = 'VIEW' then 'view'
+           else t.table_type
+      end as table_type
+    from "iceberg".INFORMATION_SCHEMA.tables t
+    left join (
+            select * from system.metadata.materialized_views
+            where catalog_name = 'iceberg'
+              and schema_name = 'silver') mv
+          on mv.catalog_name = t.table_catalog and mv.schema_name = t.table_schema and mv.name = t.table_name
+    where t.table_schema = 'silver'
+[0m23:10:21.364975 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m23:10:21.363387 [debug] [ThreadPool]: On list_iceberg_silver_dbt_test__audit: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "connection_name": "list_iceberg_silver_dbt_test__audit"} */
+select
+      t.table_catalog as database,
+      t.table_name as name,
+      t.table_schema as schema,
+      case when mv.name is not null then 'materialized_view'
+           when t.table_type = 'BASE TABLE' then 'table'
+           when t.table_type = 'VIEW' then 'view'
+           else t.table_type
+      end as table_type
+    from "iceberg".INFORMATION_SCHEMA.tables t
+    left join (
+            select * from system.metadata.materialized_views
+            where catalog_name = 'iceberg'
+              and schema_name = 'silver_dbt_test__audit') mv
+          on mv.catalog_name = t.table_catalog and mv.schema_name = t.table_schema and mv.name = t.table_name
+    where t.table_schema = 'silver_dbt_test__audit'
+[0m23:10:21.369738 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m23:10:21.588239 [debug] [ThreadPool]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:21.590854 [debug] [ThreadPool]: On list_iceberg_silver: ROLLBACK
+[0m23:10:21.591817 [debug] [ThreadPool]: On list_iceberg_silver: Close
+[0m23:10:21.680785 [debug] [ThreadPool]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:21.685825 [debug] [ThreadPool]: On list_iceberg_silver_dbt_test__audit: ROLLBACK
+[0m23:10:21.686553 [debug] [ThreadPool]: On list_iceberg_silver_dbt_test__audit: Close
+[0m23:10:21.697585 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '8a9f5935-3611-4ff7-9819-1791c8387cbf', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2efd08cd0>]}
+[0m23:10:21.698861 [debug] [MainThread]: On master: COMMIT
+[0m23:10:21.699829 [info ] [MainThread]: 
+[0m23:10:21.700761 [info ] [MainThread]: Running 4 on-run-start hooks
+[0m23:10:21.709829 [info ] [MainThread]: Iniciando execução do dbt com Trino/Iceberg
+[0m23:10:21.711012 [debug] [MainThread]: Writing injected SQL for node "operation.agronegocio_iceberg.agronegocio_iceberg-on-run-start-0"
+[0m23:10:21.720988 [info ] [MainThread]: 1 of 4 START hook: agronegocio_iceberg.on-run-start.0 .......................... [RUN]
+[0m23:10:21.722563 [info ] [MainThread]: 1 of 4 OK hook: agronegocio_iceberg.on-run-start.0 ............................. [[32mOK[0m in 0.00s]
+[0m23:10:21.741771 [debug] [MainThread]: Using trino connection "master"
+[0m23:10:21.742632 [debug] [MainThread]: On master: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "connection_name": "master"} */
+
+    
+    CREATE SCHEMA IF NOT EXISTS iceberg.bronze
+[0m23:10:21.743342 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m23:10:21.769763 [debug] [MainThread]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:21.772697 [info ] [MainThread]: Schema bronze criado/verificado
+[0m23:10:21.773848 [debug] [MainThread]: Writing injected SQL for node "operation.agronegocio_iceberg.agronegocio_iceberg-on-run-start-1"
+[0m23:10:21.775239 [info ] [MainThread]: 2 of 4 START hook: agronegocio_iceberg.on-run-start.1 .......................... [RUN]
+[0m23:10:21.776658 [info ] [MainThread]: 2 of 4 OK hook: agronegocio_iceberg.on-run-start.1 ............................. [[32mOK[0m in 0.00s]
+[0m23:10:21.786303 [debug] [MainThread]: Using trino connection "master"
+[0m23:10:21.787135 [debug] [MainThread]: On master: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "connection_name": "master"} */
+
+    
+    CREATE SCHEMA IF NOT EXISTS iceberg.silver
+[0m23:10:21.812045 [debug] [MainThread]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:21.814903 [info ] [MainThread]: Schema silver criado/verificado
+[0m23:10:21.816085 [debug] [MainThread]: Writing injected SQL for node "operation.agronegocio_iceberg.agronegocio_iceberg-on-run-start-2"
+[0m23:10:21.817548 [info ] [MainThread]: 3 of 4 START hook: agronegocio_iceberg.on-run-start.2 .......................... [RUN]
+[0m23:10:21.818689 [info ] [MainThread]: 3 of 4 OK hook: agronegocio_iceberg.on-run-start.2 ............................. [[32mOK[0m in 0.00s]
+[0m23:10:21.828483 [debug] [MainThread]: Using trino connection "master"
+[0m23:10:21.829343 [debug] [MainThread]: On master: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "connection_name": "master"} */
+
+    
+    CREATE SCHEMA IF NOT EXISTS iceberg.gold
+[0m23:10:21.846526 [debug] [MainThread]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:21.848307 [info ] [MainThread]: Schema gold criado/verificado
+[0m23:10:21.849593 [debug] [MainThread]: Writing injected SQL for node "operation.agronegocio_iceberg.agronegocio_iceberg-on-run-start-3"
+[0m23:10:21.850436 [info ] [MainThread]: 4 of 4 START hook: agronegocio_iceberg.on-run-start.3 .......................... [RUN]
+[0m23:10:21.851367 [info ] [MainThread]: 4 of 4 OK hook: agronegocio_iceberg.on-run-start.3 ............................. [[32mOK[0m in 0.00s]
+[0m23:10:21.851987 [info ] [MainThread]: 
+[0m23:10:21.852619 [debug] [MainThread]: On master: Close
+[0m23:10:21.854206 [info ] [MainThread]: Concurrency: 2 threads (target='dev')
+[0m23:10:21.854929 [info ] [MainThread]: 
+[0m23:10:21.868561 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac
+[0m23:10:21.869221 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788
+[0m23:10:21.869725 [info ] [Thread-1  ]: 1 of 29 START test accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE  [RUN]
+[0m23:10:21.870464 [info ] [Thread-2  ]: 2 of 29 START test accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO  [RUN]
+[0m23:10:21.871552 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly list_iceberg_silver_dbt_test__audit, now test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac)
+[0m23:10:21.872438 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly list_iceberg_silver, now test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788)
+[0m23:10:21.872951 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac
+[0m23:10:21.873472 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788
+[0m23:10:21.880682 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac"
+[0m23:10:21.886616 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788"
+[0m23:10:21.887689 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac (compile): 23:10:21.873793 => 23:10:21.887285
+[0m23:10:21.888226 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788 (compile): 23:10:21.881105 => 23:10:21.887947
+[0m23:10:21.888704 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac
+[0m23:10:21.889214 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788
+[0m23:10:21.912212 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_fef4c7b11f8d09d64b06313a16344134"
+[0m23:10:21.918962 [debug] [Thread-2  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_b5b1b95c0c1a169a7c112b782ea393ae"
+[0m23:10:21.942524 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788"
+[0m23:10:21.943581 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac"
+[0m23:10:21.944178 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_b5b1b95c0c1a169a7c112b782ea393ae"
+[0m23:10:21.944664 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_fef4c7b11f8d09d64b06313a16344134"
+      
+      
+    as (
+      
+    
+    
+
+with all_values as (
+
+    select
+        classificacao_propriedade as value_field,
+        count(*) as n_records
+
+    from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+    group by classificacao_propriedade
+
+)
+
+select *
+from all_values
+where value_field not in (
+    'MINIFUNDIO','PEQUENA','MEDIA','GRANDE'
+)
+
+
+
+    )
+[0m23:10:21.945113 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:21.945714 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:21.991641 [debug] [Thread-1  ]: Trino adapter: Trino query id: 20250701_231021_00263_ivifs
+[0m23:10:21.992636 [debug] [Thread-1  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'classificacao_propriedade' cannot be resolved", query_id=20250701_231021_00263_ivifs)
+[0m23:10:21.993909 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac (execute): 23:10:21.889516 => 23:10:21.993307
+[0m23:10:21.994812 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac: ROLLBACK
+[0m23:10:21.995776 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac: Close
+[0m23:10:22.001259 [debug] [Thread-1  ]: Database Error in test accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'classificacao_propriedade' cannot be resolved", query_id=20250701_231021_00263_ivifs)
+[0m23:10:22.002679 [error] [Thread-1  ]: 1 of 29 ERROR accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE  [[31mERROR[0m in 0.13s]
+[0m23:10:22.004336 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac
+[0m23:10:22.005400 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1
+[0m23:10:22.006570 [info ] [Thread-1  ]: 3 of 29 START test accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO  [RUN]
+[0m23:10:22.008225 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE.6c321b1cac, now test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1)
+[0m23:10:22.009220 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1
+[0m23:10:22.022998 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1"
+[0m23:10:22.025087 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1 (compile): 23:10:22.009771 => 23:10:22.024457
+[0m23:10:22.025944 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1
+[0m23:10:22.033452 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_75e9ca02621bb5b3ac89aa10a8ab86c4"
+[0m23:10:22.039623 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1"
+[0m23:10:22.040976 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_75e9ca02621bb5b3ac89aa10a8ab86c4"
+      
+      
+    as (
+      
+    
+    
+
+with all_values as (
+
+    select
+        faixa_risco_credito as value_field,
+        count(*) as n_records
+
+    from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+    group by faixa_risco_credito
+
+)
+
+select *
+from all_values
+where value_field not in (
+    'SEM_SCORE','MUITO_ALTO','ALTO','MEDIO','BAIXO'
+)
+
+
+
+    )
+[0m23:10:22.042026 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:22.068942 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:22.072049 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_b5b1b95c0c1a169a7c112b782ea393ae"
+[0m23:10:22.078443 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788"
+[0m23:10:22.079617 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_b5b1b95c0c1a169a7c112b782ea393ae"
+      
+      
+    as (
+      
+    
+    
+
+with all_values as (
+
+    select
+        cultura_principal as value_field,
+        count(*) as n_records
+
+    from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+    group by cultura_principal
+
+)
+
+select *
+from all_values
+where value_field not in (
+    'SOJA','MILHO','CAFE','CANA_DE_ACUCAR','ALGODAO','FRUTICULTURA','TRIGO','ARROZ','FEIJAO','EUCALIPTO'
+)
+
+
+
+    )
+[0m23:10:22.088773 [debug] [Thread-1  ]: Trino adapter: Trino query id: 20250701_231022_00265_ivifs
+[0m23:10:22.089707 [debug] [Thread-1  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'faixa_risco_credito' cannot be resolved", query_id=20250701_231022_00265_ivifs)
+[0m23:10:22.090931 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1 (execute): 23:10:22.026387 => 23:10:22.090362
+[0m23:10:22.094688 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1: ROLLBACK
+[0m23:10:22.095649 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1: Close
+[0m23:10:22.098546 [debug] [Thread-1  ]: Database Error in test accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'faixa_risco_credito' cannot be resolved", query_id=20250701_231022_00265_ivifs)
+[0m23:10:22.100468 [error] [Thread-1  ]: 3 of 29 ERROR accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO  [[31mERROR[0m in 0.09s]
+[0m23:10:22.101885 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1
+[0m23:10:22.102977 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba
+[0m23:10:22.104156 [info ] [Thread-1  ]: 4 of 29 START test accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS  [RUN]
+[0m23:10:22.105769 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO.ea44259ae1, now test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba)
+[0m23:10:22.106653 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba
+[0m23:10:22.120009 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba"
+[0m23:10:22.121563 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba (compile): 23:10:22.107212 => 23:10:22.120946
+[0m23:10:22.122617 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba
+[0m23:10:22.134977 [debug] [Thread-1  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_621d194c50662e1b5c12c13ebd261caf"
+[0m23:10:22.137020 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba"
+[0m23:10:22.138356 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_621d194c50662e1b5c12c13ebd261caf"
+[0m23:10:22.139206 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:22.283001 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:22.286126 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_621d194c50662e1b5c12c13ebd261caf"
+[0m23:10:22.293519 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba"
+[0m23:10:22.294454 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_621d194c50662e1b5c12c13ebd261caf"
+      
+      
+    as (
+      
+    
+    
+
+with all_values as (
+
+    select
+        finalidade_credito as value_field,
+        count(*) as n_records
+
+    from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+    group by finalidade_credito
+
+)
+
+select *
+from all_values
+where value_field not in (
+    'CUSTEIO_SAFRA','INVESTIMENTO_MAQUINARIO','AMPLIACAO_AREA','OUTROS'
+)
+
+
+
+    )
+[0m23:10:22.395307 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:22.397723 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788: COMMIT
+[0m23:10:22.419681 [debug] [Thread-2  ]: Writing runtime sql for node "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788"
+[0m23:10:22.428332 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788"
+[0m23:10:22.429273 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_b5b1b95c0c1a169a7c112b782ea393ae"
+    
+      
+    ) dbt_internal_test
+[0m23:10:22.642507 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:22.646615 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788 (execute): 23:10:21.905006 => 23:10:22.646066
+[0m23:10:22.660161 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788: ROLLBACK
+[0m23:10:22.661210 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788: Close
+[0m23:10:22.665848 [info ] [Thread-2  ]: 2 of 29 PASS accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO  [[32mPASS[0m in 0.79s]
+[0m23:10:22.667927 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788
+[0m23:10:22.669150 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1
+[0m23:10:22.682695 [info ] [Thread-2  ]: 5 of 29 START test accepted_values_silver_dados_produtores_agro_trino_registro_valido__True  [RUN]
+[0m23:10:22.687952 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:22.694533 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba: COMMIT
+[0m23:10:22.696774 [debug] [Thread-1  ]: Writing runtime sql for node "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba"
+[0m23:10:22.700777 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba"
+[0m23:10:22.701664 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_621d194c50662e1b5c12c13ebd261caf"
+    
+      
+    ) dbt_internal_test
+[0m23:10:22.690775 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO.c99d049788, now test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1)
+[0m23:10:22.708855 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1
+[0m23:10:22.740483 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1"
+[0m23:10:22.741847 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1 (compile): 23:10:22.709369 => 23:10:22.741306
+[0m23:10:22.742646 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1
+[0m23:10:22.750163 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_b568ce60008b64865f335c33053e3859"
+[0m23:10:22.755966 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1"
+[0m23:10:22.756899 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_b568ce60008b64865f335c33053e3859"
+      
+      
+    as (
+      
+    
+    
+
+with all_values as (
+
+    select
+        registro_valido as value_field,
+        count(*) as n_records
+
+    from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+    group by registro_valido
+
+)
+
+select *
+from all_values
+where value_field not in (
+    'True'
+)
+
+
+
+    )
+[0m23:10:22.767795 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:22.837978 [debug] [Thread-2  ]: Trino adapter: Trino query id: 20250701_231022_00271_ivifs
+[0m23:10:22.839144 [debug] [Thread-2  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'registro_valido' cannot be resolved", query_id=20250701_231022_00271_ivifs)
+[0m23:10:22.840756 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1 (execute): 23:10:22.743145 => 23:10:22.839972
+[0m23:10:22.844962 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1: ROLLBACK
+[0m23:10:22.846198 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1: Close
+[0m23:10:22.854379 [debug] [Thread-2  ]: Database Error in test accepted_values_silver_dados_produtores_agro_trino_registro_valido__True (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'registro_valido' cannot be resolved", query_id=20250701_231022_00271_ivifs)
+[0m23:10:22.860507 [error] [Thread-2  ]: 5 of 29 ERROR accepted_values_silver_dados_produtores_agro_trino_registro_valido__True  [[31mERROR[0m in 0.17s]
+[0m23:10:22.872160 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1
+[0m23:10:22.873150 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218
+[0m23:10:22.874084 [info ] [Thread-2  ]: 6 of 29 START test accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA  [RUN]
+[0m23:10:22.876168 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_registro_valido__True.9001f484f1, now test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218)
+[0m23:10:22.877073 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218
+[0m23:10:22.890979 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218"
+[0m23:10:22.898773 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218 (compile): 23:10:22.877616 => 23:10:22.898184
+[0m23:10:22.899967 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218
+[0m23:10:22.912926 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:22.916320 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba (execute): 23:10:22.123160 => 23:10:22.915720
+[0m23:10:22.924581 [debug] [Thread-2  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_619e803404c908fd439a10e67aa3eb88"
+[0m23:10:22.925721 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba: ROLLBACK
+[0m23:10:22.928489 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218"
+[0m23:10:22.930008 [debug] [Thread-1  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba: Close
+[0m23:10:22.933215 [info ] [Thread-1  ]: 4 of 29 PASS accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS  [[32mPASS[0m in 0.83s]
+[0m23:10:22.931264 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_619e803404c908fd439a10e67aa3eb88"
+[0m23:10:22.935929 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:22.934828 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba
+[0m23:10:22.939367 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca
+[0m23:10:22.940959 [info ] [Thread-1  ]: 7 of 29 START test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0  [RUN]
+[0m23:10:22.950109 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS.5aee3b8fba, now test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca)
+[0m23:10:22.951669 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca
+[0m23:10:22.983257 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca"
+[0m23:10:22.985373 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca (compile): 23:10:22.952501 => 23:10:22.984466
+[0m23:10:22.986467 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca
+[0m23:10:22.999630 [debug] [Thread-1  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_e686076c7abea73377d0fa8d0c0da50f"
+[0m23:10:23.001650 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca"
+[0m23:10:23.002566 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_e686076c7abea73377d0fa8d0c0da50f"
+[0m23:10:23.003437 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:23.077104 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:23.084910 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_619e803404c908fd439a10e67aa3eb88"
+[0m23:10:23.095214 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218"
+[0m23:10:23.096918 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_619e803404c908fd439a10e67aa3eb88"
+      
+      
+    as (
+      
+    
+    
+
+with all_values as (
+
+    select
+        tipo_pessoa as value_field,
+        count(*) as n_records
+
+    from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+    group by tipo_pessoa
+
+)
+
+select *
+from all_values
+where value_field not in (
+    'FISICA','JURIDICA'
+)
+
+
+
+    )
+[0m23:10:23.206106 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:23.208880 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_e686076c7abea73377d0fa8d0c0da50f"
+[0m23:10:23.214174 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca"
+[0m23:10:23.215174 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_e686076c7abea73377d0fa8d0c0da50f"
+      
+      
+    as (
+      
+
+
+
+select
+    *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+
+where not(area_total_hectares > 0)
+
+
+    )
+[0m23:10:23.464651 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:23.467354 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218: COMMIT
+[0m23:10:23.469258 [debug] [Thread-2  ]: Writing runtime sql for node "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218"
+[0m23:10:23.472393 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218"
+[0m23:10:23.474103 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."accepted_values_silver_dados_p_619e803404c908fd439a10e67aa3eb88"
+    
+      
+    ) dbt_internal_test
+[0m23:10:23.568613 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:23.571011 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca: COMMIT
+[0m23:10:23.586423 [debug] [Thread-1  ]: Writing runtime sql for node "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca"
+[0m23:10:23.589772 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca"
+[0m23:10:23.590592 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_e686076c7abea73377d0fa8d0c0da50f"
+    
+      
+    ) dbt_internal_test
+[0m23:10:23.626462 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:23.630997 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218 (execute): 23:10:22.900501 => 23:10:23.630425
+[0m23:10:23.633456 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218: ROLLBACK
+[0m23:10:23.634324 [debug] [Thread-2  ]: On test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218: Close
+[0m23:10:23.636838 [info ] [Thread-2  ]: 6 of 29 PASS accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA  [[32mPASS[0m in 0.76s]
+[0m23:10:23.638504 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218
+[0m23:10:23.639485 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b
+[0m23:10:23.640439 [info ] [Thread-2  ]: 8 of 29 START test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90  [RUN]
+[0m23:10:23.641918 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA.435202e218, now test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b)
+[0m23:10:23.642703 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b
+[0m23:10:23.659284 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b"
+[0m23:10:23.660940 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b (compile): 23:10:23.643217 => 23:10:23.660373
+[0m23:10:23.662134 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b
+[0m23:10:23.672470 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_7541256e6dd4e1cea6a3758fcb967c98"
+[0m23:10:23.682890 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b"
+[0m23:10:23.684072 [debug] [Thread-2  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_7541256e6dd4e1cea6a3758fcb967c98"
+      
+      
+    as (
+      
+
+
+
+select
+    *
+from (select * from "iceberg"."silver"."silver_dados_produtores_agro_trino" where localizacao_latitude IS NOT NULL) dbt_subquery
+
+where not(localizacao_latitude BETWEEN -90 AND 90)
+
+
+    )
+[0m23:10:23.685232 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:23.735040 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:23.738612 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca (execute): 23:10:22.987053 => 23:10:23.738031
+[0m23:10:23.739515 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca: ROLLBACK
+[0m23:10:23.740309 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca: Close
+[0m23:10:23.742242 [info ] [Thread-1  ]: 7 of 29 PASS dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0  [[32mPASS[0m in 0.80s]
+[0m23:10:23.743899 [debug] [Thread-2  ]: Trino adapter: Trino query id: 20250701_231023_00278_ivifs
+[0m23:10:23.744757 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca
+[0m23:10:23.745343 [debug] [Thread-2  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 17:83: Column 'localizacao_latitude' cannot be resolved", query_id=20250701_231023_00278_ivifs)
+[0m23:10:23.746089 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f
+[0m23:10:23.746997 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b (execute): 23:10:23.662765 => 23:10:23.746566
+[0m23:10:23.747705 [info ] [Thread-1  ]: 9 of 29 START test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180  [RUN]
+[0m23:10:23.748793 [debug] [Thread-2  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b: ROLLBACK
+[0m23:10:23.749986 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0.1f62d7dbca, now test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f)
+[0m23:10:23.750610 [debug] [Thread-2  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b: Close
+[0m23:10:23.751479 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f
+[0m23:10:23.761597 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f"
+[0m23:10:23.763091 [debug] [Thread-2  ]: Database Error in test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90 (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 17:83: Column 'localizacao_latitude' cannot be resolved", query_id=20250701_231023_00278_ivifs)
+[0m23:10:23.763853 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f (compile): 23:10:23.752834 => 23:10:23.763548
+[0m23:10:23.765864 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f
+[0m23:10:23.764849 [error] [Thread-2  ]: 8 of 29 ERROR dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90  [[31mERROR[0m in 0.12s]
+[0m23:10:23.841642 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_99457f3c6d1a6d4354bb223a1246db5a"
+[0m23:10:23.842652 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b
+[0m23:10:23.845712 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f"
+[0m23:10:23.846384 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c
+[0m23:10:23.847026 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_99457f3c6d1a6d4354bb223a1246db5a"
+      
+      
+    as (
+      
+
+
+
+select
+    *
+from (select * from "iceberg"."silver"."silver_dados_produtores_agro_trino" where localizacao_longitude IS NOT NULL) dbt_subquery
+
+where not(localizacao_longitude BETWEEN -180 AND 180)
+
+
+    )
+[0m23:10:23.848334 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:23.847682 [info ] [Thread-2  ]: 10 of 29 START test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0  [RUN]
+[0m23:10:23.852424 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90.8e8dcd295b, now test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c)
+[0m23:10:23.853691 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c
+[0m23:10:23.863818 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c"
+[0m23:10:23.867270 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c (compile): 23:10:23.854450 => 23:10:23.866799
+[0m23:10:23.867968 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c
+[0m23:10:23.886166 [debug] [Thread-2  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_cc84f2dea1dcde70bd44a2f041a7864e"
+[0m23:10:23.888366 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c"
+[0m23:10:23.890461 [debug] [Thread-2  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_cc84f2dea1dcde70bd44a2f041a7864e"
+[0m23:10:23.891267 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:23.896496 [debug] [Thread-1  ]: Trino adapter: Trino query id: 20250701_231023_00279_ivifs
+[0m23:10:23.897470 [debug] [Thread-1  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 17:83: Column 'localizacao_longitude' cannot be resolved", query_id=20250701_231023_00279_ivifs)
+[0m23:10:23.898487 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f (execute): 23:10:23.766470 => 23:10:23.898040
+[0m23:10:23.899532 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f: ROLLBACK
+[0m23:10:23.900637 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f: Close
+[0m23:10:23.906314 [debug] [Thread-1  ]: Database Error in test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180 (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 17:83: Column 'localizacao_longitude' cannot be resolved", query_id=20250701_231023_00279_ivifs)
+[0m23:10:23.908604 [error] [Thread-1  ]: 9 of 29 ERROR dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180  [[31mERROR[0m in 0.16s]
+[0m23:10:23.910135 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f
+[0m23:10:23.911222 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3
+[0m23:10:23.914604 [info ] [Thread-1  ]: 11 of 29 START test dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24  [RUN]
+[0m23:10:23.919100 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180.bc5157a49f, now test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3)
+[0m23:10:23.920247 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3
+[0m23:10:23.933537 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3"
+[0m23:10:23.934983 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3 (compile): 23:10:23.920876 => 23:10:23.934417
+[0m23:10:23.935944 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3
+[0m23:10:23.944899 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."dbt_utils_recency_silver_dados_fd62c271a0c4e49c7f359b82d79d7d81"
+[0m23:10:23.949047 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3"
+[0m23:10:23.949953 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."dbt_utils_recency_silver_dados_fd62c271a0c4e49c7f359b82d79d7d81"
+      
+      
+    as (
+      
+
+
+
+
+
+
+with recency as (
+
+    select 
+
+      
+      
+        max(processed_at) as most_recent
+
+    from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+
+    
+
+)
+
+select
+
+    
+    most_recent,
+    cast(date_add('hour', -24, current_timestamp) as timestamp) as threshold
+
+from recency
+where most_recent < cast(date_add('hour', -24, current_timestamp) as timestamp)
+
+
+    )
+[0m23:10:23.950884 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:23.995992 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:23.998564 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_cc84f2dea1dcde70bd44a2f041a7864e"
+[0m23:10:24.004088 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c"
+[0m23:10:24.006763 [debug] [Thread-2  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_cc84f2dea1dcde70bd44a2f041a7864e"
+      
+      
+    as (
+      
+
+
+
+select
+    *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+
+where not(valor_solicitado_credito > 0)
+
+
+    )
+[0m23:10:24.005976 [debug] [Thread-1  ]: Trino adapter: Trino query id: 20250701_231023_00281_ivifs
+[0m23:10:24.009763 [debug] [Thread-1  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 24:13: Column 'processed_at' cannot be resolved", query_id=20250701_231023_00281_ivifs)
+[0m23:10:24.011018 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3 (execute): 23:10:23.936515 => 23:10:24.010482
+[0m23:10:24.011925 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3: ROLLBACK
+[0m23:10:24.013054 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3: Close
+[0m23:10:24.020287 [debug] [Thread-1  ]: Database Error in test dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24 (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 24:13: Column 'processed_at' cannot be resolved", query_id=20250701_231023_00281_ivifs)
+[0m23:10:24.022284 [error] [Thread-1  ]: 11 of 29 ERROR dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24  [[31mERROR[0m in 0.10s]
+[0m23:10:24.023657 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3
+[0m23:10:24.024528 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72
+[0m23:10:24.025279 [info ] [Thread-1  ]: 12 of 29 START test dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao  [RUN]
+[0m23:10:24.026920 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24.7067bd38e3, now test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72)
+[0m23:10:24.028290 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72
+[0m23:10:24.045889 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72"
+[0m23:10:24.048033 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72 (compile): 23:10:24.033156 => 23:10:24.047390
+[0m23:10:24.049016 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72
+[0m23:10:24.062688 [debug] [Thread-1  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."dbt_utils_unique_combination_o_21ab17eecd767bb91bd0b03d651fdd82"
+[0m23:10:24.067147 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72"
+[0m23:10:24.068326 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."dbt_utils_unique_combination_o_21ab17eecd767bb91bd0b03d651fdd82"
+[0m23:10:24.069253 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:24.333233 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:24.336414 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."dbt_utils_unique_combination_o_21ab17eecd767bb91bd0b03d651fdd82"
+[0m23:10:24.344056 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72"
+[0m23:10:24.345174 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."dbt_utils_unique_combination_o_21ab17eecd767bb91bd0b03d651fdd82"
+      
+      
+    as (
+      
+
+
+
+
+
+with validation_errors as (
+
+    select
+        proponente_id, data_solicitacao
+    from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+    group by proponente_id, data_solicitacao
+    having count(*) > 1
+
+)
+
+select *
+from validation_errors
+
+
+
+    )
+[0m23:10:24.438187 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:24.441192 [debug] [Thread-2  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c: COMMIT
+[0m23:10:24.443081 [debug] [Thread-2  ]: Writing runtime sql for node "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c"
+[0m23:10:24.446392 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c"
+[0m23:10:24.447501 [debug] [Thread-2  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."dbt_utils_expression_is_true_s_cc84f2dea1dcde70bd44a2f041a7864e"
+    
+      
+    ) dbt_internal_test
+[0m23:10:24.599672 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:24.603362 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c (execute): 23:10:23.868456 => 23:10:24.602810
+[0m23:10:24.604277 [debug] [Thread-2  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c: ROLLBACK
+[0m23:10:24.605044 [debug] [Thread-2  ]: On test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c: Close
+[0m23:10:24.607152 [info ] [Thread-2  ]: 10 of 29 PASS dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0  [[32mPASS[0m in 0.76s]
+[0m23:10:24.608542 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c
+[0m23:10:24.609433 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b
+[0m23:10:24.610191 [info ] [Thread-2  ]: 13 of 29 START test not_null_silver_dados_produtores_agro_trino_area_total_hectares  [RUN]
+[0m23:10:24.612179 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0.7ee98e386c, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b)
+[0m23:10:24.613162 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b
+[0m23:10:24.628849 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b"
+[0m23:10:24.630068 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b (compile): 23:10:24.613701 => 23:10:24.629625
+[0m23:10:24.630845 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b
+[0m23:10:24.645076 [debug] [Thread-2  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_area_total_hectares"
+[0m23:10:24.646820 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b"
+[0m23:10:24.647641 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_area_total_hectares"
+[0m23:10:24.648405 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:24.787336 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:24.790113 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_area_total_hectares"
+[0m23:10:24.794830 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b"
+[0m23:10:24.795345 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_area_total_hectares"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where area_total_hectares is null
+
+
+
+    )
+[0m23:10:24.879979 [debug] [Thread-1  ]: SQL status: SUCCESS in 1.0 seconds
+[0m23:10:24.882366 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72: COMMIT
+[0m23:10:24.884200 [debug] [Thread-1  ]: Writing runtime sql for node "test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72"
+[0m23:10:24.887853 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72"
+[0m23:10:24.889953 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."dbt_utils_unique_combination_o_21ab17eecd767bb91bd0b03d651fdd82"
+    
+      
+    ) dbt_internal_test
+[0m23:10:25.030175 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:25.035830 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72 (execute): 23:10:24.049557 => 23:10:25.032924
+[0m23:10:25.036759 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72: ROLLBACK
+[0m23:10:25.037778 [debug] [Thread-1  ]: On test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72: Close
+[0m23:10:25.040198 [error] [Thread-1  ]: 12 of 29 FAIL 2 dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao  [[31mFAIL 2[0m in 1.01s]
+[0m23:10:25.051902 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72
+[0m23:10:25.053733 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a
+[0m23:10:25.055093 [info ] [Thread-1  ]: 14 of 29 START test not_null_silver_dados_produtores_agro_trino_classificacao_propriedade  [RUN]
+[0m23:10:25.059257 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao.7b84728d72, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a)
+[0m23:10:25.060540 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a
+[0m23:10:25.078887 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a"
+[0m23:10:25.081536 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a (compile): 23:10:25.061237 => 23:10:25.080925
+[0m23:10:25.082734 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a
+[0m23:10:25.097867 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtor_e346a2cc129f4b50135a798657d7671a"
+[0m23:10:25.112171 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a"
+[0m23:10:25.119175 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtor_e346a2cc129f4b50135a798657d7671a"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where classificacao_propriedade is null
+
+
+
+    )
+[0m23:10:25.128005 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:25.127225 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:25.134265 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b: COMMIT
+[0m23:10:25.136207 [debug] [Thread-2  ]: Writing runtime sql for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b"
+[0m23:10:25.147231 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b"
+[0m23:10:25.150926 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_area_total_hectares"
+    
+      
+    ) dbt_internal_test
+[0m23:10:25.199357 [debug] [Thread-1  ]: Trino adapter: Trino query id: 20250701_231025_00289_ivifs
+[0m23:10:25.201329 [debug] [Thread-1  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'classificacao_propriedade' cannot be resolved", query_id=20250701_231025_00289_ivifs)
+[0m23:10:25.210004 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a (execute): 23:10:25.083458 => 23:10:25.209354
+[0m23:10:25.216633 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a: ROLLBACK
+[0m23:10:25.217550 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a: Close
+[0m23:10:25.220117 [debug] [Thread-1  ]: Database Error in test not_null_silver_dados_produtores_agro_trino_classificacao_propriedade (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'classificacao_propriedade' cannot be resolved", query_id=20250701_231025_00289_ivifs)
+[0m23:10:25.221484 [error] [Thread-1  ]: 14 of 29 ERROR not_null_silver_dados_produtores_agro_trino_classificacao_propriedade  [[31mERROR[0m in 0.16s]
+[0m23:10:25.222932 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a
+[0m23:10:25.223955 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42
+[0m23:10:25.224891 [info ] [Thread-1  ]: 15 of 29 START test not_null_silver_dados_produtores_agro_trino_cpf_cnpj ....... [RUN]
+[0m23:10:25.227066 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_classificacao_propriedade.7eda33aa6a, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42)
+[0m23:10:25.227983 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42
+[0m23:10:25.238911 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42"
+[0m23:10:25.240382 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42 (compile): 23:10:25.228494 => 23:10:25.239775
+[0m23:10:25.241253 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42
+[0m23:10:25.256038 [debug] [Thread-1  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_cpf_cnpj"
+[0m23:10:25.258042 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42"
+[0m23:10:25.258988 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_cpf_cnpj"
+[0m23:10:25.259980 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:25.323727 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:25.328375 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b (execute): 23:10:24.631507 => 23:10:25.326759
+[0m23:10:25.329303 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b: ROLLBACK
+[0m23:10:25.330182 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b: Close
+[0m23:10:25.332670 [info ] [Thread-2  ]: 13 of 29 PASS not_null_silver_dados_produtores_agro_trino_area_total_hectares .. [[32mPASS[0m in 0.72s]
+[0m23:10:25.335507 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b
+[0m23:10:25.336810 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a
+[0m23:10:25.338123 [info ] [Thread-2  ]: 16 of 29 START test not_null_silver_dados_produtores_agro_trino_cultura_principal  [RUN]
+[0m23:10:25.341310 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_area_total_hectares.957629180b, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a)
+[0m23:10:25.342415 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a
+[0m23:10:25.354314 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a"
+[0m23:10:25.355981 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a (compile): 23:10:25.343158 => 23:10:25.355368
+[0m23:10:25.357102 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a
+[0m23:10:25.369723 [debug] [Thread-2  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_cultura_principal"
+[0m23:10:25.371780 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a"
+[0m23:10:25.372813 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_cultura_principal"
+[0m23:10:25.373814 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:25.380269 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:25.384630 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_cpf_cnpj"
+[0m23:10:25.389482 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42"
+[0m23:10:25.390404 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_cpf_cnpj"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where cpf_cnpj is null
+
+
+
+    )
+[0m23:10:25.476676 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:25.481311 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_cultura_principal"
+[0m23:10:25.487081 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a"
+[0m23:10:25.490706 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_cultura_principal"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where cultura_principal is null
+
+
+
+    )
+[0m23:10:25.689060 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:25.692526 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42: COMMIT
+[0m23:10:25.694564 [debug] [Thread-1  ]: Writing runtime sql for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42"
+[0m23:10:25.705122 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42"
+[0m23:10:25.706699 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_cpf_cnpj"
+    
+      
+    ) dbt_internal_test
+[0m23:10:25.804284 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:25.806429 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a: COMMIT
+[0m23:10:25.818178 [debug] [Thread-2  ]: Writing runtime sql for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a"
+[0m23:10:25.822072 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a"
+[0m23:10:25.823578 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_cultura_principal"
+    
+      
+    ) dbt_internal_test
+[0m23:10:25.857182 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:25.864586 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42 (execute): 23:10:25.241869 => 23:10:25.863997
+[0m23:10:25.865665 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42: ROLLBACK
+[0m23:10:25.869894 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42: Close
+[0m23:10:25.871973 [info ] [Thread-1  ]: 15 of 29 PASS not_null_silver_dados_produtores_agro_trino_cpf_cnpj ............. [[32mPASS[0m in 0.65s]
+[0m23:10:25.873637 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42
+[0m23:10:25.875991 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a
+[0m23:10:25.881339 [info ] [Thread-1  ]: 17 of 29 START test not_null_silver_dados_produtores_agro_trino_data_solicitacao  [RUN]
+[0m23:10:25.884068 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cpf_cnpj.83a6e44b42, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a)
+[0m23:10:25.885181 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a
+[0m23:10:25.901214 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a"
+[0m23:10:25.902785 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a (compile): 23:10:25.885696 => 23:10:25.902079
+[0m23:10:25.904852 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a
+[0m23:10:25.931908 [debug] [Thread-1  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_data_solicitacao"
+[0m23:10:25.936776 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a"
+[0m23:10:25.938524 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:25.939559 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_data_solicitacao"
+[0m23:10:25.943005 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a (execute): 23:10:25.357872 => 23:10:25.942611
+[0m23:10:25.943946 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:25.944782 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a: ROLLBACK
+[0m23:10:25.948215 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a: Close
+[0m23:10:25.950359 [info ] [Thread-2  ]: 16 of 29 PASS not_null_silver_dados_produtores_agro_trino_cultura_principal .... [[32mPASS[0m in 0.61s]
+[0m23:10:25.953485 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a
+[0m23:10:25.957101 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2
+[0m23:10:25.958276 [info ] [Thread-2  ]: 18 of 29 START test not_null_silver_dados_produtores_agro_trino_faixa_risco_credito  [RUN]
+[0m23:10:25.964065 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_cultura_principal.d77c6b8d2a, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2)
+[0m23:10:25.964770 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2
+[0m23:10:25.976203 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2"
+[0m23:10:25.978017 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2 (compile): 23:10:25.965108 => 23:10:25.977343
+[0m23:10:25.979045 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2
+[0m23:10:25.987944 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_faixa_risco_credito"
+[0m23:10:25.993248 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2"
+[0m23:10:25.994154 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_faixa_risco_credito"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where faixa_risco_credito is null
+
+
+
+    )
+[0m23:10:25.994996 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:26.032298 [debug] [Thread-2  ]: Trino adapter: Trino query id: 20250701_231025_00298_ivifs
+[0m23:10:26.033318 [debug] [Thread-2  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'faixa_risco_credito' cannot be resolved", query_id=20250701_231025_00298_ivifs)
+[0m23:10:26.034847 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2 (execute): 23:10:25.979693 => 23:10:26.034067
+[0m23:10:26.036519 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2: ROLLBACK
+[0m23:10:26.037492 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2: Close
+[0m23:10:26.040494 [debug] [Thread-2  ]: Database Error in test not_null_silver_dados_produtores_agro_trino_faixa_risco_credito (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'faixa_risco_credito' cannot be resolved", query_id=20250701_231025_00298_ivifs)
+[0m23:10:26.042065 [error] [Thread-2  ]: 18 of 29 ERROR not_null_silver_dados_produtores_agro_trino_faixa_risco_credito . [[31mERROR[0m in 0.08s]
+[0m23:10:26.043797 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2
+[0m23:10:26.046689 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477
+[0m23:10:26.048140 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:26.048807 [info ] [Thread-2  ]: 19 of 29 START test not_null_silver_dados_produtores_agro_trino_finalidade_credito  [RUN]
+[0m23:10:26.051881 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_data_solicitacao"
+[0m23:10:26.053383 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_faixa_risco_credito.455aa339a2, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477)
+[0m23:10:26.056129 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a"
+[0m23:10:26.057034 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477
+[0m23:10:26.058335 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_data_solicitacao"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where data_solicitacao is null
+
+
+
+    )
+[0m23:10:26.071210 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477"
+[0m23:10:26.074836 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477 (compile): 23:10:26.058683 => 23:10:26.074132
+[0m23:10:26.077406 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477
+[0m23:10:26.098310 [debug] [Thread-2  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_finalidade_credito"
+[0m23:10:26.100617 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477"
+[0m23:10:26.101931 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_finalidade_credito"
+[0m23:10:26.103329 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:26.246189 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:26.252031 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_finalidade_credito"
+[0m23:10:26.258510 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477"
+[0m23:10:26.259610 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_finalidade_credito"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where finalidade_credito is null
+
+
+
+    )
+[0m23:10:26.390951 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:26.393658 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a: COMMIT
+[0m23:10:26.395580 [debug] [Thread-1  ]: Writing runtime sql for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a"
+[0m23:10:26.399853 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a"
+[0m23:10:26.401016 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_data_solicitacao"
+    
+      
+    ) dbt_internal_test
+[0m23:10:26.535055 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:26.538347 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a (execute): 23:10:25.905472 => 23:10:26.537782
+[0m23:10:26.539261 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a: ROLLBACK
+[0m23:10:26.540177 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a: Close
+[0m23:10:26.542325 [info ] [Thread-1  ]: 17 of 29 PASS not_null_silver_dados_produtores_agro_trino_data_solicitacao ..... [[32mPASS[0m in 0.66s]
+[0m23:10:26.543540 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a
+[0m23:10:26.544458 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864
+[0m23:10:26.545768 [info ] [Thread-1  ]: 20 of 29 START test not_null_silver_dados_produtores_agro_trino_localizacao_uf . [RUN]
+[0m23:10:26.547372 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_data_solicitacao.808946a26a, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864)
+[0m23:10:26.548221 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864
+[0m23:10:26.558349 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864"
+[0m23:10:26.560114 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864 (compile): 23:10:26.548670 => 23:10:26.559562
+[0m23:10:26.564963 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864
+[0m23:10:26.571167 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_localizacao_uf"
+[0m23:10:26.575931 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864"
+[0m23:10:26.576905 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:26.577750 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_localizacao_uf"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where localizacao_uf is null
+
+
+
+    )
+[0m23:10:26.580900 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477: COMMIT
+[0m23:10:26.581739 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:26.583511 [debug] [Thread-2  ]: Writing runtime sql for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477"
+[0m23:10:26.588556 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477"
+[0m23:10:26.589296 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_finalidade_credito"
+    
+      
+    ) dbt_internal_test
+[0m23:10:26.630636 [debug] [Thread-1  ]: Trino adapter: Trino query id: 20250701_231026_00303_ivifs
+[0m23:10:26.631486 [debug] [Thread-1  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'localizacao_uf' cannot be resolved", query_id=20250701_231026_00303_ivifs)
+[0m23:10:26.632503 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864 (execute): 23:10:26.565464 => 23:10:26.632040
+[0m23:10:26.633313 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864: ROLLBACK
+[0m23:10:26.634122 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864: Close
+[0m23:10:26.636645 [debug] [Thread-1  ]: Database Error in test not_null_silver_dados_produtores_agro_trino_localizacao_uf (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'localizacao_uf' cannot be resolved", query_id=20250701_231026_00303_ivifs)
+[0m23:10:26.637956 [error] [Thread-1  ]: 20 of 29 ERROR not_null_silver_dados_produtores_agro_trino_localizacao_uf ...... [[31mERROR[0m in 0.09s]
+[0m23:10:26.639331 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864
+[0m23:10:26.640240 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621
+[0m23:10:26.641102 [info ] [Thread-1  ]: 21 of 29 START test not_null_silver_dados_produtores_agro_trino_processed_at ... [RUN]
+[0m23:10:26.642766 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_localizacao_uf.23044a4864, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621)
+[0m23:10:26.643604 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621
+[0m23:10:26.657562 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621"
+[0m23:10:26.665013 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621 (compile): 23:10:26.644205 => 23:10:26.662022
+[0m23:10:26.666574 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621
+[0m23:10:26.674271 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_processed_at"
+[0m23:10:26.681367 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621"
+[0m23:10:26.682350 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_processed_at"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where processed_at is null
+
+
+
+    )
+[0m23:10:26.683816 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:26.685408 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:26.689962 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477 (execute): 23:10:26.077993 => 23:10:26.689443
+[0m23:10:26.690815 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477: ROLLBACK
+[0m23:10:26.691864 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477: Close
+[0m23:10:26.695154 [info ] [Thread-2  ]: 19 of 29 PASS not_null_silver_dados_produtores_agro_trino_finalidade_credito ... [[32mPASS[0m in 0.64s]
+[0m23:10:26.700997 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477
+[0m23:10:26.703666 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943
+[0m23:10:26.706763 [info ] [Thread-2  ]: 22 of 29 START test not_null_silver_dados_produtores_agro_trino_proponente_id .. [RUN]
+[0m23:10:26.710708 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_finalidade_credito.d508fc2477, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943)
+[0m23:10:26.711613 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943
+[0m23:10:26.722689 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943"
+[0m23:10:26.724106 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943 (compile): 23:10:26.712628 => 23:10:26.723548
+[0m23:10:26.725076 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943
+[0m23:10:26.726724 [debug] [Thread-1  ]: Trino adapter: Trino query id: 20250701_231026_00305_ivifs
+[0m23:10:26.736103 [debug] [Thread-2  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_proponente_id"
+[0m23:10:26.736841 [debug] [Thread-1  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'processed_at' cannot be resolved", query_id=20250701_231026_00305_ivifs)
+[0m23:10:26.738117 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943"
+[0m23:10:26.738987 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621 (execute): 23:10:26.667632 => 23:10:26.738539
+[0m23:10:26.739671 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_proponente_id"
+[0m23:10:26.740309 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621: ROLLBACK
+[0m23:10:26.741033 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:26.741972 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621: Close
+[0m23:10:26.749728 [debug] [Thread-1  ]: Database Error in test not_null_silver_dados_produtores_agro_trino_processed_at (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'processed_at' cannot be resolved", query_id=20250701_231026_00305_ivifs)
+[0m23:10:26.751996 [error] [Thread-1  ]: 21 of 29 ERROR not_null_silver_dados_produtores_agro_trino_processed_at ........ [[31mERROR[0m in 0.11s]
+[0m23:10:26.755677 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621
+[0m23:10:26.757551 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c
+[0m23:10:26.760625 [info ] [Thread-1  ]: 23 of 29 START test not_null_silver_dados_produtores_agro_trino_registro_valido  [RUN]
+[0m23:10:26.762377 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_processed_at.90dd78e621, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c)
+[0m23:10:26.763794 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c
+[0m23:10:26.775997 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c"
+[0m23:10:26.777485 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c (compile): 23:10:26.764325 => 23:10:26.776834
+[0m23:10:26.778621 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c
+[0m23:10:26.786108 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_registro_valido"
+[0m23:10:26.790855 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c"
+[0m23:10:26.791998 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_registro_valido"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where registro_valido is null
+
+
+
+    )
+[0m23:10:26.793163 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:26.876499 [debug] [Thread-1  ]: Trino adapter: Trino query id: 20250701_231026_00307_ivifs
+[0m23:10:26.877748 [debug] [Thread-1  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'registro_valido' cannot be resolved", query_id=20250701_231026_00307_ivifs)
+[0m23:10:26.878907 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c (execute): 23:10:26.779313 => 23:10:26.878416
+[0m23:10:26.881749 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c: ROLLBACK
+[0m23:10:26.883567 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:26.884439 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c: Close
+[0m23:10:26.887258 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_proponente_id"
+[0m23:10:26.892443 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943"
+[0m23:10:26.894700 [debug] [Thread-1  ]: Database Error in test not_null_silver_dados_produtores_agro_trino_registro_valido (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'registro_valido' cannot be resolved", query_id=20250701_231026_00307_ivifs)
+[0m23:10:26.901315 [error] [Thread-1  ]: 23 of 29 ERROR not_null_silver_dados_produtores_agro_trino_registro_valido ..... [[31mERROR[0m in 0.14s]
+[0m23:10:26.903076 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c
+[0m23:10:26.899934 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_proponente_id"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where proponente_id is null
+
+
+
+    )
+[0m23:10:26.904091 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360
+[0m23:10:26.907013 [info ] [Thread-1  ]: 24 of 29 START test not_null_silver_dados_produtores_agro_trino_row_hash ....... [RUN]
+[0m23:10:26.910196 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_registro_valido.7112ef749c, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360)
+[0m23:10:26.914851 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360
+[0m23:10:26.935942 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360"
+[0m23:10:26.937261 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360 (compile): 23:10:26.915544 => 23:10:26.936757
+[0m23:10:26.938091 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360
+[0m23:10:26.946710 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_row_hash"
+[0m23:10:26.952438 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360"
+[0m23:10:26.957691 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_row_hash"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where row_hash is null
+
+
+
+    )
+[0m23:10:26.958790 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:27.005202 [debug] [Thread-1  ]: Trino adapter: Trino query id: 20250701_231026_00309_ivifs
+[0m23:10:27.006388 [debug] [Thread-1  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'row_hash' cannot be resolved", query_id=20250701_231026_00309_ivifs)
+[0m23:10:27.009411 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360 (execute): 23:10:26.938593 => 23:10:27.007197
+[0m23:10:27.010506 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360: ROLLBACK
+[0m23:10:27.011499 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360: Close
+[0m23:10:27.015829 [debug] [Thread-1  ]: Database Error in test not_null_silver_dados_produtores_agro_trino_row_hash (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'row_hash' cannot be resolved", query_id=20250701_231026_00309_ivifs)
+[0m23:10:27.017515 [error] [Thread-1  ]: 24 of 29 ERROR not_null_silver_dados_produtores_agro_trino_row_hash ............ [[31mERROR[0m in 0.11s]
+[0m23:10:27.022984 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360
+[0m23:10:27.024574 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756
+[0m23:10:27.025909 [info ] [Thread-1  ]: 25 of 29 START test not_null_silver_dados_produtores_agro_trino_tipo_pessoa .... [RUN]
+[0m23:10:27.031074 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_row_hash.49e7024360, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756)
+[0m23:10:27.032399 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756
+[0m23:10:27.047359 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756"
+[0m23:10:27.049122 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756 (compile): 23:10:27.033845 => 23:10:27.048532
+[0m23:10:27.050373 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756
+[0m23:10:27.077814 [debug] [Thread-1  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_tipo_pessoa"
+[0m23:10:27.081409 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756"
+[0m23:10:27.083069 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_tipo_pessoa"
+[0m23:10:27.084602 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:27.285673 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:27.288238 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_tipo_pessoa"
+[0m23:10:27.292730 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756"
+[0m23:10:27.293650 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_tipo_pessoa"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where tipo_pessoa is null
+
+
+
+    )
+[0m23:10:27.295722 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:27.300044 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943: COMMIT
+[0m23:10:27.307640 [debug] [Thread-2  ]: Writing runtime sql for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943"
+[0m23:10:27.311633 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943"
+[0m23:10:27.315659 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_proponente_id"
+    
+      
+    ) dbt_internal_test
+[0m23:10:27.523585 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:27.526723 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943 (execute): 23:10:26.727210 => 23:10:27.526186
+[0m23:10:27.533113 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943: ROLLBACK
+[0m23:10:27.534018 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943: Close
+[0m23:10:27.536203 [info ] [Thread-2  ]: 22 of 29 PASS not_null_silver_dados_produtores_agro_trino_proponente_id ........ [[32mPASS[0m in 0.83s]
+[0m23:10:27.542144 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943
+[0m23:10:27.543332 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6
+[0m23:10:27.544409 [info ] [Thread-2  ]: 26 of 29 START test not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito  [RUN]
+[0m23:10:27.552976 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_proponente_id.404b494943, now test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6)
+[0m23:10:27.554945 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6
+[0m23:10:27.593711 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6"
+[0m23:10:27.595132 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6 (compile): 23:10:27.555561 => 23:10:27.594585
+[0m23:10:27.596185 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6
+[0m23:10:27.615157 [debug] [Thread-2  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtor_595551ef13797787e76116376ea69d73"
+[0m23:10:27.618990 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6"
+[0m23:10:27.622608 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtor_595551ef13797787e76116376ea69d73"
+[0m23:10:27.623903 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:27.745327 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:27.748903 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756: COMMIT
+[0m23:10:27.751579 [debug] [Thread-1  ]: Writing runtime sql for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756"
+[0m23:10:27.760902 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756"
+[0m23:10:27.763949 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtores_agro_trino_tipo_pessoa"
+    
+      
+    ) dbt_internal_test
+[0m23:10:27.821775 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:27.825100 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtor_595551ef13797787e76116376ea69d73"
+[0m23:10:27.830031 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6"
+[0m23:10:27.831212 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtor_595551ef13797787e76116376ea69d73"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where valor_solicitado_credito is null
+
+
+
+    )
+[0m23:10:27.892885 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:27.896181 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756 (execute): 23:10:27.052136 => 23:10:27.895620
+[0m23:10:27.897315 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756: ROLLBACK
+[0m23:10:27.898596 [debug] [Thread-1  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756: Close
+[0m23:10:27.901505 [info ] [Thread-1  ]: 25 of 29 PASS not_null_silver_dados_produtores_agro_trino_tipo_pessoa .......... [[32mPASS[0m in 0.87s]
+[0m23:10:27.903878 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756
+[0m23:10:27.905233 [debug] [Thread-1  ]: Began running node test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61
+[0m23:10:27.906269 [info ] [Thread-1  ]: 27 of 29 START test source_not_null_bronze_dados_produtores_agro_proponente_id . [RUN]
+[0m23:10:27.908125 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_tipo_pessoa.f6570c7756, now test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61)
+[0m23:10:27.909278 [debug] [Thread-1  ]: Began compiling node test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61
+[0m23:10:27.946933 [debug] [Thread-1  ]: Writing injected SQL for node "test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61"
+[0m23:10:27.948465 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61 (compile): 23:10:27.909844 => 23:10:27.947751
+[0m23:10:27.952783 [debug] [Thread-1  ]: Began executing node test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61
+[0m23:10:27.969613 [debug] [Thread-1  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."source_not_null_bronze_dados_produtores_agro_proponente_id"
+[0m23:10:27.972068 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61"
+[0m23:10:27.973076 [debug] [Thread-1  ]: On test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."source_not_null_bronze_dados_produtores_agro_proponente_id"
+[0m23:10:27.973964 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m23:10:28.109620 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:28.113373 [debug] [Thread-1  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."source_not_null_bronze_dados_produtores_agro_proponente_id"
+[0m23:10:28.119955 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61"
+[0m23:10:28.120889 [debug] [Thread-1  ]: On test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."source_not_null_bronze_dados_produtores_agro_proponente_id"
+      
+      
+    as (
+      
+    
+    
+
+
+
+select *
+from "iceberg"."bronze"."dados_produtores_agro"
+where proponente_id is null
+
+
+
+    )
+[0m23:10:28.249463 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:28.252959 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6: COMMIT
+[0m23:10:28.254772 [debug] [Thread-2  ]: Writing runtime sql for node "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6"
+[0m23:10:28.268401 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6"
+[0m23:10:28.269390 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."not_null_silver_dados_produtor_595551ef13797787e76116376ea69d73"
+    
+      
+    ) dbt_internal_test
+[0m23:10:28.588761 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:28.592605 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6 (execute): 23:10:27.596722 => 23:10:28.592004
+[0m23:10:28.593588 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6: ROLLBACK
+[0m23:10:28.594385 [debug] [Thread-2  ]: On test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6: Close
+[0m23:10:28.597299 [info ] [Thread-2  ]: 26 of 29 PASS not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito  [[32mPASS[0m in 1.04s]
+[0m23:10:28.598854 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6
+[0m23:10:28.599883 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.test_incremental_integrity_trino
+[0m23:10:28.600697 [info ] [Thread-2  ]: 28 of 29 START test test_incremental_integrity_trino ........................... [RUN]
+[0m23:10:28.602324 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito.8e0c0102d6, now test.agronegocio_iceberg.test_incremental_integrity_trino)
+[0m23:10:28.603230 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.test_incremental_integrity_trino
+[0m23:10:28.615788 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.test_incremental_integrity_trino"
+[0m23:10:28.617173 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.test_incremental_integrity_trino (compile): 23:10:28.603879 => 23:10:28.616616
+[0m23:10:28.619731 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.test_incremental_integrity_trino
+[0m23:10:28.629103 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."test_incremental_integrity_trino"
+[0m23:10:28.641638 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.test_incremental_integrity_trino"
+[0m23:10:28.647898 [debug] [Thread-2  ]: On test.agronegocio_iceberg.test_incremental_integrity_trino: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.test_incremental_integrity_trino"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."test_incremental_integrity_trino"
+      
+      
+    as (
+      -- tests/singular/test_incremental_integrity_trino.sql
+
+
+
+-- Teste: Verifica se há gaps na carga incremental
+WITH time_gaps AS (
+    SELECT 
+        ingestion_timestamp,
+        LAG(ingestion_timestamp) OVER (ORDER BY ingestion_timestamp) as prev_timestamp,
+        ingestion_timestamp - LAG(ingestion_timestamp) OVER (ORDER BY ingestion_timestamp) as time_diff
+    FROM "iceberg"."silver"."silver_dados_produtores_agro_trino"
+    WHERE processed_at >= CURRENT_TIMESTAMP - INTERVAL '1' HOUR
+),
+large_gaps AS (
+    SELECT 
+        ingestion_timestamp,
+        prev_timestamp,
+        time_diff
+    FROM time_gaps
+    WHERE time_diff > INTERVAL '5' MINUTE  -- Gap maior que 5 minutos é suspeito
+)
+SELECT * FROM large_gaps
+    )
+[0m23:10:28.648872 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:28.655959 [debug] [Thread-1  ]: SQL status: SUCCESS in 1.0 seconds
+[0m23:10:28.657994 [debug] [Thread-1  ]: On test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61: COMMIT
+[0m23:10:28.659644 [debug] [Thread-1  ]: Writing runtime sql for node "test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61"
+[0m23:10:28.663078 [debug] [Thread-1  ]: Using trino connection "test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61"
+[0m23:10:28.663962 [debug] [Thread-1  ]: On test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."source_not_null_bronze_dados_produtores_agro_proponente_id"
+    
+      
+    ) dbt_internal_test
+[0m23:10:28.746566 [debug] [Thread-2  ]: Trino adapter: Trino query id: 20250701_231028_00319_ivifs
+[0m23:10:28.747400 [debug] [Thread-2  ]: Trino adapter: Trino error: TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 22:11: Column 'processed_at' cannot be resolved", query_id=20250701_231028_00319_ivifs)
+[0m23:10:28.748737 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.test_incremental_integrity_trino (execute): 23:10:28.620312 => 23:10:28.748242
+[0m23:10:28.749438 [debug] [Thread-2  ]: On test.agronegocio_iceberg.test_incremental_integrity_trino: ROLLBACK
+[0m23:10:28.750610 [debug] [Thread-2  ]: On test.agronegocio_iceberg.test_incremental_integrity_trino: Close
+[0m23:10:28.754053 [debug] [Thread-2  ]: Database Error in test test_incremental_integrity_trino (tests/singular/test_incremental_integrity_trino.sql)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 22:11: Column 'processed_at' cannot be resolved", query_id=20250701_231028_00319_ivifs)
+[0m23:10:28.756343 [error] [Thread-2  ]: 28 of 29 ERROR test_incremental_integrity_trino ................................ [[31mERROR[0m in 0.15s]
+[0m23:10:28.758645 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.test_incremental_integrity_trino
+[0m23:10:28.760053 [debug] [Thread-2  ]: Began running node test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf
+[0m23:10:28.761141 [info ] [Thread-2  ]: 29 of 29 START test unique_silver_dados_produtores_agro_trino_proponente_id .... [RUN]
+[0m23:10:28.763118 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.agronegocio_iceberg.test_incremental_integrity_trino, now test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf)
+[0m23:10:28.764275 [debug] [Thread-2  ]: Began compiling node test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf
+[0m23:10:28.789321 [debug] [Thread-2  ]: Writing injected SQL for node "test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf"
+[0m23:10:28.794153 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf (compile): 23:10:28.764765 => 23:10:28.793510
+[0m23:10:28.797086 [debug] [Thread-2  ]: Began executing node test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf
+[0m23:10:28.815673 [debug] [Thread-2  ]: Applying DROP to: "iceberg"."silver_dbt_test__audit"."unique_silver_dados_produtores_agro_trino_proponente_id"
+[0m23:10:28.817497 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf"
+[0m23:10:28.818303 [debug] [Thread-2  ]: On test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf"} */
+
+    drop table if exists "iceberg"."silver_dbt_test__audit"."unique_silver_dados_produtores_agro_trino_proponente_id"
+[0m23:10:28.819158 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m23:10:28.890497 [debug] [Thread-1  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:28.894011 [debug] [Thread-1  ]: Timing info for test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61 (execute): 23:10:27.953670 => 23:10:28.893393
+[0m23:10:28.896051 [debug] [Thread-1  ]: On test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61: ROLLBACK
+[0m23:10:28.896933 [debug] [Thread-1  ]: On test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61: Close
+[0m23:10:28.899210 [info ] [Thread-1  ]: 27 of 29 PASS source_not_null_bronze_dados_produtores_agro_proponente_id ....... [[32mPASS[0m in 0.99s]
+[0m23:10:28.900803 [debug] [Thread-1  ]: Finished running node test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61
+[0m23:10:28.973999 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:28.976373 [debug] [Thread-2  ]: Applying CREATE to: "iceberg"."silver_dbt_test__audit"."unique_silver_dados_produtores_agro_trino_proponente_id"
+[0m23:10:28.979401 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf"
+[0m23:10:28.980257 [debug] [Thread-2  ]: On test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf"} */
+
+        
+  
+    
+
+    create table "iceberg"."silver_dbt_test__audit"."unique_silver_dados_produtores_agro_trino_proponente_id"
+      
+      
+    as (
+      
+    
+    
+
+select
+    proponente_id as unique_field,
+    count(*) as n_records
+
+from "iceberg"."silver"."silver_dados_produtores_agro_trino"
+where proponente_id is not null
+group by proponente_id
+having count(*) > 1
+
+
+
+    )
+[0m23:10:29.389083 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:29.391658 [debug] [Thread-2  ]: On test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf: COMMIT
+[0m23:10:29.393715 [debug] [Thread-2  ]: Writing runtime sql for node "test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf"
+[0m23:10:29.397204 [debug] [Thread-2  ]: Using trino connection "test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf"
+[0m23:10:29.398122 [debug] [Thread-2  ]: On test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "agronegocio_iceberg", "target_name": "dev", "node_id": "test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+        select *
+        from "iceberg"."silver_dbt_test__audit"."unique_silver_dados_produtores_agro_trino_proponente_id"
+    
+      
+    ) dbt_internal_test
+[0m23:10:29.496097 [debug] [Thread-2  ]: SQL status: SUCCESS in 0.0 seconds
+[0m23:10:29.499387 [debug] [Thread-2  ]: Timing info for test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf (execute): 23:10:28.797668 => 23:10:29.498845
+[0m23:10:29.500439 [debug] [Thread-2  ]: On test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf: ROLLBACK
+[0m23:10:29.501392 [debug] [Thread-2  ]: On test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf: Close
+[0m23:10:29.503537 [error] [Thread-2  ]: 29 of 29 FAIL 2 unique_silver_dados_produtores_agro_trino_proponente_id ........ [[31mFAIL 2[0m in 0.74s]
+[0m23:10:29.506219 [debug] [Thread-2  ]: Finished running node test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf
+[0m23:10:29.509294 [debug] [MainThread]: On master: COMMIT
+[0m23:10:29.509988 [info ] [MainThread]: 
+[0m23:10:29.510678 [info ] [MainThread]: Running 1 on-run-end hook
+[0m23:10:29.521633 [info ] [MainThread]: Execução finalizada
+[0m23:10:29.522580 [debug] [MainThread]: Writing injected SQL for node "operation.agronegocio_iceberg.agronegocio_iceberg-on-run-end-0"
+[0m23:10:29.523654 [info ] [MainThread]: 1 of 1 START hook: agronegocio_iceberg.on-run-end.0 ............................ [RUN]
+[0m23:10:29.527134 [info ] [MainThread]: 1 of 1 OK hook: agronegocio_iceberg.on-run-end.0 ............................... [[32mOK[0m in 0.00s]
+[0m23:10:29.527851 [info ] [MainThread]: 
+[0m23:10:29.529271 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m23:10:29.529901 [debug] [MainThread]: Connection 'test.agronegocio_iceberg.unique_silver_dados_produtores_agro_trino_proponente_id.60bb6e64cf' was properly closed.
+[0m23:10:29.530563 [debug] [MainThread]: Connection 'test.agronegocio_iceberg.source_not_null_bronze_dados_produtores_agro_proponente_id.2792a42a61' was properly closed.
+[0m23:10:29.531482 [info ] [MainThread]: 
+[0m23:10:29.532214 [info ] [MainThread]: Finished running 29 tests, 5 hooks in 0 hours 0 minutes and 8.34 seconds (8.34s).
+[0m23:10:29.544031 [debug] [MainThread]: Command end result
+[0m23:10:29.573778 [info ] [MainThread]: 
+[0m23:10:29.574709 [info ] [MainThread]: [31mCompleted with 15 errors and 0 warnings:[0m
+[0m23:10:29.575406 [info ] [MainThread]: 
+[0m23:10:29.576118 [error] [MainThread]:   Database Error in test accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'classificacao_propriedade' cannot be resolved", query_id=20250701_231021_00263_ivifs)
+[0m23:10:29.576800 [info ] [MainThread]: 
+[0m23:10:29.577497 [error] [MainThread]:   Database Error in test accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'faixa_risco_credito' cannot be resolved", query_id=20250701_231022_00265_ivifs)
+[0m23:10:29.578210 [info ] [MainThread]: 
+[0m23:10:29.578895 [error] [MainThread]:   Database Error in test accepted_values_silver_dados_produtores_agro_trino_registro_valido__True (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'registro_valido' cannot be resolved", query_id=20250701_231022_00271_ivifs)
+[0m23:10:29.579640 [info ] [MainThread]: 
+[0m23:10:29.580393 [error] [MainThread]:   Database Error in test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90 (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 17:83: Column 'localizacao_latitude' cannot be resolved", query_id=20250701_231023_00278_ivifs)
+[0m23:10:29.581132 [info ] [MainThread]: 
+[0m23:10:29.581863 [error] [MainThread]:   Database Error in test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180 (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 17:83: Column 'localizacao_longitude' cannot be resolved", query_id=20250701_231023_00279_ivifs)
+[0m23:10:29.582656 [info ] [MainThread]: 
+[0m23:10:29.583381 [error] [MainThread]:   Database Error in test dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24 (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 24:13: Column 'processed_at' cannot be resolved", query_id=20250701_231023_00281_ivifs)
+[0m23:10:29.584119 [info ] [MainThread]: 
+[0m23:10:29.584862 [error] [MainThread]: [31mFailure in test dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao (models/silver/schema.yml)[0m
+[0m23:10:29.585658 [error] [MainThread]:   Got 2 results, configured to fail if != 0
+[0m23:10:29.586370 [info ] [MainThread]: 
+[0m23:10:29.587102 [info ] [MainThread]:   compiled Code at target/compiled/agronegocio_iceberg/models/silver/schema.yml/dbt_utils_unique_combination_o_21ab17eecd767bb91bd0b03d651fdd82.sql
+[0m23:10:29.587877 [info ] [MainThread]: 
+[0m23:10:29.588583 [info ] [MainThread]:   See test failures:
+  ------------------------------------------------------------------------------------------------------------------
+  select * from "iceberg"."silver_dbt_test__audit"."dbt_utils_unique_combination_o_21ab17eecd767bb91bd0b03d651fdd82"
+  ------------------------------------------------------------------------------------------------------------------
+[0m23:10:29.589346 [info ] [MainThread]: 
+[0m23:10:29.590080 [error] [MainThread]:   Database Error in test not_null_silver_dados_produtores_agro_trino_classificacao_propriedade (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'classificacao_propriedade' cannot be resolved", query_id=20250701_231025_00289_ivifs)
+[0m23:10:29.590875 [info ] [MainThread]: 
+[0m23:10:29.591691 [error] [MainThread]:   Database Error in test not_null_silver_dados_produtores_agro_trino_faixa_risco_credito (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'faixa_risco_credito' cannot be resolved", query_id=20250701_231025_00298_ivifs)
+[0m23:10:29.592505 [info ] [MainThread]: 
+[0m23:10:29.593240 [error] [MainThread]:   Database Error in test not_null_silver_dados_produtores_agro_trino_localizacao_uf (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'localizacao_uf' cannot be resolved", query_id=20250701_231026_00303_ivifs)
+[0m23:10:29.593960 [info ] [MainThread]: 
+[0m23:10:29.594682 [error] [MainThread]:   Database Error in test not_null_silver_dados_produtores_agro_trino_processed_at (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'processed_at' cannot be resolved", query_id=20250701_231026_00305_ivifs)
+[0m23:10:29.595455 [info ] [MainThread]: 
+[0m23:10:29.596235 [error] [MainThread]:   Database Error in test not_null_silver_dados_produtores_agro_trino_registro_valido (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'registro_valido' cannot be resolved", query_id=20250701_231026_00307_ivifs)
+[0m23:10:29.596952 [info ] [MainThread]: 
+[0m23:10:29.597660 [error] [MainThread]:   Database Error in test not_null_silver_dados_produtores_agro_trino_row_hash (models/silver/schema.yml)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'row_hash' cannot be resolved", query_id=20250701_231026_00309_ivifs)
+[0m23:10:29.598377 [info ] [MainThread]: 
+[0m23:10:29.599134 [error] [MainThread]:   Database Error in test test_incremental_integrity_trino (tests/singular/test_incremental_integrity_trino.sql)
+  TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 22:11: Column 'processed_at' cannot be resolved", query_id=20250701_231028_00319_ivifs)
+[0m23:10:29.599966 [info ] [MainThread]: 
+[0m23:10:29.600789 [error] [MainThread]: [31mFailure in test unique_silver_dados_produtores_agro_trino_proponente_id (models/silver/schema.yml)[0m
+[0m23:10:29.601468 [error] [MainThread]:   Got 2 results, configured to fail if != 0
+[0m23:10:29.602367 [info ] [MainThread]: 
+[0m23:10:29.603094 [info ] [MainThread]:   compiled Code at target/compiled/agronegocio_iceberg/models/silver/schema.yml/unique_silver_dados_produtores_agro_trino_proponente_id.sql
+[0m23:10:29.603831 [info ] [MainThread]: 
+[0m23:10:29.604603 [info ] [MainThread]:   See test failures:
+  ----------------------------------------------------------------------------------------------------------
+  select * from "iceberg"."silver_dbt_test__audit"."unique_silver_dados_produtores_agro_trino_proponente_id"
+  ----------------------------------------------------------------------------------------------------------
+[0m23:10:29.605417 [info ] [MainThread]: 
+[0m23:10:29.606243 [info ] [MainThread]: Done. PASS=14 WARN=0 ERROR=15 SKIP=0 TOTAL=29
+[0m23:10:29.607990 [debug] [MainThread]: Resource report: {"command_name": "test", "command_wall_clock_time": 12.939478, "process_user_time": 9.898874, "process_kernel_time": 0.36633, "process_mem_max_rss": "122920", "process_in_blocks": "64", "process_out_blocks": "5552", "command_success": false}
+[0m23:10:29.608997 [debug] [MainThread]: Command `dbt test` failed at 23:10:29.608729 after 12.94 seconds
+[0m23:10:29.609753 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2f2a949d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2efeb4ac0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x76a2efb65490>]}
+[0m23:10:29.610514 [debug] [MainThread]: Flushing usage events
