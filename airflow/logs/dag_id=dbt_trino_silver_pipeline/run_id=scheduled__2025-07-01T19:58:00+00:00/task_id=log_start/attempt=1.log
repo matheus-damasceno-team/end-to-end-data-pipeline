@@ -1,0 +1,22 @@
+[2025-07-01T20:01:08.912+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-07-01T20:01:08.940+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.log_start scheduled__2025-07-01T19:58:00+00:00 [queued]>
+[2025-07-01T20:01:08.949+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.log_start scheduled__2025-07-01T19:58:00+00:00 [queued]>
+[2025-07-01T20:01:08.949+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2025-07-01T20:01:08.960+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): log_start> on 2025-07-01 19:58:00+00:00
+[2025-07-01T20:01:08.968+0000] {logging_mixin.py:188} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=560) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-07-01T20:01:08.969+0000] {standard_task_runner.py:64} INFO - Started process 561 to run task
+[2025-07-01T20:01:08.968+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'dbt_trino_silver_pipeline', 'log_start', 'scheduled__2025-07-01T19:58:00+00:00', '--job-id', '81', '--raw', '--subdir', 'DAGS_FOLDER/dbt_trino_silver_dadg.py', '--cfg-path', '/tmp/tmpr6pfqvis']
+[2025-07-01T20:01:08.970+0000] {standard_task_runner.py:91} INFO - Job 81: Subtask log_start
+[2025-07-01T20:01:09.006+0000] {task_command.py:426} INFO - Running <TaskInstance: dbt_trino_silver_pipeline.log_start scheduled__2025-07-01T19:58:00+00:00 [running]> on host 4495c02a4cb9
+[2025-07-01T20:01:09.074+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='admin@example.com' AIRFLOW_CTX_DAG_OWNER='data-team' AIRFLOW_CTX_DAG_ID='dbt_trino_silver_pipeline' AIRFLOW_CTX_TASK_ID='log_start' AIRFLOW_CTX_EXECUTION_DATE='2025-07-01T19:58:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-07-01T19:58:00+00:00'
+[2025-07-01T20:01:09.075+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-07-01T20:01:09.086+0000] {dbt_trino_silver_dadg.py:40} INFO - Iniciando pipeline Silver com Trino
+[2025-07-01T20:01:09.088+0000] {logging_mixin.py:188} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/utils/context.py:320 AirflowContextDeprecationWarning: Accessing 'execution_date' from the template is deprecated and will be removed in a future version. Please use 'data_interval_start' or 'logical_date' instead.
+[2025-07-01T20:01:09.088+0000] {dbt_trino_silver_dadg.py:41} INFO - Data de execução: 2025-07-01 19:58:00+00:00
+[2025-07-01T20:01:09.088+0000] {dbt_trino_silver_dadg.py:42} INFO - Run ID: scheduled__2025-07-01T19:58:00+00:00
+[2025-07-01T20:01:09.088+0000] {python.py:237} INFO - Done. Returned value was: None
+[2025-07-01T20:01:09.088+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-07-01T20:01:09.095+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=dbt_trino_silver_pipeline, task_id=log_start, run_id=scheduled__2025-07-01T19:58:00+00:00, execution_date=20250701T195800, start_date=20250701T200108, end_date=20250701T200109
+[2025-07-01T20:01:09.142+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2025-07-01T20:01:09.170+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-07-01T20:01:09.172+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

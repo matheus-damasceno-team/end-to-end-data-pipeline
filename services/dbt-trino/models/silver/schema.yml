@@ -1,0 +1,149 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: iceberg  # Catálogo Iceberg no Trino
+    schema: bronze
+    tables:
+      - name: dados_produtores_agro
+        description: "Tabela bronze com dados brutos dos produtores agrícolas"
+        columns:
+          - name: proponente_id
+            description: "Identificador único do proponente"
+            tests:
+              - not_null
+          - name: data_solicitacao
+            description: "Data da solicitação de crédito"
+          - name: ingestion_timestamp
+            description: "Timestamp de ingestão no Iceberg"
+          - name: localizacao_propriedade
+            description: "Struct com dados de localização"
+          - name: fontes_dados_adicionais
+            description: "Struct com dados adicionais"
+          - name: metadata_evento
+            description: "Struct com metadados do evento"
+
+models:
+  - name: silver_dados_produtores_agro_trino
+    description: "Tabela silver com dados limpos e desaninhados - processada via Trino"
+    config:
+      tags: ['silver', 'trino', 'iceberg', 'incremental']
+      materialized: incremental
+      unique_key: proponente_id
+      incremental_strategy: merge
+      on_schema_change: append_new_columns
+    
+    columns:
+      - name: proponente_id
+        description: "Identificador único do proponente"
+        tests:
+          - unique
+          - not_null
+          
+      - name: cpf_cnpj
+        description: "CPF ou CNPJ do proponente"
+        tests:
+          - not_null
+          
+      - name: data_solicitacao
+        description: "Data da solicitação de crédito"
+        tests:
+          - not_null
+          
+      - name: tipo_pessoa
+        description: "Tipo de pessoa: FISICA ou JURIDICA"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['FISICA', 'JURIDICA']
+              
+      - name: valor_solicitado_credito
+        description: "Valor do crédito solicitado"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+              
+      - name: finalidade_credito
+        description: "Finalidade do crédito"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CUSTEIO_SAFRA', 'INVESTIMENTO_MAQUINARIO', 'AMPLIACAO_AREA', 'OUTROS']
+              
+      - name: localizacao_latitude
+        description: "Latitude extraída do struct"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "BETWEEN -90 AND 90"
+              config:
+                where: "localizacao_latitude IS NOT NULL"
+                
+      - name: localizacao_longitude
+        description: "Longitude extraída do struct"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "BETWEEN -180 AND 180"
+              config:
+                where: "localizacao_longitude IS NOT NULL"
+                
+      - name: localizacao_uf
+        description: "UF extraída do struct"
+        tests:
+          - not_null
+          
+      - name: area_total_hectares
+        description: "Área total da propriedade"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+              
+      - name: cultura_principal
+        description: "Principal cultura"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SOJA', 'MILHO', 'CAFE', 'CANA_DE_ACUCAR', 'ALGODAO', 'FRUTICULTURA', 'TRIGO', 'ARROZ', 'FEIJAO', 'EUCALIPTO']
+              
+      - name: classificacao_propriedade
+        description: "Classificação por tamanho"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['MINIFUNDIO', 'PEQUENA', 'MEDIA', 'GRANDE']
+              
+      - name: faixa_risco_credito
+        description: "Faixa de risco baseada no score"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SEM_SCORE', 'MUITO_ALTO', 'ALTO', 'MEDIO', 'BAIXO']
+              
+      - name: registro_valido
+        description: "Flag de validação"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true]
+              
+      - name: processed_at
+        description: "Timestamp de processamento"
+        tests:
+          - not_null
+          
+      - name: row_hash
+        description: "Hash para detecção de mudanças"
+        tests:
+          - not_null
+
+    tests:
+      # Verifica duplicatas
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: ['proponente_id', 'data_solicitacao']
+          
+      # Verifica dados recentes
+      - dbt_utils.recency:
+          datepart: hour
+          field: processed_at
+          interval: 24

@@ -1,1 +1,2 @@
 .env
+dbt_iceberg/*

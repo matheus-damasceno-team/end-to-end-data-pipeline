@@ -1,0 +1,252 @@
+[2025-07-01T20:16:22.856+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-07-01T20:16:22.885+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T20:14:00+00:00 [queued]>
+[2025-07-01T20:16:22.895+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T20:14:00+00:00 [queued]>
+[2025-07-01T20:16:22.895+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2025-07-01T20:16:22.908+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): dbt_run_silver> on 2025-07-01 20:14:00+00:00
+[2025-07-01T20:16:22.917+0000] {logging_mixin.py:188} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=398) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-07-01T20:16:22.918+0000] {standard_task_runner.py:64} INFO - Started process 399 to run task
+[2025-07-01T20:16:22.922+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'dbt_trino_silver_pipeline', 'dbt_run_silver', 'scheduled__2025-07-01T20:14:00+00:00', '--job-id', '111', '--raw', '--subdir', 'DAGS_FOLDER/dbt_trino_silver_dadg.py', '--cfg-path', '/tmp/tmp7pyi1p4s']
+[2025-07-01T20:16:22.924+0000] {standard_task_runner.py:91} INFO - Job 111: Subtask dbt_run_silver
+[2025-07-01T20:16:22.972+0000] {task_command.py:426} INFO - Running <TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T20:14:00+00:00 [running]> on host b4eeaef718a2
+[2025-07-01T20:16:23.066+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='admin@example.com' AIRFLOW_CTX_DAG_OWNER='data-team' AIRFLOW_CTX_DAG_ID='dbt_trino_silver_pipeline' AIRFLOW_CTX_TASK_ID='dbt_run_silver' AIRFLOW_CTX_EXECUTION_DATE='2025-07-01T20:14:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-07-01T20:14:00+00:00'
+[2025-07-01T20:16:23.067+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-07-01T20:16:23.107+0000] {docker.py:367} INFO - Starting docker container from image modern-data-pipeline-dbt-trino:latest
+[2025-07-01T20:16:23.110+0000] {docker.py:375} WARNING - Using remote engine or docker-in-docker and mounting temporary volume from host is not supported. Falling back to `mount_tmp_dir=False` mode. You can set `mount_tmp_dir` parameter to False to disable mounting and remove the warning
+[2025-07-01T20:16:23.425+0000] {docker.py:438} INFO - === Executando dbt run incremental ===
+[2025-07-01T20:16:26.584+0000] {docker.py:438} INFO - [0m20:16:26  Running with dbt=1.7.0
+[2025-07-01T20:16:26.759+0000] {docker.py:438} INFO - [0m20:16:26  Encountered an error:
+[2025-07-01T20:16:26.759+0000] {docker.py:438} INFO - Runtime Error
+[2025-07-01T20:16:26.760+0000] {docker.py:438} INFO -   Credentials in profile "agronegocio_iceberg", target "dev" invalid: 'user' is a required property
+[2025-07-01T20:16:27.356+0000] {docker.py:438} INFO - jsonschema.exceptions.ValidationError: 'user' is a required property
+[2025-07-01T20:16:27.357+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.358+0000] {docker.py:438} INFO - Failed validating 'required' in schema:
+[2025-07-01T20:16:27.358+0000] {docker.py:438} INFO -     {'type': 'object',
+[2025-07-01T20:16:27.359+0000] {docker.py:438} INFO -      'title': 'TrinoNoneCredentials',
+[2025-07-01T20:16:27.360+0000] {docker.py:438} INFO -      'properties': {'database': {'type': 'string'},
+[2025-07-01T20:16:27.360+0000] {docker.py:438} INFO -                     'schema': {'type': 'string'},
+[2025-07-01T20:16:27.361+0000] {docker.py:438} INFO -                     'host': {'type': 'string'},
+[2025-07-01T20:16:27.361+0000] {docker.py:438} INFO -                     'port': {'type': 'integer'},
+[2025-07-01T20:16:27.362+0000] {docker.py:438} INFO -                     'user': {'type': 'string'},
+[2025-07-01T20:16:27.363+0000] {docker.py:438} INFO -                     'client_tags': {'anyOf': [{'type': 'array',
+[2025-07-01T20:16:27.364+0000] {docker.py:438} INFO -                                                'items': {'type': 'string'}},
+[2025-07-01T20:16:27.364+0000] {docker.py:438} INFO -                                               {'type': 'null'}],
+[2025-07-01T20:16:27.365+0000] {docker.py:438} INFO -                                     'default': None},
+[2025-07-01T20:16:27.366+0000] {docker.py:438} INFO -                     'roles': {'anyOf': [{'type': 'object',
+[2025-07-01T20:16:27.366+0000] {docker.py:438} INFO -                                          'additionalProperties': {'type': 'string'},
+[2025-07-01T20:16:27.367+0000] {docker.py:438} INFO -                                          'propertyNames': {'type': 'string'}},
+[2025-07-01T20:16:27.368+0000] {docker.py:438} INFO -                                         {'type': 'null'}],
+[2025-07-01T20:16:27.368+0000] {docker.py:438} INFO -                               'default': None},
+[2025-07-01T20:16:27.369+0000] {docker.py:438} INFO -                     'cert': {'anyOf': [{'type': 'string'},
+[2025-07-01T20:16:27.370+0000] {docker.py:438} INFO -                                        {'type': 'null'}],
+[2025-07-01T20:16:27.370+0000] {docker.py:438} INFO -                              'default': None},
+[2025-07-01T20:16:27.371+0000] {docker.py:438} INFO -                     'http_scheme': {'enum': ['http', 'https'],
+[2025-07-01T20:16:27.372+0000] {docker.py:438} INFO -                                     'default': 'http'},
+[2025-07-01T20:16:27.372+0000] {docker.py:438} INFO -                     'http_headers': {'anyOf': [{'type': 'object',
+[2025-07-01T20:16:27.373+0000] {docker.py:438} INFO -                                                 'additionalProperties': {'type': 'string'},
+[2025-07-01T20:16:27.373+0000] {docker.py:438} INFO -                                                 'propertyNames': {'type': 'string'}},
+[2025-07-01T20:16:27.374+0000] {docker.py:438} INFO -                                                {'type': 'null'}],
+[2025-07-01T20:16:27.374+0000] {docker.py:438} INFO -                                      'default': None},
+[2025-07-01T20:16:27.375+0000] {docker.py:438} INFO -                     'session_properties': {'type': 'object',
+[2025-07-01T20:16:27.375+0000] {docker.py:438} INFO -                                            'propertyNames': {'type': 'string'}},
+[2025-07-01T20:16:27.376+0000] {docker.py:438} INFO -                     'prepared_statements_enabled': {'type': 'boolean',
+[2025-07-01T20:16:27.376+0000] {docker.py:438} INFO -                                                     'default': True},
+[2025-07-01T20:16:27.377+0000] {docker.py:438} INFO -                     'retries': {'anyOf': [{'type': 'integer'},
+[2025-07-01T20:16:27.377+0000] {docker.py:438} INFO -                                           {'type': 'null'}],
+[2025-07-01T20:16:27.378+0000] {docker.py:438} INFO -                                 'default': 3},
+[2025-07-01T20:16:27.378+0000] {docker.py:438} INFO -                     'timezone': {'anyOf': [{'type': 'string'},
+[2025-07-01T20:16:27.379+0000] {docker.py:438} INFO -                                            {'type': 'null'}],
+[2025-07-01T20:16:27.379+0000] {docker.py:438} INFO -                                  'default': None}},
+[2025-07-01T20:16:27.379+0000] {docker.py:438} INFO -      'additionalProperties': True,
+[2025-07-01T20:16:27.380+0000] {docker.py:438} INFO -      'required': ['database', 'schema', 'host', 'port', 'user']}
+[2025-07-01T20:16:27.380+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.381+0000] {docker.py:438} INFO - On instance:
+[2025-07-01T20:16:27.381+0000] {docker.py:438} INFO -     {'method': 'none',
+[2025-07-01T20:16:27.381+0000] {docker.py:438} INFO -      'host': 'trino',
+[2025-07-01T20:16:27.382+0000] {docker.py:438} INFO -      'port': 8080,
+[2025-07-01T20:16:27.382+0000] {docker.py:438} INFO -      'database': 'iceberg',
+[2025-07-01T20:16:27.383+0000] {docker.py:438} INFO -      'schema': 'silver',
+[2025-07-01T20:16:27.383+0000] {docker.py:438} INFO -      'http_scheme': 'http',
+[2025-07-01T20:16:27.383+0000] {docker.py:438} INFO -      'session_properties': {'query_max_run_time': '5m',
+[2025-07-01T20:16:27.384+0000] {docker.py:438} INFO -                             'exchange_compression': True}}
+[2025-07-01T20:16:27.384+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.384+0000] {docker.py:438} INFO - The above exception was the direct cause of the following exception:
+[2025-07-01T20:16:27.385+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.385+0000] {docker.py:438} INFO - Traceback (most recent call last):
+[2025-07-01T20:16:27.385+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/config/profile.py", line 167, in _credentials_from_profile
+[2025-07-01T20:16:27.386+0000] {docker.py:438} INFO - cls.validate(data)
+[2025-07-01T20:16:27.386+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/adapters/trino/connections.py", line 57, in validate
+[2025-07-01T20:16:27.386+0000] {docker.py:438} INFO - return klazz.validate(data)
+[2025-07-01T20:16:27.387+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/dataclass_schema.py", line 89, in validate
+[2025-07-01T20:16:27.387+0000] {docker.py:438} INFO - raise ValidationError.create_from(error) from error
+[2025-07-01T20:16:27.388+0000] {docker.py:438} INFO - dbt.dataclass_schema.ValidationError: 'user' is a required property
+[2025-07-01T20:16:27.388+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.388+0000] {docker.py:438} INFO - Failed validating 'required' in schema:
+[2025-07-01T20:16:27.388+0000] {docker.py:438} INFO -     {'type': 'object',
+[2025-07-01T20:16:27.389+0000] {docker.py:438} INFO -      'title': 'TrinoNoneCredentials',
+[2025-07-01T20:16:27.389+0000] {docker.py:438} INFO -      'properties': {'database': {'type': 'string'},
+[2025-07-01T20:16:27.389+0000] {docker.py:438} INFO -                     'schema': {'type': 'string'},
+[2025-07-01T20:16:27.390+0000] {docker.py:438} INFO -                     'host': {'type': 'string'},
+[2025-07-01T20:16:27.390+0000] {docker.py:438} INFO -                     'port': {'type': 'integer'},
+[2025-07-01T20:16:27.390+0000] {docker.py:438} INFO -                     'user': {'type': 'string'},
+[2025-07-01T20:16:27.390+0000] {docker.py:438} INFO -                     'client_tags': {'anyOf': [{'type': 'array',
+[2025-07-01T20:16:27.391+0000] {docker.py:438} INFO -                                                'items': {'type': 'string'}},
+[2025-07-01T20:16:27.391+0000] {docker.py:438} INFO -                                               {'type': 'null'}],
+[2025-07-01T20:16:27.391+0000] {docker.py:438} INFO -                                     'default': None},
+[2025-07-01T20:16:27.391+0000] {docker.py:438} INFO -                     'roles': {'anyOf': [{'type': 'object',
+[2025-07-01T20:16:27.392+0000] {docker.py:438} INFO -                                          'additionalProperties': {'type': 'string'},
+[2025-07-01T20:16:27.392+0000] {docker.py:438} INFO -                                          'propertyNames': {'type': 'string'}},
+[2025-07-01T20:16:27.392+0000] {docker.py:438} INFO -                                         {'type': 'null'}],
+[2025-07-01T20:16:27.393+0000] {docker.py:438} INFO -                               'default': None},
+[2025-07-01T20:16:27.393+0000] {docker.py:438} INFO -                     'cert': {'anyOf': [{'type': 'string'},
+[2025-07-01T20:16:27.393+0000] {docker.py:438} INFO -                                        {'type': 'null'}],
+[2025-07-01T20:16:27.393+0000] {docker.py:438} INFO -                              'default': None},
+[2025-07-01T20:16:27.393+0000] {docker.py:438} INFO -                     'http_scheme': {'enum': ['http', 'https'],
+[2025-07-01T20:16:27.394+0000] {docker.py:438} INFO -                                     'default': 'http'},
+[2025-07-01T20:16:27.394+0000] {docker.py:438} INFO -                     'http_headers': {'anyOf': [{'type': 'object',
+[2025-07-01T20:16:27.394+0000] {docker.py:438} INFO -                                                 'additionalProperties': {'type': 'string'},
+[2025-07-01T20:16:27.394+0000] {docker.py:438} INFO -                                                 'propertyNames': {'type': 'string'}},
+[2025-07-01T20:16:27.394+0000] {docker.py:438} INFO -                                                {'type': 'null'}],
+[2025-07-01T20:16:27.395+0000] {docker.py:438} INFO -                                      'default': None},
+[2025-07-01T20:16:27.395+0000] {docker.py:438} INFO -                     'session_properties': {'type': 'object',
+[2025-07-01T20:16:27.395+0000] {docker.py:438} INFO -                                            'propertyNames': {'type': 'string'}},
+[2025-07-01T20:16:27.395+0000] {docker.py:438} INFO -                     'prepared_statements_enabled': {'type': 'boolean',
+[2025-07-01T20:16:27.396+0000] {docker.py:438} INFO -                                                     'default': True},
+[2025-07-01T20:16:27.396+0000] {docker.py:438} INFO -                     'retries': {'anyOf': [{'type': 'integer'},
+[2025-07-01T20:16:27.396+0000] {docker.py:438} INFO -                                           {'type': 'null'}],
+[2025-07-01T20:16:27.396+0000] {docker.py:438} INFO -                                 'default': 3},
+[2025-07-01T20:16:27.396+0000] {docker.py:438} INFO -                     'timezone': {'anyOf': [{'type': 'string'},
+[2025-07-01T20:16:27.397+0000] {docker.py:438} INFO -                                            {'type': 'null'}],
+[2025-07-01T20:16:27.397+0000] {docker.py:438} INFO -                                  'default': None}},
+[2025-07-01T20:16:27.397+0000] {docker.py:438} INFO -      'additionalProperties': True,
+[2025-07-01T20:16:27.397+0000] {docker.py:438} INFO -      'required': ['database', 'schema', 'host', 'port', 'user']}
+[2025-07-01T20:16:27.397+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.398+0000] {docker.py:438} INFO - On instance:
+[2025-07-01T20:16:27.398+0000] {docker.py:438} INFO -     {'method': 'none',
+[2025-07-01T20:16:27.398+0000] {docker.py:438} INFO -      'host': 'trino',
+[2025-07-01T20:16:27.398+0000] {docker.py:438} INFO -      'port': 8080,
+[2025-07-01T20:16:27.398+0000] {docker.py:438} INFO -      'database': 'iceberg',
+[2025-07-01T20:16:27.399+0000] {docker.py:438} INFO -      'schema': 'silver',
+[2025-07-01T20:16:27.399+0000] {docker.py:438} INFO -      'http_scheme': 'http',
+[2025-07-01T20:16:27.399+0000] {docker.py:438} INFO -      'session_properties': {'query_max_run_time': '5m',
+[2025-07-01T20:16:27.399+0000] {docker.py:438} INFO -                             'exchange_compression': True}}
+[2025-07-01T20:16:27.399+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.400+0000] {docker.py:438} INFO - The above exception was the direct cause of the following exception:
+[2025-07-01T20:16:27.400+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.400+0000] {docker.py:438} INFO - Traceback (most recent call last):
+[2025-07-01T20:16:27.400+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 90, in wrapper
+[2025-07-01T20:16:27.400+0000] {docker.py:438} INFO -     result, success = func(*args, **kwargs)
+[2025-07-01T20:16:27.401+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 75, in wrapper
+[2025-07-01T20:16:27.401+0000] {docker.py:438} INFO -     return func(*args, **kwargs)
+[2025-07-01T20:16:27.401+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 165, in wrapper
+[2025-07-01T20:16:27.401+0000] {docker.py:438} INFO - profile = load_profile(flags.PROJECT_DIR, flags.VARS, flags.PROFILE, flags.TARGET, threads)
+[2025-07-01T20:16:27.401+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/config/runtime.py", line 70, in load_profile
+[2025-07-01T20:16:27.402+0000] {docker.py:438} INFO - profile = Profile.render(
+[2025-07-01T20:16:27.402+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/config/profile.py", line 436, in render
+[2025-07-01T20:16:27.402+0000] {docker.py:438} INFO - return cls.from_raw_profiles(
+[2025-07-01T20:16:27.402+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/config/profile.py", line 401, in from_raw_profiles
+[2025-07-01T20:16:27.402+0000] {docker.py:438} INFO - return cls.from_raw_profile_info(
+[2025-07-01T20:16:27.403+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/config/profile.py", line 355, in from_raw_profile_info
+[2025-07-01T20:16:27.403+0000] {docker.py:438} INFO - credentials: Credentials = cls._credentials_from_profile(
+[2025-07-01T20:16:27.403+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/config/profile.py", line 171, in _credentials_from_profile
+[2025-07-01T20:16:27.404+0000] {docker.py:438} INFO -     raise DbtProfileError(
+[2025-07-01T20:16:27.404+0000] {docker.py:438} INFO - dbt.exceptions.DbtProfileError: Runtime Error
+[2025-07-01T20:16:27.404+0000] {docker.py:438} INFO -   Credentials in profile "agronegocio_iceberg", target "dev" invalid: 'user' is a required property
+[2025-07-01T20:16:27.404+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.404+0000] {docker.py:438} INFO - During handling of the above exception, another exception occurred:
+[2025-07-01T20:16:27.405+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.405+0000] {docker.py:438} INFO - Traceback (most recent call last):
+[2025-07-01T20:16:27.405+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 96, in wrapper
+[2025-07-01T20:16:27.405+0000] {docker.py:438} INFO - raise ExceptionExit(e)
+[2025-07-01T20:16:27.405+0000] {docker.py:438} INFO - dbt.cli.exceptions.ExceptionExit: <exception str() failed>
+[2025-07-01T20:16:27.406+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.406+0000] {docker.py:438} INFO - During handling of the above exception, another exception occurred:
+[2025-07-01T20:16:27.406+0000] {docker.py:438} INFO - 
+[2025-07-01T20:16:27.406+0000] {docker.py:438} INFO - Traceback (most recent call last):
+[2025-07-01T20:16:27.406+0000] {docker.py:438} INFO -   File "/usr/local/bin/dbt", line 8, in <module>
+[2025-07-01T20:16:27.407+0000] {docker.py:438} INFO - sys.exit(cli())
+[2025-07-01T20:16:27.407+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/core.py", line 1161, in __call__
+[2025-07-01T20:16:27.407+0000] {docker.py:438} INFO - return self.main(*args, **kwargs)
+[2025-07-01T20:16:27.407+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/core.py", line 1082, in main
+[2025-07-01T20:16:27.408+0000] {docker.py:438} INFO - rv = self.invoke(ctx)
+[2025-07-01T20:16:27.408+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/core.py", line 1697, in invoke
+[2025-07-01T20:16:27.408+0000] {docker.py:438} INFO - return _process_result(sub_ctx.command.invoke(sub_ctx))
+[2025-07-01T20:16:27.408+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/core.py", line 1443, in invoke
+[2025-07-01T20:16:27.408+0000] {docker.py:438} INFO - return ctx.invoke(self.callback, **ctx.params)
+[2025-07-01T20:16:27.409+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/core.py", line 788, in invoke
+[2025-07-01T20:16:27.409+0000] {docker.py:438} INFO - return __callback(*args, **kwargs)
+[2025-07-01T20:16:27.409+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/decorators.py", line 33, in new_func
+[2025-07-01T20:16:27.410+0000] {docker.py:438} INFO - return f(get_current_context(), *args, **kwargs)
+[2025-07-01T20:16:27.410+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/main.py", line 155, in wrapper
+[2025-07-01T20:16:27.410+0000] {docker.py:438} INFO - return func(*args, **kwargs)
+[2025-07-01T20:16:27.410+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 108, in wrapper
+[2025-07-01T20:16:27.410+0000] {docker.py:438} INFO - fire_event(
+[2025-07-01T20:16:27.411+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/events/functions.py", line 270, in fire_event
+[2025-07-01T20:16:27.411+0000] {docker.py:438} INFO - EVENT_MANAGER.fire_event(e, level=level)
+[2025-07-01T20:16:27.411+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/events/eventmgr.py", line 17, in fire_event
+[2025-07-01T20:16:27.411+0000] {docker.py:438} INFO - msg = msg_from_base_event(e, level=level)
+[2025-07-01T20:16:27.412+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/events/base_types.py", line 143, in msg_from_base_event
+[2025-07-01T20:16:27.412+0000] {docker.py:438} INFO - "msg": event.message(),
+[2025-07-01T20:16:27.412+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/events/types.py", line 2403, in message
+[2025-07-01T20:16:27.412+0000] {docker.py:438} INFO - return f"Resource report: {self.to_json()}"
+[2025-07-01T20:16:27.412+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/events/base_types.py", line 104, in to_json
+[2025-07-01T20:16:27.413+0000] {docker.py:438} INFO - return MessageToJson(
+[2025-07-01T20:16:27.413+0000] {docker.py:438} INFO - TypeError: MessageToJson() got an unexpected keyword argument 'including_default_value_fields'
+[2025-07-01T20:16:27.870+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-07-01T20:16:27.890+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 275, in _raise_for_status
+    response.raise_for_status()
+  File "/home/airflow/.local/lib/python3.12/site-packages/requests/models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: http+docker://localhost/v1.51/containers/create
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 372, in _run_image
+    return self._run_image_with_mounts([*self.mounts, tmp_mount], add_tmp_variable=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 399, in _run_image_with_mounts
+    self.container = self.cli.create_container(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/container.py", line 440, in create_container
+    return self.create_container_from_config(config, name, platform)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/container.py", line 457, in create_container_from_config
+    return self._result(res, True)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 281, in _result
+    self._raise_for_status(response)
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 277, in _raise_for_status
+    raise create_api_error_from_http_exception(e) from e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.APIError: 400 Client Error for http+docker://localhost/v1.51/containers/create: Bad Request ("invalid mount config for type "bind": bind source path does not exist: /tmp/airflowtmpa0rrlj3o")
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 460, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 513, in execute
+    return self._run_image()
+           ^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 381, in _run_image
+    return self._run_image_with_mounts(self.mounts, add_tmp_variable=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 446, in _run_image_with_mounts
+    raise DockerContainerFailedException(f"Docker container failed: {result!r}", logs=log_lines)
+airflow.providers.docker.exceptions.DockerContainerFailedException: Docker container failed: {'StatusCode': 1}
+[2025-07-01T20:16:27.898+0000] {taskinstance.py:1206} INFO - Marking task as UP_FOR_RETRY. dag_id=dbt_trino_silver_pipeline, task_id=dbt_run_silver, run_id=scheduled__2025-07-01T20:14:00+00:00, execution_date=20250701T201400, start_date=20250701T201622, end_date=20250701T201627
+[2025-07-01T20:16:27.912+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 111 for task dbt_run_silver (Docker container failed: {'StatusCode': 1}; 399)
+[2025-07-01T20:16:27.950+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 1
+[2025-07-01T20:16:27.979+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-07-01T20:16:27.982+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

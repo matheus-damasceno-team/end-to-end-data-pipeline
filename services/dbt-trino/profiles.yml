@@ -16,4 +16,4 @@ agronegocio_iceberg:
       http_scheme: http
       session_properties:
         query_max_run_time: 5m
-        exchange_compression: true
+        # exchange_compression: true

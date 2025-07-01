@@ -19,7 +19,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'email': ['admin@example.com'],
-    'retries': 2,
+    'retries': 0,
     'retry_delay': timedelta(minutes=1),
     'execution_timeout': timedelta(minutes=5),  # Mais rápido com Trino
 }
@@ -68,8 +68,7 @@ dbt_run_silver = DockerOperator(
     docker_url='unix://var/run/docker.sock',
     network_mode='modern-data-pipeline_data_pipeline_net',
     mounts=[
-        Mount(source='/home/matheus-damasceno/modern-data-pipeline/services/dbt-trino', target='/dbt', type='bind'),
-        Mount(source='/tmp', target='/tmp', type='bind')
+        Mount(source='/home/matheus-damasceno/modern-data-pipeline/services/dbt-trino', target='/dbt', type='bind')
     ],
     environment={
         'DBT_PROFILES_DIR': '/dbt',
@@ -97,8 +96,7 @@ dbt_test_silver = DockerOperator(
     docker_url='unix://var/run/docker.sock',
     network_mode='modern-data-pipeline_data_pipeline_net',
     mounts=[
-        Mount(source='/home/matheus-damasceno/modern-data-pipeline/services/dbt-trino', target='/dbt', type='bind'),
-        Mount(source='/tmp', target='/tmp', type='bind')
+        Mount(source='/home/matheus-damasceno/modern-data-pipeline/services/dbt-trino', target='/dbt', type='bind')
     ],
     environment={
         'DBT_PROFILES_DIR': '/dbt'

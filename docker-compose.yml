@@ -5,7 +5,6 @@ networks:
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.1
-    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
     platform: linux/amd64
     container_name: zookeeper
     networks:
@@ -18,7 +17,6 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.6.1
-    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
     platform: linux/amd64
     container_name: kafka
     networks:
@@ -43,7 +41,6 @@ services:
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
-    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
     platform: linux/amd64
     networks:
       - data_pipeline_net
@@ -56,7 +53,6 @@ services:
 
   minio:
     image: minio/minio:latest
-    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
     platform: linux/amd64
     container_name: minio
     networks:
@@ -132,7 +128,6 @@ services:
 
   metastore-db:
     image: mariadb:10.5
-    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
     platform: linux/amd64
     container_name: metastore-db
     networks:
@@ -140,11 +135,8 @@ services:
     volumes:
       - metastore-db:/var/lib/mysql
     environment:
-      # A senha é definida aqui para o MariaDB usar na inicialização
       - MYSQL_ROOT_PASSWORD=password
     healthcheck:
-      # E a mesma senha é usada diretamente no comando abaixo.
-      # A sintaxe correta é -pSENHA (tudo junto, sem espaço).
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
       interval: 10s
       timeout: 5s
@@ -223,7 +215,6 @@ services:
       - "7077:7077"
     volumes:
       - ./services/spark_jobs:/opt/bitnami/spark/jobs
-      #- ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
       - ./metastore/core-site.xml:/opt/bitnami/spark/conf/core-site.xml
       - ./metastore/hive-site.xml:/opt/bitnami/spark/conf/hive-site.xml
     environment:
@@ -232,14 +223,12 @@ services:
       SPARK_RPC_ENCRYPTION_ENABLED: "no"
       SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
       SPARK_SSL_ENABLED: "no"
-      # Add Hive configuration
       HIVE_METASTORE_URIS: "thrift://metastore:9083"
     depends_on:
      - metastore
 
   spark-worker:
     image: bitnami/spark:3.5
-    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
     platform: linux/amd64
     container_name: spark-worker
     networks:
@@ -340,7 +329,6 @@ services:
 
   kafka-cleaner:
     image: confluentinc/cp-kafka:7.6.1
-    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
     platform: linux/amd64
     container_name: kafka-cleaner
     networks:
@@ -362,7 +350,6 @@ services:
   producer-simulator:
     build:
       context: ./services/producer_simulator
-    ## CORREÇÃO: Adicionada plataforma para garantir consistência e performance.
     platform: linux/amd64
     container_name: producer-simulator
     networks:
@@ -423,6 +410,8 @@ services:
       - ./airflow/dags:/opt/airflow/dags:rw
       - ./airflow/logs:/opt/airflow/logs:rw
       - ./airflow/plugins:/opt/airflow/plugins:rw
+      - ./dbt_trino:/opt/airflow/dbt_trino:rw
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "8086:8080"
     command: webserver
@@ -459,13 +448,15 @@ services:
       - ./airflow/dags:/opt/airflow/dags:rw
       - ./airflow/logs:/opt/airflow/logs:rw
       - ./airflow/plugins:/opt/airflow/plugins:rw
+      - ./services/dbt-trino:/opt/airflow/dbt_trino:rw
+      - /var/run/docker.sock:/var/run/docker.sock
     command: scheduler
     healthcheck:
       test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname \"$(hostname)\" --limit 1 --allow-multiple || exit 1"]
       interval: 60s
       timeout: 30s
       retries: 5
-    user: "50000:50000"
+    user: "0:0"
 
   airflow-init:
     build:
@@ -488,6 +479,7 @@ services:
       - ./airflow/dags:/opt/airflow/dags:rw
       - ./airflow/logs:/opt/airflow/logs:rw
       - ./airflow/plugins:/opt/airflow/plugins:rw
+      - ./services/dbt-trino:/opt/airflow/dbt_trino:rw
     command:
       - bash
       - -c
@@ -495,6 +487,7 @@ services:
         set -e
         echo "Creating necessary directories..."
         mkdir -p /opt/airflow/{dags,logs,plugins}
+        mkdir -p /opt/airflow/dags/scripts
         
         echo "Checking Airflow version..."
         airflow version
@@ -515,10 +508,159 @@ services:
         airflow users list
         
         echo "Airflow initialization completed successfully!"
-    user: "50000:50000"
+    user: "0:0"
     restart: "no"
 
+  dbt-trino:
+    build:
+      context: ./services/dbt-trino
+      dockerfile: Dockerfile
+    container_name: dbt-trino
+    platform: linux/amd64
+    networks:
+      - data_pipeline_net
+    depends_on:
+      trino:
+        condition: service_healthy
+      metastore:
+        condition: service_healthy
+    volumes:
+      - ./services/dbt-trino:/dbt:rw
+    environment:
+      - DBT_PROFILES_DIR=/dbt
+    command: tail -f /dev/null
+    healthcheck:
+      test: ["CMD", "dbt", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
+  # NOVO: Setup inicial do dbt com Trino
+  dbt-trino-setup:
+    image: python:3.9-slim
+    container_name: dbt-trino-setup
+    platform: linux/amd64
+    networks:
+      - data_pipeline_net
+    depends_on:
+      dbt-trino:
+        condition: service_healthy
+      trino:
+        condition: service_healthy
+    volumes:
+      - ./services/dbt-trino:/dbt:rw
+      - ./setup_dbt_trino.sh:/setup_dbt_trino.sh:ro
+      - ./services/dbt-trino:/services/dbt-trino:ro
+    environment:
+      - DBT_PROFILES_DIR=/dbt
+    command:
+      - bash
+      - -c
+      - |
+        set -e
+        echo "=== Setup Automático do dbt com Trino ==="
+        
+        # Instalar dependências necessárias
+        apt-get update && apt-get install -y git curl
+        pip install protobuf==4.25.3 dbt-core==1.7.0 dbt-trino==1.7.0
+        
+        # Criar estrutura de diretórios
+        cd /dbt
+        mkdir -p models/{staging,silver,marts} macros tests/{generic,singular} data analyses snapshots
+        
+        # Criar arquivo packages.yml
+        if [ ! -f packages.yml ]; then
+          cat > packages.yml << 'EOF'
+        packages:
+          - package: dbt-labs/dbt_utils
+            version: 1.1.1
+        EOF
+        fi
+        
+        # Criar dbt_project.yml se não existir
+        if [ ! -f dbt_project.yml ]; then
+          cat > dbt_project.yml << 'EOF'
+        name: 'agronegocio_iceberg'
+        version: '1.0.0'
+        config-version: 2
+        
+        profile: 'agronegocio_iceberg'
+        
+        model-paths: ["models"]
+        analysis-paths: ["analyses"]
+        test-paths: ["tests"]
+        seed-paths: ["data"]
+        macro-paths: ["macros"]
+        snapshot-paths: ["snapshots"]
+        
+        target-path: "target"
+        clean-targets: ["target", "dbt_packages"]
+        
+        models:
+          agronegocio_iceberg:
+            +materialized: incremental
+            +on_schema_change: append_new_columns
+            +incremental_strategy: merge
+            +unique_key: proponente_id
+            
+            silver:
+              +schema: silver
+              +enabled: true
+        
+        vars:
+          max_null_percentage: 0.05
+          min_row_count: 1
+          iceberg_catalog: 'iceberg'
+          bronze_catalog: 'iceberg'
+          bronze_schema: 'bronze'
+        EOF
+        fi
+        
+        # Criar profiles.yml se não existir
+        if [ ! -f profiles.yml ]; then
+          cat > profiles.yml << 'EOF'
+        agronegocio_iceberg:
+          target: dev
+          outputs:
+            dev:
+              type: trino
+              method: none
+              host: trino
+              port: 8080
+              catalog: iceberg
+              schema: silver
+              threads: 2
+              http_scheme: http
+        EOF
+        fi
+        
+        # Instalar dependências do dbt
+        echo "Instalando dependências do dbt..."
+        dbt deps
+        
+        # Aguardar Trino estar completamente pronto
+        echo "Aguardando Trino estar pronto..."
+        sleep 10
+        
+        # Testar conexão
+        echo "Testando conexão com Trino..."
+        dbt debug || true
+        
+        # Criar schema silver via Trino CLI
+        echo "Criando schema silver no Iceberg..."
+        apt-get install -y netcat-openbsd
+        echo "CREATE SCHEMA IF NOT EXISTS iceberg.silver;" | nc trino 8080 || true
+        
+        echo ""
+        echo "=== Setup do dbt com Trino concluído! ==="
+        echo ""
+        echo "O dbt está configurado e pronto para uso."
+        echo "A DAG do Airflow executará automaticamente a cada 2 minutos."
+        echo ""
+        echo "Para executar manualmente:"
+        echo "  docker-compose exec dbt-trino dbt run --models silver.*"
+        echo "  docker-compose exec dbt-trino dbt test"
+    restart: "no"
 
 volumes:
   minio_data:

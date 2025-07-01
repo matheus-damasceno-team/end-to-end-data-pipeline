@@ -1,0 +1,50 @@
+[2025-07-01T19:06:26.078+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-07-01T19:06:26.107+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T19:02:00+00:00 [queued]>
+[2025-07-01T19:06:26.117+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T19:02:00+00:00 [queued]>
+[2025-07-01T19:06:26.117+0000] {taskinstance.py:2306} INFO - Starting attempt 2 of 3
+[2025-07-01T19:06:26.128+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): dbt_run_silver> on 2025-07-01 19:02:00+00:00
+[2025-07-01T19:06:26.136+0000] {logging_mixin.py:188} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=419) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-07-01T19:06:26.137+0000] {standard_task_runner.py:64} INFO - Started process 420 to run task
+[2025-07-01T19:06:26.136+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'dbt_trino_silver_pipeline', 'dbt_run_silver', 'scheduled__2025-07-01T19:02:00+00:00', '--job-id', '6', '--raw', '--subdir', 'DAGS_FOLDER/dbt_trino_silver_dadg.py', '--cfg-path', '/tmp/tmpxa5yf8et']
+[2025-07-01T19:06:26.137+0000] {standard_task_runner.py:91} INFO - Job 6: Subtask dbt_run_silver
+[2025-07-01T19:06:26.176+0000] {task_command.py:426} INFO - Running <TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T19:02:00+00:00 [running]> on host d760a54b0847
+[2025-07-01T19:06:26.251+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='admin@example.com' AIRFLOW_CTX_DAG_OWNER='data-team' AIRFLOW_CTX_DAG_ID='dbt_trino_silver_pipeline' AIRFLOW_CTX_TASK_ID='dbt_run_silver' AIRFLOW_CTX_EXECUTION_DATE='2025-07-01T19:02:00+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-07-01T19:02:00+00:00'
+[2025-07-01T19:06:26.252+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-07-01T19:06:26.284+0000] {docker.py:496} INFO - ::group::Pulling docker image dbt-trino:latest
+[2025-07-01T19:06:28.404+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-07-01T19:06:28.405+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 275, in _raise_for_status
+    response.raise_for_status()
+  File "/home/airflow/.local/lib/python3.12/site-packages/requests/models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: http+docker://localhost/v1.51/images/create?tag=latest&fromImage=dbt-trino
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 460, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 498, in execute
+    for output in self.cli.pull(self.image, stream=True, decode=True):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/image.py", line 429, in pull
+    self._raise_for_status(response)
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 277, in _raise_for_status
+    raise create_api_error_from_http_exception(e) from e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.ImageNotFound: 404 Client Error for http+docker://localhost/v1.51/images/create?tag=latest&fromImage=dbt-trino: Not Found ("pull access denied for dbt-trino, repository does not exist or may require 'docker login': denied: requested access to the resource is denied")
+[2025-07-01T19:06:28.420+0000] {taskinstance.py:1206} INFO - Marking task as UP_FOR_RETRY. dag_id=dbt_trino_silver_pipeline, task_id=dbt_run_silver, run_id=scheduled__2025-07-01T19:02:00+00:00, execution_date=20250701T190200, start_date=20250701T190626, end_date=20250701T190628
+[2025-07-01T19:06:28.436+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 6 for task dbt_run_silver (404 Client Error for http+docker://localhost/v1.51/images/create?tag=latest&fromImage=dbt-trino: Not Found ("pull access denied for dbt-trino, repository does not exist or may require 'docker login': denied: requested access to the resource is denied"); 420)
+[2025-07-01T19:06:28.480+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 1
+[2025-07-01T19:06:28.526+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-07-01T19:06:28.530+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

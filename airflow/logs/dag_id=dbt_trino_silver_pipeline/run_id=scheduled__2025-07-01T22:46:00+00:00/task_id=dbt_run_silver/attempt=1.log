@@ -1,0 +1,50 @@
+[2025-07-01T22:48:02.529+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-07-01T22:48:02.585+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T22:46:00+00:00 [queued]>
+[2025-07-01T22:48:02.601+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T22:46:00+00:00 [queued]>
+[2025-07-01T22:48:02.601+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-07-01T22:48:02.622+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): dbt_run_silver> on 2025-07-01 22:46:00+00:00
+[2025-07-01T22:48:02.635+0000] {logging_mixin.py:188} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=292) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-07-01T22:48:02.637+0000] {standard_task_runner.py:64} INFO - Started process 293 to run task
+[2025-07-01T22:48:02.641+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'dbt_trino_silver_pipeline', 'dbt_run_silver', 'scheduled__2025-07-01T22:46:00+00:00', '--job-id', '53', '--raw', '--subdir', 'DAGS_FOLDER/dbt_trino_silver_dag.py', '--cfg-path', '/tmp/tmpz0ytn4e7']
+[2025-07-01T22:48:02.645+0000] {standard_task_runner.py:91} INFO - Job 53: Subtask dbt_run_silver
+[2025-07-01T22:48:02.739+0000] {task_command.py:426} INFO - Running <TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T22:46:00+00:00 [running]> on host 0a4aae371d36
+[2025-07-01T22:48:02.875+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='admin@example.com' AIRFLOW_CTX_DAG_OWNER='data-team' AIRFLOW_CTX_DAG_ID='dbt_trino_silver_pipeline' AIRFLOW_CTX_TASK_ID='dbt_run_silver' AIRFLOW_CTX_EXECUTION_DATE='2025-07-01T22:46:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-07-01T22:46:00+00:00'
+[2025-07-01T22:48:02.876+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-07-01T22:48:02.942+0000] {docker.py:367} INFO - Starting docker container from image modern-data-pipeline-dbt-trino:latest
+[2025-07-01T22:48:03.363+0000] {docker.py:438} INFO - === Executando dbt run incremental ===
+[2025-07-01T22:48:09.183+0000] {docker.py:438} INFO - [0m22:48:09  Running with dbt=1.7.0
+[2025-07-01T22:48:09.616+0000] {docker.py:438} INFO - [0m22:48:09  Registered adapter: trino=1.7.0
+[2025-07-01T22:48:09.653+0000] {docker.py:438} INFO - [0m22:48:09  Unable to do partial parsing because a project config has changed
+[2025-07-01T22:48:09.719+0000] {docker.py:438} INFO - [0m22:48:09  Encountered an error:
+[2025-07-01T22:48:09.719+0000] {docker.py:438} INFO - Compilation Error
+[2025-07-01T22:48:09.719+0000] {docker.py:438} INFO -   dbt found two macros named "create_schema_if_not_exists" in the project
+[2025-07-01T22:48:09.720+0000] {docker.py:438} INFO -   "agronegocio_iceberg".
+[2025-07-01T22:48:09.720+0000] {docker.py:438} INFO -    To fix this error, rename or remove one of the following macros:
+[2025-07-01T22:48:09.720+0000] {docker.py:438} INFO -       - macros/trino_iceberg_utils.sql
+[2025-07-01T22:48:09.720+0000] {docker.py:438} INFO -       - macros/create_table_if_not_exists.sql
+[2025-07-01T22:48:10.909+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-07-01T22:48:10.926+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 460, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 513, in execute
+    return self._run_image()
+           ^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 384, in _run_image
+    return self._run_image_with_mounts(self.mounts, add_tmp_variable=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 446, in _run_image_with_mounts
+    raise DockerContainerFailedException(f"Docker container failed: {result!r}", logs=log_lines)
+airflow.providers.docker.exceptions.DockerContainerFailedException: Docker container failed: {'StatusCode': 2}
+[2025-07-01T22:48:10.934+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=dbt_trino_silver_pipeline, task_id=dbt_run_silver, run_id=scheduled__2025-07-01T22:46:00+00:00, execution_date=20250701T224600, start_date=20250701T224802, end_date=20250701T224810
+[2025-07-01T22:48:10.949+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 53 for task dbt_run_silver (Docker container failed: {'StatusCode': 2}; 293)
+[2025-07-01T22:48:10.968+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 1
+[2025-07-01T22:48:10.986+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-07-01T22:48:10.990+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

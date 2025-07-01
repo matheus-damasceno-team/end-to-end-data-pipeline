@@ -1,0 +1,199 @@
+[2025-07-01T20:47:25.449+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-07-01T20:47:25.477+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T20:44:00+00:00 [queued]>
+[2025-07-01T20:47:25.486+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T20:44:00+00:00 [queued]>
+[2025-07-01T20:47:25.487+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2025-07-01T20:47:25.498+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): dbt_run_silver> on 2025-07-01 20:44:00+00:00
+[2025-07-01T20:47:25.505+0000] {logging_mixin.py:188} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=1052) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-07-01T20:47:25.505+0000] {standard_task_runner.py:64} INFO - Started process 1053 to run task
+[2025-07-01T20:47:25.505+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'dbt_trino_silver_pipeline', 'dbt_run_silver', 'scheduled__2025-07-01T20:44:00+00:00', '--job-id', '163', '--raw', '--subdir', 'DAGS_FOLDER/dbt_trino_silver_dadg.py', '--cfg-path', '/tmp/tmpri9bm2vw']
+[2025-07-01T20:47:25.506+0000] {standard_task_runner.py:91} INFO - Job 163: Subtask dbt_run_silver
+[2025-07-01T20:47:25.544+0000] {task_command.py:426} INFO - Running <TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T20:44:00+00:00 [running]> on host b4eeaef718a2
+[2025-07-01T20:47:25.616+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='admin@example.com' AIRFLOW_CTX_DAG_OWNER='data-team' AIRFLOW_CTX_DAG_ID='dbt_trino_silver_pipeline' AIRFLOW_CTX_TASK_ID='dbt_run_silver' AIRFLOW_CTX_EXECUTION_DATE='2025-07-01T20:44:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-07-01T20:44:00+00:00'
+[2025-07-01T20:47:25.617+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-07-01T20:47:25.648+0000] {docker.py:367} INFO - Starting docker container from image modern-data-pipeline-dbt-trino:latest
+[2025-07-01T20:47:25.957+0000] {docker.py:438} INFO - === Executando dbt run incremental ===
+[2025-07-01T20:47:28.753+0000] {docker.py:438} INFO - [0m20:47:28  Running with dbt=1.7.0
+[2025-07-01T20:47:29.158+0000] {docker.py:438} INFO - [0m20:47:29  Registered adapter: trino=1.7.0
+[2025-07-01T20:47:29.206+0000] {docker.py:438} INFO - [0m20:47:29  [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+[2025-07-01T20:47:29.207+0000] {docker.py:438} INFO - There are 1 unused configuration paths:
+[2025-07-01T20:47:29.207+0000] {docker.py:438} INFO - - models.agronegocio_iceberg.staging
+[2025-07-01T20:47:29.232+0000] {docker.py:438} INFO - [0m20:47:29  Found 1 model, 29 tests, 2 operations, 1 source, 0 exposures, 0 metrics, 427 macros, 0 groups, 0 semantic models
+[2025-07-01T20:47:29.235+0000] {docker.py:438} INFO - [0m20:47:29
+[2025-07-01T20:47:29.280+0000] {docker.py:438} INFO - [0m20:47:29
+[2025-07-01T20:47:29.281+0000] {docker.py:438} INFO - [0m20:47:29  Finished running  in 0 hours 0 minutes and 0.04 seconds (0.04s).
+[2025-07-01T20:47:29.281+0000] {docker.py:438} INFO - [0m20:47:29  Encountered an error:
+[2025-07-01T20:47:29.282+0000] {docker.py:438} INFO - Database Error
+[2025-07-01T20:47:29.282+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=INVALID_SESSION_PROPERTY, message="Unknown session property exchange_compression", query_id=20250701_204729_00030_yqvmp)
+[2025-07-01T20:47:29.886+0000] {docker.py:438} INFO - Traceback (most recent call last):
+[2025-07-01T20:47:29.887+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/adapters/trino/connections.py", line 399, in exception_handler
+[2025-07-01T20:47:29.888+0000] {docker.py:438} INFO - yield
+[2025-07-01T20:47:29.888+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/adapters/sql/connections.py", line 80, in add_query
+[2025-07-01T20:47:29.889+0000] {docker.py:438} INFO - cursor.execute(sql, bindings)
+[2025-07-01T20:47:29.890+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/adapters/trino/connections.py", line 355, in execute
+[2025-07-01T20:47:29.892+0000] {docker.py:438} INFO - result = self._cursor.execute(sql, params=bindings)
+[2025-07-01T20:47:29.893+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/trino/dbapi.py", line 640, in execute
+[2025-07-01T20:47:29.894+0000] {docker.py:438} INFO -     self._iterator = iter(self._query.execute())
+[2025-07-01T20:47:29.895+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/trino/client.py", line 900, in execute
+[2025-07-01T20:47:29.896+0000] {docker.py:438} INFO -     self._result.rows += self.fetch()
+[2025-07-01T20:47:29.897+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/trino/client.py", line 920, in fetch
+[2025-07-01T20:47:29.897+0000] {docker.py:438} INFO -     status = self._request.process(response)
+[2025-07-01T20:47:29.898+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/trino/client.py", line 689, in process
+[2025-07-01T20:47:29.899+0000] {docker.py:438} INFO - raise self._process_error(response["error"], response.get("id"))
+[2025-07-01T20:47:29.901+0000] {docker.py:438} INFO - trino.exceptions.TrinoUserError: TrinoUserError(type=USER_ERROR, name=INVALID_SESSION_PROPERTY, message="Unknown session property exchange_compression", query_id=20250701_204729_00030_yqvmp)
+[2025-07-01T20:47:29.903+0000] {docker.py:438} INFO - During handling of the above exception, another exception occurred:
+[2025-07-01T20:47:29.905+0000] {docker.py:438} INFO - Traceback (most recent call last):
+[2025-07-01T20:47:29.907+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 90, in wrapper
+[2025-07-01T20:47:29.908+0000] {docker.py:438} INFO - result, success = func(*args, **kwargs)
+[2025-07-01T20:47:29.909+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 75, in wrapper
+[2025-07-01T20:47:29.911+0000] {docker.py:438} INFO - return func(*args, **kwargs)
+[2025-07-01T20:47:29.912+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 168, in wrapper
+[2025-07-01T20:47:29.913+0000] {docker.py:438} INFO -     return func(*args, **kwargs)
+[2025-07-01T20:47:29.913+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 197, in wrapper
+[2025-07-01T20:47:29.914+0000] {docker.py:438} INFO -     return func(*args, **kwargs)
+[2025-07-01T20:47:29.914+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 244, in wrapper
+[2025-07-01T20:47:29.915+0000] {docker.py:438} INFO -     return func(*args, **kwargs)
+[2025-07-01T20:47:29.915+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 284, in wrapper
+[2025-07-01T20:47:29.916+0000] {docker.py:438} INFO -     return func(*args, **kwargs)
+[2025-07-01T20:47:29.916+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/main.py", line 625, in run
+[2025-07-01T20:47:29.917+0000] {docker.py:438} INFO -     results = task.run()
+[2025-07-01T20:47:29.917+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/task/runnable.py", line 474, in run
+[2025-07-01T20:47:29.918+0000] {docker.py:438} INFO -     result = self.execute_with_hooks(selected_uids)
+[2025-07-01T20:47:29.918+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/task/runnable.py", line 434, in execute_with_hooks
+[2025-07-01T20:47:29.918+0000] {docker.py:438} INFO -     self.before_run(adapter, selected_uids)
+[2025-07-01T20:47:29.919+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/task/run.py", line 446, in before_run
+[2025-07-01T20:47:29.919+0000] {docker.py:438} INFO -     self.create_schemas(adapter, required_schemas)
+[2025-07-01T20:47:29.920+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/task/runnable.py", line 573, in create_schemas
+[2025-07-01T20:47:29.920+0000] {docker.py:438} INFO -     existing_schemas_lowered.update(ls_future.result())
+[2025-07-01T20:47:29.920+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/concurrent/futures/_base.py", line 439, in result
+[2025-07-01T20:47:29.921+0000] {docker.py:438} INFO -     return self.__get_result()
+[2025-07-01T20:47:29.921+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/concurrent/futures/_base.py", line 391, in __get_result
+[2025-07-01T20:47:29.921+0000] {docker.py:438} INFO -     raise self._exception
+[2025-07-01T20:47:29.922+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/concurrent/futures/thread.py", line 58, in run
+[2025-07-01T20:47:29.922+0000] {docker.py:438} INFO -     result = self.fn(*self.args, **self.kwargs)
+[2025-07-01T20:47:29.923+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/utils.py", line 471, in connected
+[2025-07-01T20:47:29.923+0000] {docker.py:438} INFO - return func(*args, **kwargs)
+[2025-07-01T20:47:29.923+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/task/runnable.py", line 550, in list_schemas
+[2025-07-01T20:47:29.924+0000] {docker.py:438} INFO - for s in adapter.list_schemas(database_quoted)
+[2025-07-01T20:47:29.924+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/adapters/sql/impl.py", line 206, in list_schemas
+[2025-07-01T20:47:29.924+0000] {docker.py:438} INFO - results = self.execute_macro(LIST_SCHEMAS_MACRO_NAME, kwargs={"database": database})
+[2025-07-01T20:47:29.925+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/adapters/base/impl.py", line 1099, in execute_macro
+[2025-07-01T20:47:29.925+0000] {docker.py:438} INFO - result = macro_function(**kwargs)
+[2025-07-01T20:47:29.925+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/clients/jinja.py", line 330, in __call__
+[2025-07-01T20:47:29.926+0000] {docker.py:438} INFO - return self.call_macro(*args, **kwargs)
+[2025-07-01T20:47:29.926+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/clients/jinja.py", line 257, in call_macro
+[2025-07-01T20:47:29.926+0000] {docker.py:438} INFO - return macro(*args, **kwargs)
+[2025-07-01T20:47:29.927+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/jinja2/runtime.py", line 770, in __call__
+[2025-07-01T20:47:29.927+0000] {docker.py:438} INFO - return self._invoke(arguments, autoescape)
+[2025-07-01T20:47:29.928+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/jinja2/runtime.py", line 784, in _invoke
+[2025-07-01T20:47:29.928+0000] {docker.py:438} INFO - rv = self._func(*arguments)
+[2025-07-01T20:47:29.929+0000] {docker.py:438} INFO - File "<template>", line 20, in macro
+[2025-07-01T20:47:29.929+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/jinja2/sandbox.py", line 401, in call
+[2025-07-01T20:47:29.930+0000] {docker.py:438} INFO - return __context.call(__obj, *args, **kwargs)
+[2025-07-01T20:47:29.930+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/jinja2/runtime.py", line 303, in call
+[2025-07-01T20:47:29.930+0000] {docker.py:438} INFO - return __obj(*args, **kwargs)
+[2025-07-01T20:47:29.931+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/clients/jinja.py", line 330, in __call__
+[2025-07-01T20:47:29.931+0000] {docker.py:438} INFO - return self.call_macro(*args, **kwargs)
+[2025-07-01T20:47:29.932+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/clients/jinja.py", line 257, in call_macro
+[2025-07-01T20:47:29.932+0000] {docker.py:438} INFO - return macro(*args, **kwargs)
+[2025-07-01T20:47:29.933+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/jinja2/runtime.py", line 770, in __call__
+[2025-07-01T20:47:29.933+0000] {docker.py:438} INFO -     return self._invoke(arguments, autoescape)
+[2025-07-01T20:47:29.933+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/jinja2/runtime.py", line 784, in _invoke
+[2025-07-01T20:47:29.933+0000] {docker.py:438} INFO -     rv = self._func(*arguments)
+[2025-07-01T20:47:29.934+0000] {docker.py:438} INFO -   File "<template>", line 31, in macro
+[2025-07-01T20:47:29.934+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/jinja2/sandbox.py", line 401, in call
+[2025-07-01T20:47:29.934+0000] {docker.py:438} INFO -     return __context.call(__obj, *args, **kwargs)
+[2025-07-01T20:47:29.934+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/jinja2/runtime.py", line 303, in call
+[2025-07-01T20:47:29.934+0000] {docker.py:438} INFO -     return __obj(*args, **kwargs)
+[2025-07-01T20:47:29.935+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/clients/jinja.py", line 330, in __call__
+[2025-07-01T20:47:29.935+0000] {docker.py:438} INFO -     return self.call_macro(*args, **kwargs)
+[2025-07-01T20:47:29.935+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/clients/jinja.py", line 257, in call_macro
+[2025-07-01T20:47:29.935+0000] {docker.py:438} INFO -     return macro(*args, **kwargs)
+[2025-07-01T20:47:29.935+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/jinja2/runtime.py", line 770, in __call__
+[2025-07-01T20:47:29.936+0000] {docker.py:438} INFO -     return self._invoke(arguments, autoescape)
+[2025-07-01T20:47:29.936+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/jinja2/runtime.py", line 784, in _invoke
+[2025-07-01T20:47:29.936+0000] {docker.py:438} INFO -     rv = self._func(*arguments)
+[2025-07-01T20:47:29.936+0000] {docker.py:438} INFO -   File "<template>", line 52, in macro
+[2025-07-01T20:47:29.937+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/jinja2/sandbox.py", line 401, in call
+[2025-07-01T20:47:29.937+0000] {docker.py:438} INFO -     return __context.call(__obj, *args, **kwargs)
+[2025-07-01T20:47:29.937+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/jinja2/runtime.py", line 303, in call
+[2025-07-01T20:47:29.937+0000] {docker.py:438} INFO -     return __obj(*args, **kwargs)
+[2025-07-01T20:47:29.937+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/adapters/base/impl.py", line 309, in execute
+[2025-07-01T20:47:29.938+0000] {docker.py:438} INFO -     return self.connections.execute(sql=sql, auto_begin=auto_begin, fetch=fetch, limit=limit)
+[2025-07-01T20:47:29.938+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/adapters/sql/connections.py", line 138, in execute
+[2025-07-01T20:47:29.938+0000] {docker.py:438} INFO -     _, cursor = self.add_query(sql, auto_begin)
+[2025-07-01T20:47:29.938+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/adapters/trino/connections.py", line 497, in add_query
+[2025-07-01T20:47:29.938+0000] {docker.py:438} INFO -     connection, cursor = parent.add_query(
+[2025-07-01T20:47:29.939+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/adapters/sql/connections.py", line 90, in add_query
+[2025-07-01T20:47:29.939+0000] {docker.py:438} INFO -     return connection, cursor
+[2025-07-01T20:47:29.939+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/contextlib.py", line 137, in __exit__
+[2025-07-01T20:47:29.939+0000] {docker.py:438} INFO -     self.gen.throw(typ, value, traceback)
+[2025-07-01T20:47:29.939+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/adapters/trino/connections.py", line 410, in exception_handler
+[2025-07-01T20:47:29.940+0000] {docker.py:438} INFO -     raise DbtDatabaseError(msg)
+[2025-07-01T20:47:29.940+0000] {docker.py:438} INFO - dbt.exceptions.DbtDatabaseError: Database Error
+[2025-07-01T20:47:29.940+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=INVALID_SESSION_PROPERTY, message="Unknown session property exchange_compression", query_id=20250701_204729_00030_yqvmp)
+[2025-07-01T20:47:29.940+0000] {docker.py:438} INFO - 
+[2025-07-01T20:47:29.940+0000] {docker.py:438} INFO - During handling of the above exception, another exception occurred:
+[2025-07-01T20:47:29.941+0000] {docker.py:438} INFO - 
+[2025-07-01T20:47:29.941+0000] {docker.py:438} INFO - Traceback (most recent call last):
+[2025-07-01T20:47:29.941+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 96, in wrapper
+[2025-07-01T20:47:29.941+0000] {docker.py:438} INFO -     raise ExceptionExit(e)
+[2025-07-01T20:47:29.941+0000] {docker.py:438} INFO - dbt.cli.exceptions.ExceptionExit: <exception str() failed>
+[2025-07-01T20:47:29.942+0000] {docker.py:438} INFO - 
+[2025-07-01T20:47:29.942+0000] {docker.py:438} INFO - During handling of the above exception, another exception occurred:
+[2025-07-01T20:47:29.942+0000] {docker.py:438} INFO - 
+[2025-07-01T20:47:29.942+0000] {docker.py:438} INFO - Traceback (most recent call last):
+[2025-07-01T20:47:29.942+0000] {docker.py:438} INFO -   File "/usr/local/bin/dbt", line 8, in <module>
+[2025-07-01T20:47:29.943+0000] {docker.py:438} INFO -     sys.exit(cli())
+[2025-07-01T20:47:29.943+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/core.py", line 1161, in __call__
+[2025-07-01T20:47:29.943+0000] {docker.py:438} INFO -     return self.main(*args, **kwargs)
+[2025-07-01T20:47:29.943+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/core.py", line 1082, in main
+[2025-07-01T20:47:29.943+0000] {docker.py:438} INFO -     rv = self.invoke(ctx)
+[2025-07-01T20:47:29.943+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/core.py", line 1697, in invoke
+[2025-07-01T20:47:29.944+0000] {docker.py:438} INFO -     return _process_result(sub_ctx.command.invoke(sub_ctx))
+[2025-07-01T20:47:29.944+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/core.py", line 1443, in invoke
+[2025-07-01T20:47:29.944+0000] {docker.py:438} INFO - return ctx.invoke(self.callback, **ctx.params)
+[2025-07-01T20:47:29.944+0000] {docker.py:438} INFO -   File "/usr/local/lib/python3.9/site-packages/click/core.py", line 788, in invoke
+[2025-07-01T20:47:29.945+0000] {docker.py:438} INFO - return __callback(*args, **kwargs)
+[2025-07-01T20:47:29.945+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/click/decorators.py", line 33, in new_func
+[2025-07-01T20:47:29.945+0000] {docker.py:438} INFO - return f(get_current_context(), *args, **kwargs)
+[2025-07-01T20:47:29.945+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/cli/main.py", line 155, in wrapper
+[2025-07-01T20:47:29.946+0000] {docker.py:438} INFO - return func(*args, **kwargs)
+[2025-07-01T20:47:29.946+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/cli/requires.py", line 108, in wrapper
+[2025-07-01T20:47:29.946+0000] {docker.py:438} INFO - fire_event(
+[2025-07-01T20:47:29.946+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/events/functions.py", line 270, in fire_event
+[2025-07-01T20:47:29.947+0000] {docker.py:438} INFO - EVENT_MANAGER.fire_event(e, level=level)
+[2025-07-01T20:47:29.947+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/events/eventmgr.py", line 17, in fire_event
+[2025-07-01T20:47:29.947+0000] {docker.py:438} INFO - msg = msg_from_base_event(e, level=level)
+[2025-07-01T20:47:29.947+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/events/base_types.py", line 143, in msg_from_base_event
+[2025-07-01T20:47:29.948+0000] {docker.py:438} INFO - "msg": event.message(),
+[2025-07-01T20:47:29.948+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/events/types.py", line 2403, in message
+[2025-07-01T20:47:29.948+0000] {docker.py:438} INFO - return f"Resource report: {self.to_json()}"
+[2025-07-01T20:47:29.948+0000] {docker.py:438} INFO - File "/usr/local/lib/python3.9/site-packages/dbt/events/base_types.py", line 104, in to_json
+[2025-07-01T20:47:29.949+0000] {docker.py:438} INFO - return MessageToJson(
+[2025-07-01T20:47:29.949+0000] {docker.py:438} INFO - TypeError: MessageToJson() got an unexpected keyword argument 'including_default_value_fields'
+[2025-07-01T20:47:30.389+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-07-01T20:47:30.401+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 460, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 513, in execute
+    return self._run_image()
+           ^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 384, in _run_image
+    return self._run_image_with_mounts(self.mounts, add_tmp_variable=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 446, in _run_image_with_mounts
+    raise DockerContainerFailedException(f"Docker container failed: {result!r}", logs=log_lines)
+airflow.providers.docker.exceptions.DockerContainerFailedException: Docker container failed: {'StatusCode': 1}
+[2025-07-01T20:47:30.408+0000] {taskinstance.py:1206} INFO - Marking task as UP_FOR_RETRY. dag_id=dbt_trino_silver_pipeline, task_id=dbt_run_silver, run_id=scheduled__2025-07-01T20:44:00+00:00, execution_date=20250701T204400, start_date=20250701T204725, end_date=20250701T204730
+[2025-07-01T20:47:30.425+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 163 for task dbt_run_silver (Docker container failed: {'StatusCode': 1}; 1053)
+[2025-07-01T20:47:30.460+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 1
+[2025-07-01T20:47:30.493+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-07-01T20:47:30.495+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
