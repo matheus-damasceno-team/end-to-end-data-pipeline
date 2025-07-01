@@ -1,0 +1,193 @@
+[2025-07-01T23:08:14.222+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-07-01T23:08:14.273+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_test_silver scheduled__2025-07-01T23:06:00+00:00 [queued]>
+[2025-07-01T23:08:14.288+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_test_silver scheduled__2025-07-01T23:06:00+00:00 [queued]>
+[2025-07-01T23:08:14.288+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-07-01T23:08:14.309+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): dbt_test_silver> on 2025-07-01 23:06:00+00:00
+[2025-07-01T23:08:14.319+0000] {logging_mixin.py:188} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=699) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-07-01T23:08:14.320+0000] {standard_task_runner.py:64} INFO - Started process 700 to run task
+[2025-07-01T23:08:14.322+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'dbt_trino_silver_pipeline', 'dbt_test_silver', 'scheduled__2025-07-01T23:06:00+00:00', '--job-id', '76', '--raw', '--subdir', 'DAGS_FOLDER/dbt_trino_silver_dag.py', '--cfg-path', '/tmp/tmp1ag9hky7']
+[2025-07-01T23:08:14.324+0000] {standard_task_runner.py:91} INFO - Job 76: Subtask dbt_test_silver
+[2025-07-01T23:08:14.384+0000] {task_command.py:426} INFO - Running <TaskInstance: dbt_trino_silver_pipeline.dbt_test_silver scheduled__2025-07-01T23:06:00+00:00 [running]> on host 0a4aae371d36
+[2025-07-01T23:08:14.474+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='admin@example.com' AIRFLOW_CTX_DAG_OWNER='data-team' AIRFLOW_CTX_DAG_ID='dbt_trino_silver_pipeline' AIRFLOW_CTX_TASK_ID='dbt_test_silver' AIRFLOW_CTX_EXECUTION_DATE='2025-07-01T23:06:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-07-01T23:06:00+00:00'
+[2025-07-01T23:08:14.476+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-07-01T23:08:14.513+0000] {docker.py:367} INFO - Starting docker container from image modern-data-pipeline-dbt-trino:latest
+[2025-07-01T23:08:14.968+0000] {docker.py:438} INFO - === Executando testes dbt ===
+[2025-07-01T23:08:18.487+0000] {docker.py:438} INFO - [0m23:08:18  Running with dbt=1.7.0
+[2025-07-01T23:08:18.946+0000] {docker.py:438} INFO - [0m23:08:18  Registered adapter: trino=1.7.0
+[2025-07-01T23:08:18.980+0000] {docker.py:438} INFO - [0m23:08:18  Unable to do partial parsing because config vars, config profile, or config target have changed
+[2025-07-01T23:08:21.003+0000] {docker.py:438} INFO - [0m23:08:21  Iniciando execução do dbt com Trino/Iceberg
+[2025-07-01T23:08:21.049+0000] {docker.py:438} INFO - [0m23:08:21  Execução finalizada
+[2025-07-01T23:08:21.741+0000] {docker.py:438} INFO - [0m23:08:21  Found 1 model, 29 tests, 5 operations, 1 source, 0 exposures, 0 metrics, 541 macros, 0 groups, 0 semantic models
+[2025-07-01T23:08:21.748+0000] {docker.py:438} INFO - [0m23:08:21
+[2025-07-01T23:08:22.041+0000] {docker.py:438} INFO - [0m23:08:22
+[2025-07-01T23:08:22.042+0000] {docker.py:438} INFO - [0m23:08:22  Running 4 on-run-start hooks
+[2025-07-01T23:08:22.046+0000] {docker.py:438} INFO - [0m23:08:22  Iniciando execução do dbt com Trino/Iceberg
+[2025-07-01T23:08:22.053+0000] {docker.py:438} INFO - [0m23:08:22  1 of 4 START hook: agronegocio_iceberg.on-run-start.0 .......................... [RUN]
+[2025-07-01T23:08:22.054+0000] {docker.py:438} INFO - [0m23:08:22  1 of 4 OK hook: agronegocio_iceberg.on-run-start.0 ............................. [[32mOK[0m in 0.00s]
+[2025-07-01T23:08:22.080+0000] {docker.py:438} INFO - [0m23:08:22  Schema bronze criado/verificado
+[2025-07-01T23:08:22.082+0000] {docker.py:438} INFO - [0m23:08:22  2 of 4 START hook: agronegocio_iceberg.on-run-start.1 .......................... [RUN]
+[2025-07-01T23:08:22.083+0000] {docker.py:438} INFO - [0m23:08:22  2 of 4 OK hook: agronegocio_iceberg.on-run-start.1 ............................. [[32mOK[0m in 0.00s]
+[2025-07-01T23:08:22.108+0000] {docker.py:438} INFO - [0m23:08:22  Schema silver criado/verificado
+[2025-07-01T23:08:22.111+0000] {docker.py:438} INFO - [0m23:08:22  3 of 4 START hook: agronegocio_iceberg.on-run-start.2 .......................... [RUN]
+[2025-07-01T23:08:22.112+0000] {docker.py:438} INFO - [0m23:08:22  3 of 4 OK hook: agronegocio_iceberg.on-run-start.2 ............................. [[32mOK[0m in 0.00s]
+[2025-07-01T23:08:22.148+0000] {docker.py:438} INFO - [0m23:08:22  Schema gold criado/verificado
+[2025-07-01T23:08:22.151+0000] {docker.py:438} INFO - [0m23:08:22  4 of 4 START hook: agronegocio_iceberg.on-run-start.3 .......................... [RUN]
+[2025-07-01T23:08:22.152+0000] {docker.py:438} INFO - [0m23:08:22  4 of 4 OK hook: agronegocio_iceberg.on-run-start.3 ............................. [[32mOK[0m in 0.00s]
+[2025-07-01T23:08:22.153+0000] {docker.py:438} INFO - [0m23:08:22
+[2025-07-01T23:08:22.156+0000] {docker.py:438} INFO - [0m23:08:22  Concurrency: 2 threads (target='dev')
+[2025-07-01T23:08:22.157+0000] {docker.py:438} INFO - [0m23:08:22
+[2025-07-01T23:08:22.173+0000] {docker.py:438} INFO - [0m23:08:22  1 of 29 START test accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE  [RUN]
+[2025-07-01T23:08:22.184+0000] {docker.py:438} INFO - [0m23:08:22  2 of 29 START test accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO  [RUN]
+[2025-07-01T23:08:22.365+0000] {docker.py:438} INFO - [0m23:08:22  1 of 29 ERROR accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE  [[31mERROR[0m in 0.19s]
+[2025-07-01T23:08:22.368+0000] {docker.py:438} INFO - [0m23:08:22  3 of 29 START test accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO  [RUN]
+[2025-07-01T23:08:22.458+0000] {docker.py:438} INFO - [0m23:08:22  3 of 29 ERROR accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO  [[31mERROR[0m in 0.09s]
+[2025-07-01T23:08:22.462+0000] {docker.py:438} INFO - [0m23:08:22  4 of 29 START test accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS  [RUN]
+[2025-07-01T23:08:23.093+0000] {docker.py:438} INFO - [0m23:08:23  2 of 29 PASS accepted_values_silver_dados_produtores_agro_trino_cultura_principal__SOJA__MILHO__CAFE__CANA_DE_ACUCAR__ALGODAO__FRUTICULTURA__TRIGO__ARROZ__FEIJAO__EUCALIPTO  [[32mPASS[0m in 0.90s]
+[2025-07-01T23:08:23.099+0000] {docker.py:438} INFO - [0m23:08:23  5 of 29 START test accepted_values_silver_dados_produtores_agro_trino_registro_valido__True  [RUN]
+[2025-07-01T23:08:23.226+0000] {docker.py:438} INFO - [0m23:08:23  5 of 29 ERROR accepted_values_silver_dados_produtores_agro_trino_registro_valido__True  [[31mERROR[0m in 0.12s]
+[2025-07-01T23:08:23.231+0000] {docker.py:438} INFO - [0m23:08:23  6 of 29 START test accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA  [RUN]
+[2025-07-01T23:08:23.300+0000] {docker.py:438} INFO - [0m23:08:23  4 of 29 PASS accepted_values_silver_dados_produtores_agro_trino_finalidade_credito__CUSTEIO_SAFRA__INVESTIMENTO_MAQUINARIO__AMPLIACAO_AREA__OUTROS  [[32mPASS[0m in 0.84s]
+[2025-07-01T23:08:23.305+0000] {docker.py:438} INFO - [0m23:08:23  7 of 29 START test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0  [RUN]
+[2025-07-01T23:08:23.981+0000] {docker.py:438} INFO - [0m23:08:23  6 of 29 PASS accepted_values_silver_dados_produtores_agro_trino_tipo_pessoa__FISICA__JURIDICA  [[32mPASS[0m in 0.75s]
+[2025-07-01T23:08:23.986+0000] {docker.py:438} INFO - [0m23:08:23  8 of 29 START test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90  [RUN]
+[2025-07-01T23:08:24.080+0000] {docker.py:438} INFO - [0m23:08:24  8 of 29 ERROR dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90  [[31mERROR[0m in 0.09s]
+[2025-07-01T23:08:24.085+0000] {docker.py:438} INFO - [0m23:08:24  9 of 29 START test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180  [RUN]
+[2025-07-01T23:08:24.113+0000] {docker.py:438} INFO - [0m23:08:24  7 of 29 PASS dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_area_total_hectares___0  [[32mPASS[0m in 0.81s]
+[2025-07-01T23:08:24.130+0000] {docker.py:438} INFO - [0m23:08:24  10 of 29 START test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0  [RUN]
+[2025-07-01T23:08:24.186+0000] {docker.py:438} INFO - [0m23:08:24  9 of 29 ERROR dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180  [[31mERROR[0m in 0.10s]
+[2025-07-01T23:08:24.195+0000] {docker.py:438} INFO - [0m23:08:24  11 of 29 START test dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24  [RUN]
+[2025-07-01T23:08:24.372+0000] {docker.py:438} INFO - [0m23:08:24  11 of 29 ERROR dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24  [[31mERROR[0m in 0.17s]
+[2025-07-01T23:08:24.381+0000] {docker.py:438} INFO - [0m23:08:24  12 of 29 START test dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao  [RUN]
+[2025-07-01T23:08:24.927+0000] {docker.py:438} INFO - [0m23:08:24  10 of 29 PASS dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_valor_solicitado_credito___0  [[32mPASS[0m in 0.79s]
+[2025-07-01T23:08:24.928+0000] {docker.py:438} INFO - [0m23:08:24  13 of 29 START test not_null_silver_dados_produtores_agro_trino_area_total_hectares  [RUN]
+[2025-07-01T23:08:25.367+0000] {docker.py:438} INFO - [0m23:08:25  12 of 29 FAIL 2 dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao  [[31mFAIL 2[0m in 0.99s]
+[2025-07-01T23:08:25.372+0000] {docker.py:438} INFO - [0m23:08:25  14 of 29 START test not_null_silver_dados_produtores_agro_trino_classificacao_propriedade  [RUN]
+[2025-07-01T23:08:25.460+0000] {docker.py:438} INFO - [0m23:08:25  14 of 29 ERROR not_null_silver_dados_produtores_agro_trino_classificacao_propriedade  [[31mERROR[0m in 0.09s]
+[2025-07-01T23:08:25.470+0000] {docker.py:438} INFO - [0m23:08:25  15 of 29 START test not_null_silver_dados_produtores_agro_trino_cpf_cnpj ....... [RUN]
+[2025-07-01T23:08:25.635+0000] {docker.py:438} INFO - [0m23:08:25  13 of 29 PASS not_null_silver_dados_produtores_agro_trino_area_total_hectares .. [[32mPASS[0m in 0.70s]
+[2025-07-01T23:08:25.640+0000] {docker.py:438} INFO - [0m23:08:25  16 of 29 START test not_null_silver_dados_produtores_agro_trino_cultura_principal  [RUN]
+[2025-07-01T23:08:26.141+0000] {docker.py:438} INFO - [0m23:08:26  15 of 29 PASS not_null_silver_dados_produtores_agro_trino_cpf_cnpj ............. [[32mPASS[0m in 0.67s]
+[2025-07-01T23:08:26.150+0000] {docker.py:438} INFO - [0m23:08:26  17 of 29 START test not_null_silver_dados_produtores_agro_trino_data_solicitacao  [RUN]
+[2025-07-01T23:08:26.279+0000] {docker.py:438} INFO - [0m23:08:26  16 of 29 PASS not_null_silver_dados_produtores_agro_trino_cultura_principal .... [[32mPASS[0m in 0.64s]
+[2025-07-01T23:08:26.286+0000] {docker.py:438} INFO - [0m23:08:26  18 of 29 START test not_null_silver_dados_produtores_agro_trino_faixa_risco_credito  [RUN]
+[2025-07-01T23:08:26.360+0000] {docker.py:438} INFO - [0m23:08:26  18 of 29 ERROR not_null_silver_dados_produtores_agro_trino_faixa_risco_credito . [[31mERROR[0m in 0.07s]
+[2025-07-01T23:08:26.364+0000] {docker.py:438} INFO - [0m23:08:26  19 of 29 START test not_null_silver_dados_produtores_agro_trino_finalidade_credito  [RUN]
+[2025-07-01T23:08:26.849+0000] {docker.py:438} INFO - [0m23:08:26  17 of 29 PASS not_null_silver_dados_produtores_agro_trino_data_solicitacao ..... [[32mPASS[0m in 0.70s]
+[2025-07-01T23:08:26.852+0000] {docker.py:438} INFO - [0m23:08:26  20 of 29 START test not_null_silver_dados_produtores_agro_trino_localizacao_uf . [RUN]
+[2025-07-01T23:08:26.976+0000] {docker.py:438} INFO - [0m23:08:26  20 of 29 ERROR not_null_silver_dados_produtores_agro_trino_localizacao_uf ...... [[31mERROR[0m in 0.11s]
+[2025-07-01T23:08:26.980+0000] {docker.py:438} INFO - [0m23:08:26  21 of 29 START test not_null_silver_dados_produtores_agro_trino_processed_at ... [RUN]
+[2025-07-01T23:08:27.019+0000] {docker.py:438} INFO - [0m23:08:27  19 of 29 PASS not_null_silver_dados_produtores_agro_trino_finalidade_credito ... [[32mPASS[0m in 0.65s]
+[2025-07-01T23:08:27.026+0000] {docker.py:438} INFO - [0m23:08:27  22 of 29 START test not_null_silver_dados_produtores_agro_trino_proponente_id .. [RUN]
+[2025-07-01T23:08:27.077+0000] {docker.py:438} INFO - [0m23:08:27  21 of 29 ERROR not_null_silver_dados_produtores_agro_trino_processed_at ........ [[31mERROR[0m in 0.10s]
+[2025-07-01T23:08:27.082+0000] {docker.py:438} INFO - [0m23:08:27  23 of 29 START test not_null_silver_dados_produtores_agro_trino_registro_valido  [RUN]
+[2025-07-01T23:08:27.220+0000] {docker.py:438} INFO - [0m23:08:27  23 of 29 ERROR not_null_silver_dados_produtores_agro_trino_registro_valido ..... [[31mERROR[0m in 0.14s]
+[2025-07-01T23:08:27.225+0000] {docker.py:438} INFO - [0m23:08:27  24 of 29 START test not_null_silver_dados_produtores_agro_trino_row_hash ....... [RUN]
+[2025-07-01T23:08:27.331+0000] {docker.py:438} INFO - [0m23:08:27  24 of 29 ERROR not_null_silver_dados_produtores_agro_trino_row_hash ............ [[31mERROR[0m in 0.10s]
+[2025-07-01T23:08:27.334+0000] {docker.py:438} INFO - [0m23:08:27  25 of 29 START test not_null_silver_dados_produtores_agro_trino_tipo_pessoa .... [RUN]
+[2025-07-01T23:08:27.646+0000] {docker.py:438} INFO - [0m23:08:27  22 of 29 PASS not_null_silver_dados_produtores_agro_trino_proponente_id ........ [[32mPASS[0m in 0.62s]
+[2025-07-01T23:08:27.654+0000] {docker.py:438} INFO - [0m23:08:27  26 of 29 START test not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito  [RUN]
+[2025-07-01T23:08:27.971+0000] {docker.py:438} INFO - [0m23:08:27  25 of 29 PASS not_null_silver_dados_produtores_agro_trino_tipo_pessoa .......... [[32mPASS[0m in 0.64s]
+[2025-07-01T23:08:27.976+0000] {docker.py:438} INFO - [0m23:08:27  27 of 29 START test source_not_null_bronze_dados_produtores_agro_proponente_id . [RUN]
+[2025-07-01T23:08:28.299+0000] {docker.py:438} INFO - [0m23:08:28  26 of 29 PASS not_null_silver_dados_produtores_agro_trino_valor_solicitado_credito  [[32mPASS[0m in 0.64s]
+[2025-07-01T23:08:28.304+0000] {docker.py:438} INFO - [0m23:08:28  28 of 29 START test test_incremental_integrity_trino ........................... [RUN]
+[2025-07-01T23:08:28.390+0000] {docker.py:438} INFO - [0m23:08:28  28 of 29 ERROR test_incremental_integrity_trino ................................ [[31mERROR[0m in 0.08s]
+[2025-07-01T23:08:28.391+0000] {docker.py:438} INFO - [0m23:08:28  29 of 29 START test unique_silver_dados_produtores_agro_trino_proponente_id .... [RUN]
+[2025-07-01T23:08:28.623+0000] {docker.py:438} INFO - [0m23:08:28  27 of 29 PASS source_not_null_bronze_dados_produtores_agro_proponente_id ....... [[32mPASS[0m in 0.65s]
+[2025-07-01T23:08:29.106+0000] {docker.py:438} INFO - [0m23:08:29  29 of 29 FAIL 2 unique_silver_dados_produtores_agro_trino_proponente_id ........ [[31mFAIL 2[0m in 0.71s]
+[2025-07-01T23:08:29.111+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.112+0000] {docker.py:438} INFO - [0m23:08:29  Running 1 on-run-end hook
+[2025-07-01T23:08:29.119+0000] {docker.py:438} INFO - [0m23:08:29  Execução finalizada
+[2025-07-01T23:08:29.123+0000] {docker.py:438} INFO - [0m23:08:29  1 of 1 START hook: agronegocio_iceberg.on-run-end.0 ............................ [RUN]
+[2025-07-01T23:08:29.124+0000] {docker.py:438} INFO - [0m23:08:29  1 of 1 OK hook: agronegocio_iceberg.on-run-end.0 ............................... [[32mOK[0m in 0.00s]
+[2025-07-01T23:08:29.125+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.127+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.128+0000] {docker.py:438} INFO - [0m23:08:29  Finished running 29 tests, 5 hooks in 0 hours 0 minutes and 7.38 seconds (7.38s).
+[2025-07-01T23:08:29.158+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.159+0000] {docker.py:438} INFO - [0m23:08:29  [31mCompleted with 15 errors and 0 warnings:[0m
+[2025-07-01T23:08:29.159+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.160+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test accepted_values_silver_dados_produtores_agro_trino_classificacao_propriedade__MINIFUNDIO__PEQUENA__MEDIA__GRANDE (models/silver/schema.yml)
+[2025-07-01T23:08:29.161+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'classificacao_propriedade' cannot be resolved", query_id=20250701_230822_00185_ivifs)
+[2025-07-01T23:08:29.162+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.163+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test accepted_values_silver_dados_produtores_agro_trino_faixa_risco_credito__SEM_SCORE__MUITO_ALTO__ALTO__MEDIO__BAIXO (models/silver/schema.yml)
+[2025-07-01T23:08:29.164+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'faixa_risco_credito' cannot be resolved", query_id=20250701_230822_00186_ivifs)
+[2025-07-01T23:08:29.165+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.166+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test accepted_values_silver_dados_produtores_agro_trino_registro_valido__True (models/silver/schema.yml)
+[2025-07-01T23:08:29.167+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 18:9: Column 'registro_valido' cannot be resolved", query_id=20250701_230823_00191_ivifs)
+[2025-07-01T23:08:29.168+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.169+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_latitude__BETWEEN_90_AND_90 (models/silver/schema.yml)
+[2025-07-01T23:08:29.170+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 17:83: Column 'localizacao_latitude' cannot be resolved", query_id=20250701_230824_00199_ivifs)
+[2025-07-01T23:08:29.171+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.171+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test dbt_utils_expression_is_true_silver_dados_produtores_agro_trino_localizacao_longitude__BETWEEN_180_AND_180 (models/silver/schema.yml)
+[2025-07-01T23:08:29.171+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 17:83: Column 'localizacao_longitude' cannot be resolved", query_id=20250701_230824_00200_ivifs)
+[2025-07-01T23:08:29.172+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.172+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test dbt_utils_recency_silver_dados_produtores_agro_trino_hour__processed_at__24 (models/silver/schema.yml)
+[2025-07-01T23:08:29.172+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 24:13: Column 'processed_at' cannot be resolved", query_id=20250701_230824_00202_ivifs)
+[2025-07-01T23:08:29.173+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.173+0000] {docker.py:438} INFO - [0m23:08:29  [31mFailure in test dbt_utils_unique_combination_of_columns_silver_dados_produtores_agro_trino_proponente_id__data_solicitacao (models/silver/schema.yml)[0m
+[2025-07-01T23:08:29.173+0000] {docker.py:438} INFO - [0m23:08:29    Got 2 results, configured to fail if != 0
+[2025-07-01T23:08:29.173+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.174+0000] {docker.py:438} INFO - [0m23:08:29    compiled Code at target/compiled/agronegocio_iceberg/models/silver/schema.yml/dbt_utils_unique_combination_o_21ab17eecd767bb91bd0b03d651fdd82.sql
+[2025-07-01T23:08:29.174+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.175+0000] {docker.py:438} INFO - [0m23:08:29    See test failures:
+[2025-07-01T23:08:29.175+0000] {docker.py:438} INFO -   ------------------------------------------------------------------------------------------------------------------
+[2025-07-01T23:08:29.175+0000] {docker.py:438} INFO -   select * from "iceberg"."silver_dbt_test__audit"."dbt_utils_unique_combination_o_21ab17eecd767bb91bd0b03d651fdd82"
+[2025-07-01T23:08:29.176+0000] {docker.py:438} INFO -   ------------------------------------------------------------------------------------------------------------------
+[2025-07-01T23:08:29.176+0000] {docker.py:438} INFO - [0m23:08:29  
+[2025-07-01T23:08:29.177+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test not_null_silver_dados_produtores_agro_trino_classificacao_propriedade (models/silver/schema.yml)
+[2025-07-01T23:08:29.178+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'classificacao_propriedade' cannot be resolved", query_id=20250701_230825_00210_ivifs)
+[2025-07-01T23:08:29.179+0000] {docker.py:438} INFO - [0m23:08:29  
+[2025-07-01T23:08:29.180+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test not_null_silver_dados_produtores_agro_trino_faixa_risco_credito (models/silver/schema.yml)
+[2025-07-01T23:08:29.181+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'faixa_risco_credito' cannot be resolved", query_id=20250701_230826_00219_ivifs)
+[2025-07-01T23:08:29.182+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.183+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test not_null_silver_dados_produtores_agro_trino_localizacao_uf (models/silver/schema.yml)
+[2025-07-01T23:08:29.184+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'localizacao_uf' cannot be resolved", query_id=20250701_230826_00225_ivifs)
+[2025-07-01T23:08:29.185+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.186+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test not_null_silver_dados_produtores_agro_trino_processed_at (models/silver/schema.yml)
+[2025-07-01T23:08:29.188+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'processed_at' cannot be resolved", query_id=20250701_230827_00226_ivifs)
+[2025-07-01T23:08:29.188+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.188+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test not_null_silver_dados_produtores_agro_trino_registro_valido (models/silver/schema.yml)
+[2025-07-01T23:08:29.189+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'registro_valido' cannot be resolved", query_id=20250701_230827_00228_ivifs)
+[2025-07-01T23:08:29.189+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.190+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test not_null_silver_dados_produtores_agro_trino_row_hash (models/silver/schema.yml)
+[2025-07-01T23:08:29.190+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 19:7: Column 'row_hash' cannot be resolved", query_id=20250701_230827_00230_ivifs)
+[2025-07-01T23:08:29.190+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.191+0000] {docker.py:438} INFO - [0m23:08:29    Database Error in test test_incremental_integrity_trino (tests/singular/test_incremental_integrity_trino.sql)
+[2025-07-01T23:08:29.191+0000] {docker.py:438} INFO -   TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 22:11: Column 'processed_at' cannot be resolved", query_id=20250701_230828_00240_ivifs)
+[2025-07-01T23:08:29.192+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.192+0000] {docker.py:438} INFO - [0m23:08:29  [31mFailure in test unique_silver_dados_produtores_agro_trino_proponente_id (models/silver/schema.yml)[0m
+[2025-07-01T23:08:29.193+0000] {docker.py:438} INFO - [0m23:08:29    Got 2 results, configured to fail if != 0
+[2025-07-01T23:08:29.194+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.194+0000] {docker.py:438} INFO - [0m23:08:29    compiled Code at target/compiled/agronegocio_iceberg/models/silver/schema.yml/unique_silver_dados_produtores_agro_trino_proponente_id.sql
+[2025-07-01T23:08:29.195+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.195+0000] {docker.py:438} INFO - [0m23:08:29    See test failures:
+[2025-07-01T23:08:29.195+0000] {docker.py:438} INFO -   ----------------------------------------------------------------------------------------------------------
+[2025-07-01T23:08:29.195+0000] {docker.py:438} INFO -   select * from "iceberg"."silver_dbt_test__audit"."unique_silver_dados_produtores_agro_trino_proponente_id"
+[2025-07-01T23:08:29.196+0000] {docker.py:438} INFO -   ----------------------------------------------------------------------------------------------------------
+[2025-07-01T23:08:29.196+0000] {docker.py:438} INFO - [0m23:08:29
+[2025-07-01T23:08:29.196+0000] {docker.py:438} INFO - [0m23:08:29  Done. PASS=14 WARN=0 ERROR=15 SKIP=0 TOTAL=29
+[2025-07-01T23:08:30.744+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-07-01T23:08:30.751+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 460, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 513, in execute
+    return self._run_image()
+           ^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 384, in _run_image
+    return self._run_image_with_mounts(self.mounts, add_tmp_variable=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 446, in _run_image_with_mounts
+    raise DockerContainerFailedException(f"Docker container failed: {result!r}", logs=log_lines)
+airflow.providers.docker.exceptions.DockerContainerFailedException: Docker container failed: {'StatusCode': 1}
+[2025-07-01T23:08:30.754+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=dbt_trino_silver_pipeline, task_id=dbt_test_silver, run_id=scheduled__2025-07-01T23:06:00+00:00, execution_date=20250701T230600, start_date=20250701T230814, end_date=20250701T230830
+[2025-07-01T23:08:30.764+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 76 for task dbt_test_silver (Docker container failed: {'StatusCode': 1}; 700)
+[2025-07-01T23:08:30.779+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 1
+[2025-07-01T23:08:30.796+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-07-01T23:08:30.800+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
