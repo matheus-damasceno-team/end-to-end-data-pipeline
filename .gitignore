@@ -1,7 +1,7 @@
 .env
 dbt_iceberg/*
-services/dbt-trino/target
-services/dbt-trino/logs
-airflow/dags/__pycache__
+services/dbt-trino/target/*
+services/dbt-trino/logs/*
+airflow/dags/__pycache__/
 airflow/dags/dbt_trino_silver_dag.pyc
 airflow/dags/__init__.pyc

@@ -1,0 +1,58 @@
+[2025-07-01T23:12:01.960+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-07-01T23:12:02.020+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T23:10:00+00:00 [queued]>
+[2025-07-01T23:12:02.049+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T23:10:00+00:00 [queued]>
+[2025-07-01T23:12:02.049+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-07-01T23:12:02.076+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): dbt_run_silver> on 2025-07-01 23:10:00+00:00
+[2025-07-01T23:12:02.092+0000] {logging_mixin.py:188} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=773) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-07-01T23:12:02.094+0000] {standard_task_runner.py:64} INFO - Started process 774 to run task
+[2025-07-01T23:12:02.101+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'dbt_trino_silver_pipeline', 'dbt_run_silver', 'scheduled__2025-07-01T23:10:00+00:00', '--job-id', '81', '--raw', '--subdir', 'DAGS_FOLDER/dbt_trino_silver_dag.py', '--cfg-path', '/tmp/tmpxue1v1yg']
+[2025-07-01T23:12:02.103+0000] {standard_task_runner.py:91} INFO - Job 81: Subtask dbt_run_silver
+[2025-07-01T23:12:02.201+0000] {task_command.py:426} INFO - Running <TaskInstance: dbt_trino_silver_pipeline.dbt_run_silver scheduled__2025-07-01T23:10:00+00:00 [running]> on host 0a4aae371d36
+[2025-07-01T23:12:02.425+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='admin@example.com' AIRFLOW_CTX_DAG_OWNER='data-team' AIRFLOW_CTX_DAG_ID='dbt_trino_silver_pipeline' AIRFLOW_CTX_TASK_ID='dbt_run_silver' AIRFLOW_CTX_EXECUTION_DATE='2025-07-01T23:10:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-07-01T23:10:00+00:00'
+[2025-07-01T23:12:02.425+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-07-01T23:12:02.516+0000] {docker.py:367} INFO - Starting docker container from image modern-data-pipeline-dbt-trino:latest
+[2025-07-01T23:12:02.986+0000] {docker.py:438} INFO - === Executando dbt run incremental ===
+[2025-07-01T23:12:07.009+0000] {docker.py:438} INFO - [0m23:12:07  Running with dbt=1.7.0
+[2025-07-01T23:12:07.630+0000] {docker.py:438} INFO - [0m23:12:07  Registered adapter: trino=1.7.0
+[2025-07-01T23:12:07.698+0000] {docker.py:438} INFO - [0m23:12:07  Unable to do partial parsing because config vars, config profile, or config target have changed
+[2025-07-01T23:12:10.180+0000] {docker.py:438} INFO - [0m23:12:10  Iniciando execução do dbt com Trino/Iceberg
+[2025-07-01T23:12:10.228+0000] {docker.py:438} INFO - [0m23:12:10  Execução finalizada
+[2025-07-01T23:12:10.946+0000] {docker.py:438} INFO - [0m23:12:10  Found 1 model, 29 tests, 5 operations, 1 source, 0 exposures, 0 metrics, 541 macros, 0 groups, 0 semantic models
+[2025-07-01T23:12:10.949+0000] {docker.py:438} INFO - [0m23:12:10
+[2025-07-01T23:12:11.167+0000] {docker.py:438} INFO - [0m23:12:11  
+[2025-07-01T23:12:11.168+0000] {docker.py:438} INFO - [0m23:12:11  Running 4 on-run-start hooks
+[2025-07-01T23:12:11.178+0000] {docker.py:438} INFO - [0m23:12:11  Iniciando execução do dbt com Trino/Iceberg
+[2025-07-01T23:12:11.187+0000] {docker.py:438} INFO - [0m23:12:11  1 of 4 START hook: agronegocio_iceberg.on-run-start.0 .......................... [RUN]
+[2025-07-01T23:12:11.188+0000] {docker.py:438} INFO - [0m23:12:11  1 of 4 OK hook: agronegocio_iceberg.on-run-start.0 ............................. [[32mOK[0m in 0.00s]
+[2025-07-01T23:12:11.226+0000] {docker.py:438} INFO - [0m23:12:11  Schema bronze criado/verificado
+[2025-07-01T23:12:11.229+0000] {docker.py:438} INFO - [0m23:12:11  2 of 4 START hook: agronegocio_iceberg.on-run-start.1 .......................... [RUN]
+[2025-07-01T23:12:11.230+0000] {docker.py:438} INFO - [0m23:12:11  2 of 4 OK hook: agronegocio_iceberg.on-run-start.1 ............................. [[32mOK[0m in 0.00s]
+[2025-07-01T23:12:11.302+0000] {docker.py:438} INFO - [0m23:12:11  Schema silver criado/verificado
+[2025-07-01T23:12:11.302+0000] {docker.py:438} INFO - [0m23:12:11  3 of 4 START hook: agronegocio_iceberg.on-run-start.2 .......................... [RUN]
+[2025-07-01T23:12:11.303+0000] {docker.py:438} INFO - [0m23:12:11  3 of 4 OK hook: agronegocio_iceberg.on-run-start.2 ............................. [[32mOK[0m in 0.00s]
+[2025-07-01T23:12:11.324+0000] {docker.py:438} INFO - [0m23:12:11  Schema gold criado/verificado
+[2025-07-01T23:12:11.326+0000] {docker.py:438} INFO - [0m23:12:11  4 of 4 START hook: agronegocio_iceberg.on-run-start.3 .......................... [RUN]
+[2025-07-01T23:12:11.329+0000] {docker.py:438} INFO - [0m23:12:11  4 of 4 OK hook: agronegocio_iceberg.on-run-start.3 ............................. [[32mOK[0m in 0.00s]
+[2025-07-01T23:12:11.331+0000] {docker.py:438} INFO - [0m23:12:11
+[2025-07-01T23:12:11.335+0000] {docker.py:438} INFO - [0m23:12:11  Concurrency: 2 threads (target='dev')
+[2025-07-01T23:12:11.336+0000] {docker.py:438} INFO - [0m23:12:11
+[2025-07-01T23:12:11.350+0000] {docker.py:438} INFO - [0m23:12:11  1 of 1 START sql incremental model silver.silver_dados_produtores_agro_trino ... [RUN]
+[2025-07-01T23:12:13.517+0000] {docker.py:438} INFO - [0m23:12:13  1 of 1 OK created sql incremental model silver.silver_dados_produtores_agro_trino  [[32mSUCCESS[0m in 2.17s]
+[2025-07-01T23:12:13.522+0000] {docker.py:438} INFO - [0m23:12:13
+[2025-07-01T23:12:13.523+0000] {docker.py:438} INFO - [0m23:12:13  Running 1 on-run-end hook
+[2025-07-01T23:12:13.532+0000] {docker.py:438} INFO - [0m23:12:13  Execução finalizada
+[2025-07-01T23:12:13.533+0000] {docker.py:438} INFO - [0m23:12:13  1 of 1 START hook: agronegocio_iceberg.on-run-end.0 ............................ [RUN]
+[2025-07-01T23:12:13.534+0000] {docker.py:438} INFO - [0m23:12:13  1 of 1 OK hook: agronegocio_iceberg.on-run-end.0 ............................... [[32mOK[0m in 0.00s]
+[2025-07-01T23:12:13.535+0000] {docker.py:438} INFO - [0m23:12:13
+[2025-07-01T23:12:13.538+0000] {docker.py:438} INFO - [0m23:12:13
+[2025-07-01T23:12:13.539+0000] {docker.py:438} INFO - [0m23:12:13  Finished running 1 incremental model, 5 hooks in 0 hours 0 minutes and 2.59 seconds (2.59s).
+[2025-07-01T23:12:13.563+0000] {docker.py:438} INFO - [0m23:12:13
+[2025-07-01T23:12:13.563+0000] {docker.py:438} INFO - [0m23:12:13  [32mCompleted successfully[0m
+[2025-07-01T23:12:13.564+0000] {docker.py:438} INFO - [0m23:12:13
+[2025-07-01T23:12:13.565+0000] {docker.py:438} INFO - [0m23:12:13  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
+[2025-07-01T23:12:14.497+0000] {docker.py:438} INFO - === dbt run concluído com sucesso ===
+[2025-07-01T23:12:14.732+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-07-01T23:12:14.782+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=dbt_trino_silver_pipeline, task_id=dbt_run_silver, run_id=scheduled__2025-07-01T23:10:00+00:00, execution_date=20250701T231000, start_date=20250701T231202, end_date=20250701T231214
+[2025-07-01T23:12:14.823+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2025-07-01T23:12:14.896+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-07-01T23:12:14.900+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
