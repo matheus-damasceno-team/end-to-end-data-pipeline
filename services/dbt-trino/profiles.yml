@@ -1,0 +1,15 @@
+agronegocio_iceberg :
+  target: prod  # Target padrão ao executar o dbt
+  outputs:
+    prod:
+      type: trino
+      method: none
+      host: trino
+      port: 8080
+      user: trino
+      catalog: iceberg
+      schema: prod
+      threads: 2
+      http_scheme: http
+      session_properties:
+        query_max_run_time: 5m

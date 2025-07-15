@@ -1,0 +1,6 @@
+# /home/damasceno/modern-data-pipeline/config/kafka-ui/config.yml
+kafka:
+  clusters:
+    - name: Local Kafka Cluster
+      bootstrapServers: kafka:9092 # Aponta para o serviço 'kafka' dentro da rede Docker
+      zookeeper: zookeeper:2181 # Descomente se precisar da conexão Zookeeper para o Kafka UI (ex: para versões mais antigas do Kafka)

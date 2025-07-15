@@ -1,0 +1,276 @@
+version: 2
+
+sources:
+  - name: silver
+    database: iceberg
+    schema: silver
+    tables:
+      - name: silver_dados_produtores_agro_trino
+
+models:
+  - name: proponente_features_agro
+    description: "Features agregadas e engenheiradas por proponente para a feature store"
+    config:
+      tags: ['gold', 'features', 'feast', 'proponente']
+      materialized: incremental
+      unique_key: 'proponente_id'
+      incremental_strategy: merge
+      on_schema_change: append_new_columns
+      schema: 'gold'
+      profile: 'agronegocio_iceberg'
+    
+    columns:
+      - name: proponente_id
+        description: "Identificador único do proponente (chave primária)"
+        tests:
+          - not_null
+          - unique
+          
+      - name: total_solicitacoes
+        description: "Número total de solicitações do proponente"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 1"
+              
+      - name: valor_total_solicitado
+        description: "Valor total solicitado pelo proponente"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+              
+      - name: valor_medio_solicitado
+        description: "Valor médio solicitado pelo proponente"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+              
+      - name: serasa_score_medio
+        description: "Score médio do Serasa do proponente"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "BETWEEN 0 AND 1000"
+              config:
+                where: "serasa_score_medio IS NOT NULL"
+                
+      - name: perfil_frequencia
+        description: "Perfil de frequência de solicitações"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['NOVO', 'RECORRENTE', 'FREQUENTE', 'MUITO_FREQUENTE']
+              
+      - name: perfil_volatilidade
+        description: "Perfil de volatilidade dos valores solicitados"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CONSISTENTE', 'ESTAVEL', 'MODERADO', 'VOLATIL']
+              
+      - name: perfil_diversificacao
+        description: "Perfil de diversificação de finalidades"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ESPECIALIZADO', 'FOCADO', 'DIVERSIFICADO']
+              
+      - name: indicador_risco_score
+        description: "Indicador de risco baseado no score (0-1, onde 1 é maior risco)"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "BETWEEN 0 AND 1"
+              
+      - name: indicador_risco_ambiental
+        description: "Indicador de risco ambiental (0-1, onde 1 é maior risco)"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "BETWEEN 0 AND 1"
+              
+      - name: feature_timestamp
+        description: "Timestamp de geração das features"
+        tests:
+          - not_null
+          
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: feature_timestamp
+          interval: 24
+
+  - name: location_features_agro
+    description: "Features agregadas por localização (UF e município)"
+    config:
+      tags: ['gold', 'features', 'feast', 'location']
+      materialized: incremental
+      unique_key: ['localizacao_uf', 'localizacao_municipio']
+      incremental_strategy: merge
+      on_schema_change: append_new_columns
+      schema: 'gold'
+      profile: 'agronegocio_iceberg'
+    
+    columns:
+      - name: localizacao_uf
+        description: "Unidade Federativa"
+        tests:
+          - not_null
+          
+      - name: localizacao_municipio
+        description: "Município"
+        tests:
+          - not_null
+          
+      - name: localizacao_key
+        description: "Chave concatenada UF-Município para Feast"
+          
+      - name: total_proponentes
+        description: "Total de proponentes na localização"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 1"
+              
+      - name: densidade_proponentes
+        description: "Classificação de densidade de proponentes"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['BAIXA', 'MEDIA', 'ALTA', 'MUITO_ALTA']
+              
+      - name: homogeneidade_credito
+        description: "Classificação de homogeneidade dos valores de crédito"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HOMOGENEA', 'ESTAVEL', 'MODERADA', 'HETEROGENEA']
+              
+      - name: perfil_diversificacao_culturas
+        description: "Perfil de diversificação de culturas na região"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['MONOCULTURA', 'POUCO_DIVERSIFICADA', 'MODERADAMENTE_DIVERSIFICADA', 'ALTAMENTE_DIVERSIFICADA']
+              
+      - name: regiao_geografica
+        description: "Região geográfica baseada na latitude"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['NORTE', 'NORDESTE', 'CENTRO_OESTE_SUDESTE', 'SUL']
+              
+      - name: taxa_risco_elevado
+        description: "Taxa de risco elevado (alto + muito alto)"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "BETWEEN 0 AND 1"
+              
+      - name: feature_timestamp
+        description: "Timestamp de geração das features"
+        tests:
+          - not_null
+          
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: feature_timestamp
+          interval: 24
+
+  - name: risk_features_agro
+    description: "Features agregadas por faixa de risco e cultura"
+    config:
+      tags: ['gold', 'features', 'feast', 'risk']
+      materialized: incremental
+      unique_key: ['faixa_risco_credito', 'cultura_principal']
+      incremental_strategy: merge
+      on_schema_change: append_new_columns
+      schema: 'gold'
+      profile: 'agronegocio_iceberg'
+    
+    columns:
+      - name: faixa_risco_credito
+        description: "Faixa de risco de crédito"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SEM_SCORE', 'MUITO_ALTO', 'ALTO', 'MEDIO', 'BAIXO']
+              
+      - name: cultura_principal
+        description: "Cultura principal"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SOJA', 'MILHO', 'CAFE', 'CANA_DE_ACUCAR', 'ALGODAO', 'FRUTICULTURA', 'TRIGO', 'ARROZ', 'FEIJAO', 'EUCALIPTO']
+              
+      - name: risco_cultura_key
+        description: "Chave concatenada Risco-Cultura para Feast"
+              
+      - name: total_solicitacoes
+        description: "Total de solicitações nesta combinação risco/cultura"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 1"
+              
+      - name: volume_solicitacoes
+        description: "Classificação de volume de solicitações"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['BAIXO_VOLUME', 'MEDIO_VOLUME', 'ALTO_VOLUME', 'MUITO_ALTO_VOLUME']
+              
+      - name: volatilidade_credito
+        description: "Classificação de volatilidade dos valores de crédito"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HOMOGENEO', 'ESTAVEL', 'MODERADO', 'VOLATIL']
+              
+      - name: perfil_tipo_pessoa
+        description: "Perfil predominante de tipo de pessoa"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['PREDOMINANTEMENTE_JURIDICA', 'MISTA', 'PREDOMINANTEMENTE_FISICA']
+              
+      - name: perfil_finalidade
+        description: "Perfil predominante de finalidade"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['FOCO_CUSTEIO', 'FOCO_INVESTIMENTO', 'FOCO_EXPANSAO', 'DIVERSIFICADO']
+              
+      - name: peso_risco_base
+        description: "Peso base de risco (0-1, onde 1 é maior risco)"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "BETWEEN 0 AND 1"
+              
+      - name: fator_risco_cultura
+        description: "Fator de ajuste de risco por cultura"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "BETWEEN 0.5 AND 1.5"
+              
+      - name: score_risco_ajustado
+        description: "Score de risco ajustado final"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "BETWEEN 0 AND 1.5"
+              
+      - name: feature_timestamp
+        description: "Timestamp de geração das features"
+        tests:
+          - not_null
+          
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: feature_timestamp
+          interval: 24

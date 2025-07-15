@@ -1,0 +1,53 @@
+name: 'agronegocio_iceberg'
+version: '1.0.0'
+config-version: 2
+
+# Configuração do perfil (deve corresponder ao arquivo profiles.yml)
+profile: 'agronegocio_iceberg'
+
+# Diretórios do projeto
+model-paths: ["models"]
+test-paths: ["tests"]
+seed-paths: ["data"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+# Diretório de saída para arquivos compilados
+target-path: "target"
+
+# Diretório para pacotes
+packages-install-path: "dbt_packages"
+
+# Configuração de limpeza
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Configurações dos modelos
+models:
+  agronegocio_iceberg:
+    +materialized: table
+    
+    # Configurações para camada Silver  
+    silver:
+      +materialized: incremental
+      +unique_key: 'proponente_id'
+      +incremental_strategy: 'merge'
+
+    gold:
+      +materialized: table
+
+# Variáveis globais
+vars:
+  # Catálogo Iceberg para usar nas macros
+  iceberg_catalog: 'iceberg'
+
+# Hooks de execução
+on-run-start:
+  - "{{ log('Iniciando execução do dbt com Trino/Iceberg', info=True) }}"
+  - "{{ create_schema_if_not_exists('bronze') }}"
+  - "{{ create_schema_if_not_exists('silver') }}"
+  - "{{ create_schema_if_not_exists('gold') }}"
+
+on-run-end:
+  - "{{ log('Execução finalizada', info=True) }}"
