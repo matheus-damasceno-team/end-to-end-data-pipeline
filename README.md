@@ -351,6 +351,7 @@ Contribuições são muito bem-vindas! Se você tem alguma sugestão ou encontro
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](/LICENSE) para mais detalhes.
+
 ## 🗺️ Roadmap: Evoluindo para uma Plataforma de Dados Completa
 
 Esta arquitetura é uma base sólida e funcional. No entanto, para transformá-la em uma plataforma de dados de nível enterprise, robusta, observável e segura, os próximos passos se concentram em três pilares estratégicos: **Governança de Dados**, **Observabilidade Total** e **Automação e Segurança**.
@@ -403,3 +404,4 @@ Com a base sólida, o próximo salto de maturidade é adotar a orquestração e 
 | :--- | :--- | :--- | :--- |
 | **1. Orquestração de Contêineres** | **Kubernetes (k8s)** | **Problema:** O Docker Compose é excelente para desenvolvimento local, mas não oferece auto-recuperação (self-healing), escalabilidade horizontal ou gerenciamento avançado de rede e armazenamento para um ambiente de produção. O Kubernetes é o padrão para executar aplicações distribuídas em escala. | **Amazon EKS (Elastic Kubernetes Service)** |
 | **2. Continuous Delivery com GitOps** | **Argo CD** | **Problema:** Um pipeline de CI/CD (Pilar 3) constrói e testa os artefatos, mas como garantimos que o estado do nosso cluster Kubernetes corresponde exatamente ao que foi definido e testado? O Argo CD implementa o **GitOps**, usando um repositório Git como a única fonte da verdade para o estado da aplicação, automatizando e auditando o deploy de forma contínua e segura. | **Argo CD on EKS** (Combinação padrão) |
+
