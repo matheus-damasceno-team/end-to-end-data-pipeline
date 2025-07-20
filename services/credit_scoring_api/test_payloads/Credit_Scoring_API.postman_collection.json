@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Credit Scoring API",
+		"description": "Collection for testing the Credit Scoring API endpoints with different scenarios",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health"
+					]
+				},
+				"description": "Check if the API service is running and healthy"
+			},
+			"response": []
+		},
+		{
+			"name": "Credit Score - Approve Case",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"proponente_id\": \"PROP_APPROVE_001\",\n  \"data_solicitacao\": 1704682800000,\n  \"cpf_cnpj\": \"12.345.678/0001-90\",\n  \"nome_razao_social\": \"Fazenda São João Ltda\",\n  \"tipo_pessoa\": \"JURIDICA\",\n  \"renda_bruta_anual_declarada\": 800000.0,\n  \"valor_solicitado_credito\": 150000.0,\n  \"finalidade_credito\": \"CUSTEIO_SAFRA\",\n  \"localizacao_propriedade\": {\n    \"latitude\": -20.4697,\n    \"longitude\": -54.6201,\n    \"municipio\": \"Campo Grande\",\n    \"uf\": \"MS\"\n  },\n  \"area_total_hectares\": 1200.0,\n  \"cultura_principal\": \"SOJA\",\n  \"possui_experiencia_atividade\": true,\n  \"anos_experiencia\": 25,\n  \"fontes_dados_adicionais\": {\n    \"serasa_score\": 850,\n    \"ibama_autuacoes_ativas\": false,\n    \"numero_matricula_imovel\": \"MAT-850123\"\n  },\n  \"metadata_evento\": {\n    \"versao_schema\": \"1.0.0\",\n    \"origem_dados\": \"test_approve\",\n    \"timestamp_geracao_evento\": 1704682800000\n  }\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/score",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"score"
+					]
+				},
+				"description": "Test case for credit approval scenario with high-income, experienced farmer with large property and excellent credit score"
+			},
+			"response": []
+		},
+		{
+			"name": "Credit Score - Manual Review Case",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"proponente_id\": \"PROP_REVIEW_002\",\n  \"data_solicitacao\": 1704682800000,\n  \"cpf_cnpj\": \"987.654.321-45\",\n  \"nome_razao_social\": \"Maria Santos Silva\",\n  \"tipo_pessoa\": \"FISICA\",\n  \"renda_bruta_anual_declarada\": 120000.0,\n  \"valor_solicitado_credito\": 80000.0,\n  \"finalidade_credito\": \"INVESTIMENTO_MAQUINARIO\",\n  \"localizacao_propriedade\": {\n    \"latitude\": -22.9068,\n    \"longitude\": -43.1729,\n    \"municipio\": \"Rio de Janeiro\",\n    \"uf\": \"RJ\"\n  },\n  \"area_total_hectares\": 50.0,\n  \"cultura_principal\": \"CAFE\",\n  \"possui_experiencia_atividade\": true,\n  \"anos_experiencia\": 8,\n  \"fontes_dados_adicionais\": {\n    \"serasa_score\": 620,\n    \"ibama_autuacoes_ativas\": false,\n    \"numero_matricula_imovel\": \"MAT-620456\"\n  },\n  \"metadata_evento\": {\n    \"versao_schema\": \"1.0.0\",\n    \"origem_dados\": \"test_manual_review\",\n    \"timestamp_geracao_evento\": 1704682800000\n  }\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/score",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"score"
+					]
+				},
+				"description": "Test case for manual review scenario with medium-risk profile requiring human evaluation"
+			},
+			"response": []
+		},
+		{
+			"name": "Credit Score - Deny Case",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"proponente_id\": \"PROP_DENY_003\",\n  \"data_solicitacao\": 1704682800000,\n  \"cpf_cnpj\": \"111.222.333-44\",\n  \"nome_razao_social\": \"Pedro Costa Junior\",\n  \"tipo_pessoa\": \"FISICA\",\n  \"renda_bruta_anual_declarada\": 45000.0,\n  \"valor_solicitado_credito\": 200000.0,\n  \"finalidade_credito\": \"AMPLIACAO_AREA\",\n  \"localizacao_propriedade\": {\n    \"latitude\": -3.7319,\n    \"longitude\": -38.5267,\n    \"municipio\": \"Fortaleza\",\n    \"uf\": \"CE\"\n  },\n  \"area_total_hectares\": 15.0,\n  \"cultura_principal\": \"FRUTICULTURA\",\n  \"possui_experiencia_atividade\": false,\n  \"anos_experiencia\": 0,\n  \"fontes_dados_adicionais\": {\n    \"serasa_score\": 380,\n    \"ibama_autuacoes_ativas\": true,\n    \"numero_matricula_imovel\": \"MAT-380789\"\n  },\n  \"metadata_evento\": {\n    \"versao_schema\": \"1.0.0\",\n    \"origem_dados\": \"test_deny\",\n    \"timestamp_geracao_evento\": 1704682800000\n  }\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/score",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"score"
+					]
+				},
+				"description": "Test case for credit denial scenario with high-risk profile, low income, no experience, and environmental violations"
+			},
+			"response": []
+		},
+		{
+			"name": "Model Info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/model-info",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"model-info"
+					]
+				},
+				"description": "Get information about the current ML model including metrics and training date"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8087",
+			"type": "string"
+		}
+	]
+}

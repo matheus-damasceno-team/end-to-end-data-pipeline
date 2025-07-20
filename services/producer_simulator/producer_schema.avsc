@@ -1,0 +1,57 @@
+
+{
+  "type": "record",
+  "name": "DadosProdutor",
+  "namespace": "com.agronegocio.schema",
+  "fields": [
+    {"name": "proponente_id", "type": "string"},
+    {"name": "data_solicitacao", "type": {"type": "long", "logicalType": "timestamp-millis"}},
+    {"name": "cpf_cnpj", "type": "string"},
+    {"name": "nome_razao_social", "type": "string"},
+    {"name": "tipo_pessoa", "type": {"type": "enum", "name": "TipoPessoa", "symbols": ["FISICA", "JURIDICA"]}},
+    {"name": "renda_bruta_anual_declarada", "type": "double"},
+    {"name": "valor_solicitado_credito", "type": "double"},
+    {"name": "finalidade_credito", "type": {"type": "enum", "name": "FinalidadeCredito", "symbols": ["CUSTEIO_SAFRA", "INVESTIMENTO_MAQUINARIO", "AMPLIACAO_AREA", "OUTROS"]}},
+    {
+      "name": "localizacao_propriedade",
+      "type": {
+        "type": "record",
+        "name": "LocalizacaoPropriedade",
+        "fields": [
+          {"name": "latitude", "type": "double"},
+          {"name": "longitude", "type": "double"},
+          {"name": "municipio", "type": "string"},
+          {"name": "uf", "type": {"type": "enum", "name": "UnidadeFederativa", "symbols": ["SP", "MG", "PR", "RS", "GO", "MT", "MS", "BA", "SC", "RJ", "ES", "TO", "MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "DF", "AC", "AP", "AM", "PA", "RO", "RR"]}}
+        ]
+      }
+    },
+    {"name": "area_total_hectares", "type": "double"},
+    {"name": "cultura_principal", "type": {"type": "enum", "name": "CulturaPrincipal", "symbols": ["SOJA", "MILHO", "CAFE", "CANA_DE_ACUCAR", "ALGODAO", "FRUTICULTURA", "TRIGO", "ARROZ", "FEIJAO", "EUCALIPTO"]}},
+    {"name": "possui_experiencia_atividade", "type": "boolean"},
+    {"name": "anos_experiencia", "type": "int"},
+    {
+      "name": "fontes_dados_adicionais",
+      "type": {
+        "type": "record",
+        "name": "FontesDadosAdicionais",
+        "fields": [
+          {"name": "serasa_score", "type": ["null", "int"], "default": null},
+          {"name": "ibama_autuacoes_ativas", "type": ["null", "boolean"], "default": null},
+          {"name": "numero_matricula_imovel", "type": "string"}
+        ]
+      }
+    },
+    {
+      "name": "metadata_evento",
+      "type": {
+        "type": "record",
+        "name": "MetadataEvento",
+        "fields": [
+          {"name": "versao_schema", "type": "string"},
+          {"name": "origem_dados", "type": "string"},
+          {"name": "timestamp_geracao_evento", "type": {"type": "long", "logicalType": "timestamp-millis"}}
+        ]
+      }
+    }
+  ]
+}

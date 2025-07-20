@@ -1,0 +1,77 @@
+# dbt profiles.yml for agronegocio_analytics project
+
+# This file configures connection details for dbt to connect to your data warehouse.
+# It should be placed in ~/.dbt/profiles.yml, or mounted into the dbt container
+# at /root/.dbt/profiles.yml as done in the docker-compose.yml.
+
+agronegocio_analytics: # This is the profile name referenced in dbt_project.yml
+  target: dev # Specifies the default target to use.
+  outputs:
+    dev:
+      type: clickhouse # Specifies the dbt adapter for ClickHouse
+      host: clickhouse # Service name of the ClickHouse container from docker-compose.yml
+      port: 8123       # HTTP port of ClickHouse, as dbt-clickhouse typically uses HTTP.
+      user: default    # ClickHouse user. 'default' user is used here.
+                       # Ensure this user has necessary permissions (CREATE, SELECT, INSERT, DROP etc.)
+                       # on the target schemas/databases.
+      password: ""     # Password for the ClickHouse user. Empty if 'default' user has no password.
+                       # If you set a password in clickhouse_config/users.xml, specify it here.
+
+      schema: default  # Default schema (database in ClickHouse terms) where dbt will create models,
+                       # unless overridden in dbt_project.yml or model configs.
+                       # The fct_analise_risco.sql model specifies `schema: 'marts'`, so it will go to `marts.fct_analise_risco`.
+                       # This 'schema' here is the default if a model doesn't specify one.
+                       # It's also the schema dbt connects to initially.
+
+      # Optional settings for dbt-clickhouse adapter:
+      # secure: false               # Set to true if ClickHouse uses HTTPS
+      # verify: false               # Set to true to verify SSL certificates if secure=true
+      # connect_timeout: 10         # Connection timeout in seconds
+      # send_receive_timeout: 300   # Send/receive timeout in seconds
+      # threads: 1                  # Number of threads dbt will use for this connection (default is 1)
+
+      # ClickHouse specific settings can be passed if needed:
+      # custom_settings:
+      #   allow_experimental_object_type: 1 # Example if using experimental JSON type
+
+      # Default engine for tables created by dbt, if not specified in model config.
+      # This can be useful to set a global default for your project.
+      # default_table_engine: "MergeTree()"
+      # default_table_settings:
+      #   index_granularity: 8192
+
+      # For ReplicatedMergeTree or other cluster setups, you might need:
+      # on_cluster_clause: "ON CLUSTER your_cluster_name"
+
+      # You can add other targets like 'prod' for production environments
+      # prod:
+      #   type: clickhouse
+      #   host: your_production_clickhouse_host
+      #   port: 8123
+      #   user: dbt_prod_user
+      #   password: "{{ env_var('DBT_CLICKHOUSE_PROD_PASSWORD') }}" # Use env var for passwords
+      #   schema: production_marts
+      #   threads: 4
+
+# Notes:
+# - The `host` should be the service name defined in `docker-compose.yml` for ClickHouse.
+# - `port` 8123 is the default HTTP port for ClickHouse.
+# - The `user` and `password` must match a valid user in your ClickHouse `users.xml`.
+#   The default `users.xml` has a 'default' user with no password.
+# - The `schema` is the default database dbt operates in. Models can override this.
+#   The `fct_analise_risco.sql` model specifies `schema: 'marts'`, so dbt will attempt to
+#   create and manage tables in the `marts` database in ClickHouse.
+#   Ensure the 'default' user (or whichever user dbt connects as) has permissions
+#   to CREATE DATABASE/SCHEMA 'marts' if it doesn't exist, or at least CREATE TABLE within it.
+#   The `setup.sh` script does not explicitly create the 'marts' database in ClickHouse.
+#   dbt or ClickHouse user permissions might handle this, or it might need to be pre-created.
+#   Typically, dbt can create schemas if the user has permissions.
+#   The `on-run-start` hook in `dbt_project.yml` can also be used to ensure schema existence:
+#   `on-run-start: - "CREATE DATABASE IF NOT EXISTS marts"` (ClickHouse syntax for database)
+#
+# This profile should allow the `dbt` service in `docker-compose.yml` to connect to
+# the `clickhouse` service and run dbt jobs.
+# The `setup.sh` script calls `dbt deps` and `dbt run`.
+# The `dbt run` command will use this 'dev' target.
+# The `dbt_project.yml` references `profile: 'agronegocio_analytics'`.
+# This file looks correct and complete for the local development setup.

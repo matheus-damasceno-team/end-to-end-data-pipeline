@@ -1,0 +1,727 @@
+networks:
+  data_pipeline_net:
+    driver: bridge
+    external: false
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    platform: linux/amd64
+    container_name: zookeeper
+    networks:
+      - data_pipeline_net
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    platform: linux/amd64
+    container_name: kafka
+    networks:
+      - data_pipeline_net
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    platform: linux/amd64
+    networks:
+      - data_pipeline_net
+    ports:
+      - "8085:8080"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    volumes:
+      - ./config/kafka-ui/config.yml:/etc/kafkaui/dynamic_config.yaml
+
+  minio:
+    image: minio/minio:latest
+    platform: linux/amd64
+    container_name: minio
+    networks:
+      - data_pipeline_net
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  mc:
+    image: minio/mc:latest
+    platform: linux/amd64
+    container_name: mc
+    networks:
+      - data_pipeline_net
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        set -e
+        echo '--- INÍCIO DO SCRIPT MC (Versão Final Simplificada) ---'
+
+        echo '[1/2] Configurando alias para o MinIO...'
+        until /usr/bin/mc alias set local http://minio:9000 admin password; do
+          echo '...MinIO não está pronto, aguardando 1s...';
+          sleep 1;
+        done
+        echo 'Alias do MinIO configurado.'
+
+        echo '[2/2] Criando buckets necessários...'
+        /usr/bin/mc mb local/warehouse --ignore-existing
+        echo 'Buckets criados. Usando permissões padrão do usuário root.'
+
+        echo '--- SCRIPT MC FINALIZADO COM SUCESSO ---'
+    restart: "no"
+
+  trino:
+    build:
+      context: ./services/trino
+    container_name: trino
+    platform: linux/amd64
+    hostname: trino
+    networks:
+      - data_pipeline_net
+    ports:
+      - "8080:8080"
+    depends_on:
+      - metastore
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/ui/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "trino:127.0.0.1"
+
+  metastore-db:
+    image: mariadb:10.5
+    platform: linux/amd64
+    container_name: metastore-db
+    networks:
+      - data_pipeline_net
+    volumes:
+      - metastore-db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  create-metastore-schema:
+    build:
+      context: ./services/hive_metastore
+      dockerfile: Dockerfile.schema
+    platform: linux/amd64
+    container_name: create-metastore-schema
+    depends_on:
+      metastore-db:
+        condition: service_healthy
+    networks:
+      - data_pipeline_net
+    entrypoint: /bin/bash
+    command: ["/opt/hive/bin/init-schema.sh"]
+    environment:
+      - DB_DRIVER=mysql
+    restart: "no"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./metastore/core-site.xml:/opt/hive/conf/core-site.xml
+      - ./metastore/hive-site.xml:/opt/hive/conf/hive-site.xml
+
+  metastore:
+    build:
+      context: ./services/hive_metastore
+    platform: linux/amd64
+    container_name: metastore
+    networks:
+      - data_pipeline_net
+    ports:
+      - "9083:9083"
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
+      - SERVICE_NAME=metastore
+      - DB_DRIVER=mysql
+      - IS_RESUME=true
+      - SERVICE_OPTS=-Djavax.jdo.option.ConnectionDriverName=com.mysql.cj.jdbc.Driver -Djavax.jdo.option.ConnectionURL=jdbc:mysql://metastore-db:3306/metastore_db -Djavax.jdo.option.ConnectionUserName=root -Djavax.jdo.option.ConnectionPassword=password -Dfs.s3a.endpoint=http://minio:9000 -Dfs.s3a.access.key=admin -Dfs.s3a.secret.key=password -Dfs.s3a.path.style.access=true -Dhive.metastore.warehouse.dir=s3a://warehouse/ -Dfs.s3a.aws.credentials.provider=org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider -Dfs.s3a.region=us-east-1 -Dfs.s3a.bucket.all.region.lookup.disable=true -Dfs.s3a.signer.override=S3SignerType -Dfs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem -Daws.region=us-east-1
+    depends_on:
+      metastore-db:
+        condition: service_healthy
+      create-metastore-schema:
+        condition: service_completed_successfully
+      mc:
+        condition: service_completed_successfully
+    restart: always
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9083"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./metastore/core-site.xml:/opt/hive/conf/core-site.xml
+      - ./metastore/hive-site.xml:/opt/hive/conf/hive-site.xml
+
+  spark-master:
+    image: bitnami/spark:3.5
+    container_name: spark-master
+    platform: linux/amd64
+    networks:
+      - data_pipeline_net
+    ports:
+      - "8081:8080"
+      - "7077:7077"
+    volumes:
+      - ./services/spark_jobs:/opt/bitnami/spark/jobs
+      - ./metastore/core-site.xml:/opt/bitnami/spark/conf/core-site.xml
+      - ./metastore/hive-site.xml:/opt/bitnami/spark/conf/hive-site.xml
+    environment:
+      SPARK_MODE: master
+      SPARK_RPC_AUTHENTICATION_ENABLED: "no"
+      SPARK_RPC_ENCRYPTION_ENABLED: "no"
+      SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
+      SPARK_SSL_ENABLED: "no"
+      HIVE_METASTORE_URIS: "thrift://metastore:9083"
+    depends_on:
+     - metastore
+
+  spark-worker:
+    image: bitnami/spark:3.5
+    platform: linux/amd64
+    container_name: spark-worker
+    networks:
+      - data_pipeline_net
+    ports:
+      - "8082:8081"
+    depends_on:
+      - spark-master
+    volumes:
+      - ./services/spark_jobs:/opt/bitnami/spark/jobs
+      - ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+    environment:
+      SPARK_MODE: worker
+      SPARK_MASTER_URL: spark://spark-master:7077
+      SPARK_WORKER_MEMORY: 2G
+      SPARK_WORKER_CORES: 2
+      SPARK_RPC_AUTHENTICATION_ENABLED: "no"
+      SPARK_RPC_ENCRYPTION_ENABLED: "no"
+      SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
+      SPARK_SSL_ENABLED: "no"
+
+  ingestion-consumer:
+    image: bitnami/spark:3.5
+    platform: linux/amd64
+    container_name: ingestion-consumer
+    networks:
+      - data_pipeline_net
+    depends_on:
+      kafka:
+        condition: service_started
+      metastore:
+        condition: service_healthy
+      spark-master:
+        condition: service_started
+      mc:
+        condition: service_completed_successfully
+    volumes:
+      - ./services/spark_jobs:/opt/bitnami/spark/jobs
+      - ./services/producer_simulator/producer_schema.avsc:/opt/bitnami/spark/jobs/producer_schema.avsc:ro
+      - ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      - ./metastore/core-site.xml:/opt/bitnami/spark/conf/core-site.xml
+      - ./metastore/hive-site.xml:/opt/bitnami/spark/conf/hive-site.xml
+    environment:
+      KAFKA_BROKER: kafka:9092
+      KAFKA_TOPIC: dados_produtores
+      ICEBERG_WAREHOUSE: s3a://warehouse
+      ICEBERG_TABLE_NAME: bronze.dados_produtores_agro
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: password
+      AWS_S3_ENDPOINT_URL: http://minio:9000
+      AWS_REGION: us-east-1
+      AWS_DEFAULT_REGION: us-east-1
+      PYTHONPATH: /opt/bitnami/spark/python:/opt/bitnami/spark/python/lib/pyspark.zip:/opt/bitnami/spark/python/lib/py4j-0.10.9.7-src.zip
+    command:
+      - /bin/bash
+      - -c
+      - |
+        echo "Setting up environment..."
+        export AWS_REGION=us-east-1
+        export AWS_DEFAULT_REGION=us-east-1
+        export AWS_ACCESS_KEY_ID=admin
+        export AWS_SECRET_ACCESS_KEY=password
+        
+        echo "Ensuring file permissions..."
+        chmod +x /opt/bitnami/spark/jobs/ingestion_to_iceberg.py
+        
+        echo "Waiting for dependencies..."
+        sleep 30
+        
+        echo "Starting Spark job with Iceberg..."
+        cd /opt/bitnami/spark/jobs
+        
+        /opt/bitnami/spark/bin/spark-submit \
+          --master spark://spark-master:7077 \
+          --deploy-mode client \
+          --packages org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262,org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.spark:spark-avro_2.12:3.5.0 \
+          --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
+          --conf spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkCatalog \
+          --conf spark.sql.catalog.spark_catalog.type=hive \
+          --conf spark.sql.catalog.spark_catalog.uri=thrift://metastore:9083 \
+          --conf spark.sql.catalog.spark_catalog.warehouse=s3a://warehouse \
+          --conf spark.sql.catalog.spark_catalog.io-impl=org.apache.iceberg.hadoop.HadoopFileIO \
+          --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000 \
+          --conf spark.hadoop.fs.s3a.access.key=admin \
+          --conf spark.hadoop.fs.s3a.secret.key=password \
+          --conf spark.hadoop.fs.s3a.path.style.access=true \
+          --conf spark.hadoop.fs.s3a.aws.credentials.provider=org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider \
+          --conf spark.hadoop.fs.s3a.region=us-east-1 \
+          --conf spark.hadoop.fs.s3a.bucket.all.region.lookup.disable=true \
+          --conf spark.hadoop.fs.s3a.signer.override=S3SignerType \
+          --conf spark.hadoop.fs.s3a.connection.ssl.enabled=false \
+          --conf spark.hadoop.fs.s3a.fast.upload=true \
+          --conf spark.hadoop.fs.s3a.multipart.size=67108864 \
+          --conf spark.hadoop.fs.s3a.fast.upload.buffer=bytebuffer \
+          --conf spark.driver.extraJavaOptions="-Daws.region=us-east-1" \
+          --conf spark.executor.extraJavaOptions="-Daws.region=us-east-1" \
+          ./ingestion_to_iceberg.py
+
+  kafka-cleaner:
+    image: confluentinc/cp-kafka:7.6.1
+    platform: linux/amd64
+    container_name: kafka-cleaner
+    networks:
+      - data_pipeline_net
+    depends_on:
+      - kafka
+    command: >
+      bash -c "
+        echo 'Waiting for Kafka to be ready...' &&
+        sleep 15 &&
+        echo 'Deleting Kafka topic: dados_produtores...' &&
+        kafka-topics --bootstrap-server kafka:9092 --delete --topic dados_produtores --if-exists &&
+        echo 'Topic deleted. Creating a new one...' &&
+        kafka-topics --bootstrap-server kafka:9092 --create --topic dados_produtores --partitions 3 --replication-factor 1 &&
+        echo 'Topic created successfully.'
+      "
+    restart: on-failure
+
+  producer-simulator:
+    build:
+      context: ./services/producer_simulator
+    platform: linux/amd64
+    container_name: producer-simulator
+    networks:
+      - data_pipeline_net
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BROKER: kafka:9092
+      KAFKA_TOPIC: dados_produtores
+
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    platform: linux/amd64
+    networks:
+      - data_pipeline_net
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow_password_here
+      - POSTGRES_DB=airflow
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8
+    volumes:
+      - airflow_db_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow -d airflow -q"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  airflow-webserver:
+    build:
+      context: ./services/airflow
+    container_name: airflow-webserver
+    platform: linux/amd64
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+      - data_pipeline_net
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow_password_here@postgres:5432/airflow
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__WEBSERVER__SECRET_KEY=your-secret-key
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=true
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW_UID=50000
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW__CORE__BASE_LOG_FOLDER=/opt/airflow/logs
+      - AIRFLOW__CORE__PLUGINS_FOLDER=/opt/airflow/plugins
+      - PROJECT_ROOT=${PWD}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags:rw
+      - ./airflow/logs:/opt/airflow/logs:rw
+      - ./airflow/plugins:/opt/airflow/plugins:rw
+      - ./dbt_trino:/opt/airflow/dbt_trino:rw
+      - ./services/credit_scoring_api/models:/opt/airflow/shared_models:rw
+      - ./services:/opt/airflow/services:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8086:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    user: "50000:0"
+
+  airflow-scheduler:
+    build:
+      context: ./services/airflow
+    container_name: airflow-scheduler
+    platform: linux/amd64
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+      - data_pipeline_net
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow_password_here@postgres:5432/airflow
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=true
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW_UID=50000
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW__CORE__BASE_LOG_FOLDER=/opt/airflow/logs
+      - AIRFLOW__CORE__PLUGINS_FOLDER=/opt/airflow/plugins
+      - PROJECT_ROOT=${PWD}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags:rw
+      - ./airflow/logs:/opt/airflow/logs:rw
+      - ./airflow/plugins:/opt/airflow/plugins:rw
+      - ./services/dbt-trino:/opt/airflow/dbt_trino:rw
+      - ./services/credit_scoring_api/models:/opt/airflow/shared_models:rw
+      - ./services:/opt/airflow/services:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: scheduler
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname \"$(hostname)\" --limit 1 --allow-multiple || exit 1"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+    user: "0:0"
+
+  airflow-init:
+    build:
+      context: ./services/airflow
+    container_name: airflow-init
+    platform: linux/amd64
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - data_pipeline_net
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow_password_here@postgres:5432/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW_UID=50000
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW__CORE__BASE_LOG_FOLDER=/opt/airflow/logs
+      - AIRFLOW__CORE__PLUGINS_FOLDER=/opt/airflow/plugins
+      - PROJECT_ROOT=${PWD}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags:rw
+      - ./airflow/logs:/opt/airflow/logs:rw
+      - ./airflow/plugins:/opt/airflow/plugins:rw
+      - ./services/dbt-trino:/opt/airflow/dbt_trino:rw
+    command:
+      - bash
+      - -c
+      - |
+        set -e
+        echo "Creating necessary directories..."
+        mkdir -p /opt/airflow/{dags,logs,plugins}
+        mkdir -p /opt/airflow/dags/scripts
+        
+        echo "Checking Airflow version..."
+        airflow version
+        
+        echo "Initializing Airflow database..."
+        airflow db init
+        
+        echo "Creating admin user..."
+        airflow users create \
+          --username airflow \
+          --password airflow \
+          --firstname Airflow \
+          --lastname Admin \
+          --email admin@example.com \
+          --role Admin
+        
+        echo "Listing users to confirm creation..."
+        airflow users list
+        
+        echo "Airflow initialization completed successfully!"
+    user: "0:0"
+    restart: "no"
+
+  dbt-trino:
+    build:
+      context: ./services/dbt-trino
+      dockerfile: Dockerfile
+    container_name: dbt-trino
+    platform: linux/amd64
+    networks:
+      - data_pipeline_net
+    depends_on:
+      trino:
+        condition: service_healthy
+      metastore:
+        condition: service_healthy
+    volumes:
+      - ./services/dbt-trino:/dbt:rw
+    environment:
+      - DBT_PROFILES_DIR=/dbt
+    command: tail -f /dev/null
+    healthcheck:
+      test: ["CMD", "dbt", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  dbt-trino-setup:
+    image: python:3.9-slim
+    container_name: dbt-trino-setup
+    platform: linux/amd64
+    networks:
+      - data_pipeline_net
+    depends_on:
+      dbt-trino:
+        condition: service_healthy
+      trino:
+        condition: service_healthy
+    volumes:
+      - ./services/dbt-trino:/dbt:rw
+      - ./setup_dbt_trino.sh:/setup_dbt_trino.sh:ro
+      - ./services/dbt-trino:/services/dbt-trino:ro
+    environment:
+      - DBT_PROFILES_DIR=/dbt
+    command:
+      - bash
+      - -c
+      - |
+        set -e
+        echo "=== Setup Automático do dbt com Trino ==="
+        
+        # Instalar dependências necessárias
+        apt-get update && apt-get install -y git curl
+        pip install protobuf==4.25.3 dbt-core==1.7.0 dbt-trino==1.7.0
+        
+        # Criar estrutura de diretórios
+        cd /dbt
+        mkdir -p models/{staging,silver,marts} macros tests/{generic,singular} data analyses snapshots
+        
+        # Criar arquivo packages.yml
+        if [ ! -f packages.yml ]; then
+          cat > packages.yml << 'EOF'
+        packages:
+          - package: dbt-labs/dbt_utils
+            version: 1.1.1
+        EOF
+        fi
+        
+        # Criar dbt_project.yml se não existir
+        if [ ! -f dbt_project.yml ]; then
+          cat > dbt_project.yml << 'EOF'
+        name: 'agronegocio_iceberg'
+        version: '1.0.0'
+        config-version: 2
+        
+        profile: 'agronegocio_iceberg'
+        
+        model-paths: ["models"]
+        analysis-paths: ["analyses"]
+        test-paths: ["tests"]
+        seed-paths: ["data"]
+        macro-paths: ["macros"]
+        snapshot-paths: ["snapshots"]
+        
+        target-path: "target"
+        clean-targets: ["target", "dbt_packages"]
+        
+        models:
+          agronegocio_iceberg:
+            +materialized: incremental
+            +on_schema_change: append_new_columns
+            +incremental_strategy: merge
+            +unique_key: proponente_id
+            
+            silver:
+              +schema: silver
+              +enabled: true
+            
+          agronegocio_iceberg:
+          +materialized: incremental
+            +on_schema_change: append_new_columns
+            +incremental_strategy: merge
+          # Configurações para camada Gold
+            gold:
+              +materialized: table
+              +schema: gold
+        
+        vars:
+          max_null_percentage: 0.05
+          min_row_count: 1
+          iceberg_catalog: 'iceberg'
+          bronze_catalog: 'iceberg'
+          bronze_schema: 'bronze'
+        EOF
+        fi
+        
+        # Criar profiles.yml se não existir
+        if [ ! -f profiles.yml ]; then
+          cat > profiles.yml << 'EOF'
+        agronegocio_iceberg:
+          target: dev
+          outputs:
+            dev:
+              type: trino
+              method: none
+              host: trino
+              port: 8080
+              catalog: iceberg
+              threads: 2
+              http_scheme: http
+        EOF
+        fi
+        
+        # Instalar dependências do dbt
+        echo "Instalando dependências do dbt..."
+        dbt deps
+        
+        # Aguardar Trino estar completamente pronto
+        echo "Aguardando Trino estar pronto..."
+        sleep 10
+        
+        # Testar conexão
+        echo "Testando conexão com Trino..."
+        dbt debug || true
+        
+        # Criar schema silver via Trino CLI
+        echo "Criando schema silver no Iceberg..."
+        apt-get install -y netcat-openbsd
+        echo "CREATE SCHEMA IF NOT EXISTS iceberg.silver;" | nc trino 8080 || true
+        
+        echo ""
+        echo "=== Setup do dbt com Trino concluído! ==="
+        echo ""
+        echo "O dbt está configurado e pronto para uso."
+        echo "A DAG do Airflow executará automaticamente a cada 2 minutos."
+        echo ""
+        echo "Para executar manualmente:"
+        echo "  docker-compose exec dbt-trino dbt run --models silver.*"
+        echo "  docker-compose exec dbt-trino dbt test"
+    restart: "no"
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    networks:
+      - data_pipeline_net
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  credit-scoring-api:
+    build:
+      context: ./services/credit_scoring_api
+    container_name: credit-scoring-api
+    platform: linux/amd64
+    networks:
+      - data_pipeline_net
+    depends_on:
+      redis:
+        condition: service_healthy
+      trino:
+        condition: service_healthy
+    ports:
+      - "8087:8000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - TRINO_HOST=trino
+      - TRINO_PORT=8080
+    volumes:
+      - ./services/credit_scoring_api/models:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  minio_data:
+  metastore-db:
+  clickhouse_data:
+  redis_data:
+  superset_data:
+  airflow_db_data:
