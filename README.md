@@ -351,3 +351,55 @@ Contribuições são muito bem-vindas! Se você tem alguma sugestão ou encontro
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](/LICENSE) para mais detalhes.
+## 🗺️ Roadmap: Evoluindo para uma Plataforma de Dados Completa
+
+Esta arquitetura é uma base sólida e funcional. No entanto, para transformá-la em uma plataforma de dados de nível enterprise, robusta, observável e segura, os próximos passos se concentram em três pilares estratégicos: **Governança de Dados**, **Observabilidade Total** e **Automação e Segurança**.
+
+O objetivo deste roadmap não é apenas adicionar mais ferramentas, mas preencher lacunas críticas que surgem quando um pipeline de dados cresce em escala e importância para o negócio.
+
+---
+
+### 🏛️ Pilar 1: Governança de Dados e Qualidade
+
+À medida que mais dados e usuários são adicionados, garantir a confiança, a descoberta e a qualidade dos dados se torna a principal prioridade.
+
+| Evolução Proposta | Ferramenta Open-Source | Justificativa Estratégica (Por quê?) | Serviço Equivalente na AWS |
+| :--- | :--- | :--- | :--- |
+| **1. Data Catalog & Linhagem** | **OpenMetadata / DataHub** | **Problema:** "De onde veio este dado? Quem é o dono? Posso confiar nele?". O Hive Metastore é técnico; falta uma camada de negócio para documentação, descoberta e, crucialmente, **linhagem de dados de ponta a ponta** (de Kafka à API). | **AWS Glue Data Catalog (com DataZone)** |
+| **2. Schema Registry** | **Confluent Schema Registry** | **Problema:** Mudanças no schema do produtor podem quebrar silenciosamente os consumidores. Um Schema Registry força um "contrato de dados" (Data Contract), garantindo a compatibilidade e a evolução segura dos schemas Avro. | **AWS Glue Schema Registry** |
+| **3. Monitoramento de Qualidade** | **Great Expectations / Soda Core** | **Problema:** Os testes do dbt são ótimos, mas reativos. Precisamos de **monitoramento proativo da qualidade dos dados** diretamente no pipeline (ex: no job Spark de ingestão) para detectar anomalias, dados inválidos e desvios antes que eles contaminem o Data Lake. | **AWS Deequ / AWS Glue Data Quality** |
+
+---
+
+### 🔭 Pilar 2: Observabilidade Total (Métricas, Logs e Traces)
+
+Uma plataforma de dados sem visibilidade é uma caixa preta. A observabilidade nos permite entender o comportamento do sistema, diagnosticar problemas rapidamente e garantir a performance.
+
+| Evolução Proposta | Ferramenta Open-Source | Justificativa Estratégica (Por quê?) | Serviço Equivalente na AWS |
+| :--- | :--- | :--- | :--- |
+| **1. Métricas e Alertas** | **Prometheus + Grafana** | **Problema:** "O Kafka está lento? O Spark está usando todos os recursos?". Precisamos coletar métricas de todos os serviços (Kafka, Trino, Spark, APIs) em um único local, criar dashboards de saúde e configurar alertas para condições anormais (ex: latência alta, fila do Kafka crescendo). | **Amazon Managed Service for Prometheus + Amazon Managed Grafana / CloudWatch** |
+| **2. Agregação de Logs** | **Loki / OpenSearch** | **Problema:** Diagnosticar um erro hoje exige `docker logs` em múltiplos contêineres. Uma solução de logging centralizado permite pesquisar e analisar todos os logs da aplicação e do sistema em uma única interface, correlacionando eventos entre serviços. | **Amazon OpenSearch Service / CloudWatch Logs** |
+| **3. Tracing Distribuído** | **OpenTelemetry + Jaeger/Tempo** | **Problema:** "Por que esta requisição na API demorou 3 segundos?". O tracing distribuído permite seguir uma única requisição através de todos os microsserviços (API -> Feast -> Trino), visualizando o tempo gasto em cada etapa e identificando gargalos. | **AWS X-Ray** |
+
+---
+
+### 🛡️ Pilar 3: Automação, Segurança e Analytics
+
+Com a governança e a observabilidade estabelecidas, o foco se volta para a automação do ciclo de vida de desenvolvimento, o fortalecimento da segurança e a democratização do acesso aos dados.
+
+| Evolução Proposta | Ferramenta Open-Source | Justificativa Estratégica (Por quê?) | Serviço Equivalente na AWS |
+| :--- | :--- | :--- | :--- |
+| **1. Pipeline de CI/CD** | **GitHub Actions / GitLab CI** | **Problema:** O deploy é manual (`docker-compose up`). Um pipeline de CI/CD automatiza testes (unitários, de integração, testes do dbt) e o deploy de novas versões, garantindo que mudanças no código não quebrem o ambiente e acelerando o desenvolvimento. | **AWS CodePipeline / CodeBuild** |
+| **2. Gerenciamento de Segredos** | **HashiCorp Vault** | **Problema:** Segredos (senhas, chaves de API) estão em texto plano no `docker-compose.yml`. O Vault centraliza e protege o acesso a esses segredos, permitindo que as aplicações os obtenham de forma segura e auditável. | **AWS Secrets Manager / Parameter Store** |
+| **3. Plataforma de BI** | **Apache Superset / Metabase** | **Problema:** O Streamlit é excelente para apps de dados, mas não substitui uma ferramenta de BI para exploração e criação de dashboards pelo time de negócio. Uma plataforma de BI se conectaria ao Trino para democratizar o acesso aos dados da camada Gold. | **Amazon QuickSight** |
+
+---
+
+### 🏛️ Pilar 4: Escalabilidade Cloud-Native e GitOps
+
+Com a base sólida, o próximo salto de maturidade é adotar a orquestração e as práticas de implantação que são padrão na nuvem, garantindo escalabilidade real e um gerenciamento de infraestrutura declarativo.
+
+| Evolução Proposta | Ferramenta Open-Source | Justificativa Estratégica (Por quê?) | Serviço Equivalente na AWS |
+| :--- | :--- | :--- | :--- |
+| **1. Orquestração de Contêineres** | **Kubernetes (k8s)** | **Problema:** O Docker Compose é excelente para desenvolvimento local, mas não oferece auto-recuperação (self-healing), escalabilidade horizontal ou gerenciamento avançado de rede e armazenamento para um ambiente de produção. O Kubernetes é o padrão para executar aplicações distribuídas em escala. | **Amazon EKS (Elastic Kubernetes Service)** |
+| **2. Continuous Delivery com GitOps** | **Argo CD** | **Problema:** Um pipeline de CI/CD (Pilar 3) constrói e testa os artefatos, mas como garantimos que o estado do nosso cluster Kubernetes corresponde exatamente ao que foi definido e testado? O Argo CD implementa o **GitOps**, usando um repositório Git como a única fonte da verdade para o estado da aplicação, automatizando e auditando o deploy de forma contínua e segura. | **Argo CD on EKS** (Combinação padrão) |
