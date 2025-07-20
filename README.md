@@ -351,6 +351,7 @@ Contribuições são muito bem-vindas! Se você tem alguma sugestão ou encontro
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](/LICENSE) para mais detalhes.
+
 ## 🗺️ Roadmap: Evoluindo para uma Plataforma de Dados Completa
 
 Esta arquitetura é uma base sólida e funcional. No entanto, para transformá-la em uma plataforma de dados de nível enterprise, robusta, observável e segura, os próximos passos se concentram em três pilares estratégicos: **Governança de Dados**, **Observabilidade Total** e **Automação e Segurança**.
