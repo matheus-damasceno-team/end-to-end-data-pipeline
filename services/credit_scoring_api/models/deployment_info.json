@@ -1,0 +1,7 @@
+{
+  "deployed_at": "2025-07-10T00:00:11.502729",
+  "model_file": "credit_model.joblib",
+  "metrics_file": "model_metrics.json",
+  "drift_detected": false,
+  "performance_degraded": true
+}

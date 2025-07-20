@@ -1,0 +1,30 @@
+{
+  "proponente_id": "PROP_APPROVE_001",
+  "data_solicitacao": 1704682800000,
+  "cpf_cnpj": "12.345.678/0001-90",
+  "nome_razao_social": "Fazenda São João Ltda",
+  "tipo_pessoa": "JURIDICA",
+  "renda_bruta_anual_declarada": 800000.0,
+  "valor_solicitado_credito": 150000.0,
+  "finalidade_credito": "CUSTEIO_SAFRA",
+  "localizacao_propriedade": {
+    "latitude": -20.4697,
+    "longitude": -54.6201,
+    "municipio": "Campo Grande",
+    "uf": "MS"
+  },
+  "area_total_hectares": 1200.0,
+  "cultura_principal": "SOJA",
+  "possui_experiencia_atividade": true,
+  "anos_experiencia": 25,
+  "fontes_dados_adicionais": {
+    "serasa_score": 850,
+    "ibama_autuacoes_ativas": false,
+    "numero_matricula_imovel": "MAT-850123"
+  },
+  "metadata_evento": {
+    "versao_schema": "1.0.0",
+    "origem_dados": "test_approve",
+    "timestamp_geracao_evento": 1704682800000
+  }
+}

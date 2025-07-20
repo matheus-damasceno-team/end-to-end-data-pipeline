@@ -1,0 +1,30 @@
+{
+  "proponente_id": "PROP_REVIEW_002",
+  "data_solicitacao": 1704682800000,
+  "cpf_cnpj": "987.654.321-45",
+  "nome_razao_social": "Maria Santos Silva",
+  "tipo_pessoa": "FISICA",
+  "renda_bruta_anual_declarada": 120000.0,
+  "valor_solicitado_credito": 80000.0,
+  "finalidade_credito": "INVESTIMENTO_MAQUINARIO",
+  "localizacao_propriedade": {
+    "latitude": -22.9068,
+    "longitude": -43.1729,
+    "municipio": "Rio de Janeiro",
+    "uf": "RJ"
+  },
+  "area_total_hectares": 50.0,
+  "cultura_principal": "CAFE",
+  "possui_experiencia_atividade": true,
+  "anos_experiencia": 8,
+  "fontes_dados_adicionais": {
+    "serasa_score": 620,
+    "ibama_autuacoes_ativas": false,
+    "numero_matricula_imovel": "MAT-620456"
+  },
+  "metadata_evento": {
+    "versao_schema": "1.0.0",
+    "origem_dados": "test_manual_review",
+    "timestamp_geracao_evento": 1704682800000
+  }
+}

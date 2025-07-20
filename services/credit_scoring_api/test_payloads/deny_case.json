@@ -1,0 +1,30 @@
+{
+  "proponente_id": "PROP_DENY_003",
+  "data_solicitacao": 1704682800000,
+  "cpf_cnpj": "111.222.333-44",
+  "nome_razao_social": "Pedro Costa Junior",
+  "tipo_pessoa": "FISICA",
+  "renda_bruta_anual_declarada": 45000.0,
+  "valor_solicitado_credito": 200000.0,
+  "finalidade_credito": "AMPLIACAO_AREA",
+  "localizacao_propriedade": {
+    "latitude": -3.7319,
+    "longitude": -38.5267,
+    "municipio": "Fortaleza",
+    "uf": "CE"
+  },
+  "area_total_hectares": 15.0,
+  "cultura_principal": "FRUTICULTURA",
+  "possui_experiencia_atividade": false,
+  "anos_experiencia": 0,
+  "fontes_dados_adicionais": {
+    "serasa_score": 380,
+    "ibama_autuacoes_ativas": true,
+    "numero_matricula_imovel": "MAT-380789"
+  },
+  "metadata_evento": {
+    "versao_schema": "1.0.0",
+    "origem_dados": "test_deny",
+    "timestamp_geracao_evento": 1704682800000
+  }
+}
